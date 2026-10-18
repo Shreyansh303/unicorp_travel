@@ -1,0 +1,371 @@
+---
+import { Picture } from 'astro:assets';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import MockBar from '../_shared/MockBar.astro';
+import Topbar from '../_b/Topbar.astro';
+import Enquiry from '../_b/Enquiry.astro';
+import { brand, featured, formatPrice, whatsappFor } from '../_shared/data';
+import '../_shared/route.css';
+import '../_b/b.css';
+
+const pkg = featured;
+const topic = `the ${pkg.name} holiday`;
+---
+
+<BaseLayout
+  title={`Mock B, Departure board: ${pkg.name}, ${brand}`}
+  description="Design direction B for the Unicorp Travel demo: a sample holiday package page."
+>
+  <div class="board">
+    <MockBar letter="b" name="Departure board" />
+    <Topbar />
+    <main>
+      <section class="b-pk-hero" aria-labelledby="pk-title">
+        <div class="wrap b-pk-grid">
+          <div class="b-pk-copy">
+            <nav aria-label="Breadcrumb">
+              <ol class="mono b-crumbs">
+                <li>
+                  <a href="/mocks/b">Home</a>
+                </li>
+                <li aria-current="page">{pkg.region}</li>
+              </ol>
+            </nav>
+            <span class="sample">Sample content</span>
+            <h1 id="pk-title" class="h-display">
+              {pkg.name}
+            </h1>
+            <p class="b-lede">{pkg.intro}</p>
+            <dl class="b-ticket">
+              <div>
+                <dt class="mono">Duration</dt>
+                <dd>
+                  {pkg.days}D / {pkg.nights}N
+                </dd>
+              </div>
+              <div>
+                <dt class="mono">Route</dt>
+                <dd>COK → COK</dd>
+              </div>
+              <div>
+                <dt class="mono">From, per person</dt>
+                <dd>{formatPrice(pkg.fromPrice)}</dd>
+              </div>
+              <div>
+                <dt class="mono">Valid to</dt>
+                <dd>{pkg.validTo}</dd>
+              </div>
+            </dl>
+            <div class="actions">
+              <a class="btn" href={whatsappFor(topic)}>
+                Ask about this trip{' '}
+                <span class="arrow" aria-hidden="true">
+                  →
+                </span>
+              </a>
+            </div>
+          </div>
+          <figure class="b-pk-figure">
+            <Picture
+              src={pkg.image}
+              alt={pkg.alt}
+              formats={['avif', 'webp']}
+              widths={[480, 768, 1080, 1440, 1920]}
+              sizes="(min-width: 1024px) 50vw, 100vw"
+              loading="eager"
+              fetchpriority="high"
+            />
+          </figure>
+        </div>
+      </section>
+
+      <section class="section section-light" aria-labelledby="highlights-title">
+        <div class="wrap">
+          <div class="section-head">
+            <div>
+              <p class="mono kicker">Highlights</p>
+              <h2 id="highlights-title" class="h-section" style="margin-top: 1rem">
+                Four reasons to go.
+              </h2>
+            </div>
+            <p>
+              What the trip is built around. <span class="sample">Sample content</span>
+            </p>
+          </div>
+          <ol class="b-hl">
+            {pkg.highlights.map((item, index) => (
+              <li>
+                <span class="mono b-hl-num">{String(index + 1).padStart(2, '0')}</span>
+                <h3>{item.title}</h3>
+                <p>{item.text}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="itinerary-title">
+        <div class="wrap b-itin-grid">
+          <div class="b-itin-head">
+            <p class="mono kicker">Itinerary</p>
+            <h2 id="itinerary-title" class="h-section" style="margin-top: 1rem">
+              Day by day.
+            </h2>
+            <p>
+              Six stops from Kochi and back. <span class="sample">Sample content</span>
+            </p>
+          </div>
+          <div class="b-itin route-scroll">
+            <svg
+              class="b-itin-line"
+              viewBox="0 0 16 1000"
+              preserveAspectRatio="none"
+              fill="none"
+              aria-hidden="true"
+            >
+              <path d="M8 0 V1000" stroke="rgb(255 255 255 / 0.14)" stroke-width="3"></path>
+              <path
+                class="route-draw route-line"
+                pathLength="1"
+                d="M8 0 V1000"
+                stroke-width="3"
+              ></path>
+            </svg>
+            <ol>
+              {pkg.itinerary.map((stop) => (
+                <li class="b-day">
+                  <span class="b-day-stop" aria-hidden="true" />
+                  <p class="mono b-day-code">
+                    D{stop.day} · {stop.place}
+                  </p>
+                  <h3>{stop.title}</h3>
+                  <p>{stop.text}</p>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </div>
+      </section>
+    </main>
+    <Enquiry topic={topic} />
+  </div>
+</BaseLayout>
+
+<style is:global>
+  .board .b-pk-grid {
+    display: grid;
+    gap: 2.5rem;
+    padding-block: 2rem 4rem;
+  }
+
+  .board .b-pk-copy {
+    display: grid;
+    gap: 1.25rem;
+    justify-items: start;
+    align-content: center;
+  }
+
+  .board .b-crumbs {
+    display: flex;
+    gap: 0.5rem;
+    color: var(--muted);
+  }
+
+  .board .b-crumbs li + li::before {
+    content: '/';
+    margin-right: 0.5rem;
+  }
+
+  .board .b-crumbs a {
+    color: var(--fg);
+  }
+
+  .board .b-pk-hero h1 {
+    font-size: clamp(2.75rem, 1.5rem + 5vw, 5.5rem);
+  }
+
+  .board .b-lede {
+    max-width: 34rem;
+    font-size: 1.125rem;
+    color: var(--muted);
+  }
+
+  .board .b-ticket {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 100%;
+    border: 1px solid var(--line);
+    background: var(--navy-2);
+  }
+
+  .board .b-ticket > div {
+    display: grid;
+    gap: 0.25rem;
+    padding: 0.875rem 1rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .board .b-ticket > div:nth-child(odd) {
+    border-right: 1px solid var(--line);
+  }
+
+  .board .b-ticket > div:nth-last-child(-n + 2) {
+    border-bottom: 0;
+  }
+
+  .board .b-ticket dt {
+    color: var(--muted);
+    font-size: 0.6875rem;
+  }
+
+  .board .b-ticket dd {
+    font-size: 1.125rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+
+  .board .b-pk-figure img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+  }
+
+  @media (min-width: 1024px) {
+    .board .b-pk-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      padding-block: 3rem 6rem;
+    }
+
+    .board .b-pk-figure img {
+      aspect-ratio: 1;
+    }
+  }
+
+  .board .b-hl {
+    display: grid;
+    gap: 1px;
+    background: var(--light-line);
+    border: 1px solid var(--light-line);
+  }
+
+  .board .b-hl li {
+    display: grid;
+    gap: 0.5rem;
+    align-content: start;
+    padding: 1.5rem;
+    background: #fff;
+  }
+
+  .board .b-hl-num {
+    color: var(--ink-muted);
+  }
+
+  .board .b-hl h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+  }
+
+  .board .b-hl p {
+    color: var(--ink-muted);
+    font-size: 0.9375rem;
+  }
+
+  @media (min-width: 768px) {
+    .board .b-hl {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .board .b-hl {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .board .b-itin-grid {
+    display: grid;
+    gap: 2.5rem;
+  }
+
+  .board .b-itin-head p:last-child {
+    margin-top: 1rem;
+    color: var(--muted);
+  }
+
+  @media (min-width: 1024px) {
+    .board .b-itin-grid {
+      grid-template-columns: 1fr 2fr;
+      gap: 4rem;
+    }
+
+    .board .b-itin-head {
+      position: sticky;
+      top: 2rem;
+      align-self: start;
+    }
+  }
+
+  .board .b-itin {
+    position: relative;
+    padding-left: 2.5rem;
+  }
+
+  .board .b-itin-line {
+    position: absolute;
+    top: 0.75rem;
+    left: 0;
+    width: 16px;
+    height: calc(100% - 1.5rem);
+  }
+
+  .board .b-day {
+    position: relative;
+    display: grid;
+    gap: 0.25rem;
+    padding: 0 0 2rem;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .board .b-day:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: 0;
+  }
+
+  .board .b-day-stop {
+    position: absolute;
+    top: 0.25rem;
+    left: calc(-2.5rem + 1px);
+    width: 14px;
+    height: 14px;
+    background: var(--navy);
+    border: 3px solid var(--signal);
+  }
+
+  .board .b-day:first-child .b-day-stop,
+  .board .b-day:last-child .b-day-stop {
+    background: var(--signal);
+  }
+
+  .board .b-day-code {
+    color: var(--signal);
+  }
+
+  .board .b-day h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+
+  .board .b-day p:last-child {
+    max-width: 38rem;
+    color: var(--muted);
+  }
+</style>

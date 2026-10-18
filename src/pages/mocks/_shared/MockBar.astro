@@ -1,0 +1,63 @@
+---
+/** Thin strip above each mock page naming the direction, with links between the mocks. */
+interface Props {
+  letter: 'a' | 'b' | 'c';
+  name: string;
+}
+
+const { letter, name } = Astro.props;
+const others = (['a', 'b', 'c'] as const).filter((item) => item !== letter);
+---
+
+<nav class="mockbar" aria-label="Design directions">
+  <p>
+    Design mock <span class="mockbar-letter">{letter.toUpperCase()}</span>: {name}
+  </p>
+  <ul>
+    <li>
+      <a href="/mocks">All directions</a>
+    </li>
+    {others.map((other) => (
+      <li>
+        <a href={`/mocks/${other}`}>Direction {other.toUpperCase()}</a>
+      </li>
+    ))}
+  </ul>
+</nav>
+
+<style>
+  .mockbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.25rem 1rem;
+    padding: 0.5rem 1rem;
+    background: #141414;
+    color: #f2f2f2;
+    font:
+      500 0.75rem/1.4 system-ui,
+      sans-serif;
+    letter-spacing: 0.02em;
+  }
+
+  .mockbar-letter {
+    font-weight: 700;
+  }
+
+  .mockbar ul {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .mockbar a {
+    color: #f2f2f2;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  .mockbar a:focus-visible {
+    outline: 2px solid #f2f2f2;
+    outline-offset: 2px;
+  }
+</style>

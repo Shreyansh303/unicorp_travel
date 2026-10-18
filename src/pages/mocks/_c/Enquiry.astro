@@ -1,0 +1,58 @@
+---
+import { callHref, email, mailHref, mobile, office, whatsappFor } from '../_shared/data';
+
+interface Props {
+  topic?: string;
+}
+
+const { topic } = Astro.props;
+---
+
+<section class="enquiry" aria-labelledby="enquiry-title">
+  <div class="wrap enquiry-grid">
+    <div>
+      <h2 id="enquiry-title" class="h2">
+        Where to <em>next?</em>
+      </h2>
+      <p style="margin-top: 1rem; max-width: 30rem">
+        Tell us who is travelling, roughly when, and what you love doing. We will send back a
+        day-by-day plan to talk through.
+      </p>
+      <div class="actions" style="margin-top: 2rem">
+        <a class="btn" href={whatsappFor(topic)}>
+          Chat on WhatsApp
+        </a>
+        {callHref && mobile && (
+          <a class="btn btn-line" href={callHref}>
+            Call {mobile.display}
+          </a>
+        )}
+      </div>
+    </div>
+    <dl class="enquiry-card">
+      {email && mailHref && (
+        <div>
+          <dt>Email</dt>
+          <dd>
+            <a href={mailHref}>{email}</a>
+          </dd>
+        </div>
+      )}
+      {office && (
+        <div>
+          <dt>Visit us</dt>
+          <dd>
+            <address>
+              {office.lines.map((line) => (
+                <>
+                  {line}
+                  <br />
+                </>
+              ))}
+            </address>
+          </dd>
+        </div>
+      )}
+    </dl>
+  </div>
+</section>

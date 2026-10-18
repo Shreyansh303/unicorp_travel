@@ -1,0 +1,556 @@
+---
+import { Picture } from 'astro:assets';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import MockBar from '../_shared/MockBar.astro';
+import Topbar from '../_b/Topbar.astro';
+import Enquiry from '../_b/Enquiry.astro';
+import {
+  brand,
+  callHref,
+  corporateDetail,
+  formatPrice,
+  office,
+  packages,
+  serviceGroups,
+  whatsappFor,
+} from '../_shared/data';
+import cityDusk from '../../../assets/photos/corporate-city.jpg';
+import '../_shared/route.css';
+import '../_b/b.css';
+
+const corporate = serviceGroups.find((group) => group.id === 'corporate');
+const secondary = serviceGroups.filter((group) => group.id !== 'corporate');
+const shown = packages.filter((item) => ['kerala', 'ladakh', 'bali'].includes(item.slug));
+
+const desktopStops = [
+  { x: 20, y: 70, code: 'DEL' },
+  { x: 200, y: 70, code: 'BOM' },
+  { x: 460, y: 40, code: 'BLR' },
+  { x: 760, y: 70, code: 'DXB' },
+  { x: 1040, y: 40, code: 'SIN' },
+  { x: 1180, y: 40, code: 'LHR' },
+];
+const mobileStops = [
+  { x: 10, y: 50, code: 'DEL' },
+  { x: 180, y: 30, code: 'DXB' },
+  { x: 333, y: 50, code: 'SIN' },
+];
+---
+
+<BaseLayout
+  title={`Mock B, Departure board: ${brand}`}
+  description="Design direction B for the Unicorp Travel demo: precise grotesk and mono type on deep navy."
+>
+  <div class="board">
+    <MockBar letter="b" name="Departure board" />
+    <Topbar />
+    <main>
+      <section class="b-hero" aria-labelledby="hero-title">
+        <div class="wrap b-hero-inner">
+          <p class="mono kicker">Corporate travel desk{office ? `, ${office.locality}` : ''}</p>
+          <h1 id="hero-title" class="h-display">
+            Business travel, <span class="b-signal">on schedule.</span>
+          </h1>
+          <p class="b-lede">
+            Flights, hotels, visas and ground transport for your teams, handled by one desk and kept
+            within your travel policy. Holidays too, when the work is done.
+          </p>
+          <div class="actions">
+            {callHref && (
+              <a class="btn" href={callHref}>
+                Talk to the corporate desk{' '}
+                <span class="arrow" aria-hidden="true">
+                  →
+                </span>
+              </a>
+            )}
+            <a class="btn btn-ghost" href={whatsappFor('corporate travel')}>
+              WhatsApp us
+            </a>
+          </div>
+        </div>
+        <div class="b-hero-media">
+          <Picture
+            src={cityDusk}
+            alt="A business district skyline glowing in golden evening light"
+            formats={['avif', 'webp']}
+            widths={[480, 768, 1080, 1440, 1920]}
+            sizes="(min-width: 1024px) 65vw, 100vw"
+            loading="eager"
+            fetchpriority="high"
+          />
+        </div>
+        <div class="wrap b-route">
+          <svg class="b-route-lg" viewBox="0 0 1200 110" fill="none" aria-hidden="true">
+            <path
+              class="route-draw route-line"
+              pathLength="1"
+              stroke-width="3"
+              stroke-linejoin="round"
+              d="M20 70 H280 L320 40 H600 L640 70 H880 L920 40 H1180"
+            ></path>
+            {desktopStops.map((stop, index) => (
+              <g class="route-fade" style={`--fade-delay: ${0.3 + index * 0.3}s`}>
+                <circle
+                  cx={stop.x}
+                  cy={stop.y}
+                  r="7"
+                  fill={index === 0 || index === desktopStops.length - 1 ? '#ffb81c' : '#0a1628'}
+                  stroke="#ffb81c"
+                  stroke-width="3"
+                />
+                <text
+                  class:list={['route-label', { 'route-label-strong': index === 0 }]}
+                  x={stop.x}
+                  y={stop.y === 70 ? 102 : 20}
+                  text-anchor={
+                    index === 0 ? 'start' : index === desktopStops.length - 1 ? 'end' : 'middle'
+                  }
+                >
+                  {stop.code}
+                </text>
+              </g>
+            ))}
+          </svg>
+          <svg class="b-route-sm" viewBox="0 0 343 80" fill="none" aria-hidden="true">
+            <path
+              class="route-draw route-line"
+              pathLength="1"
+              stroke-width="3"
+              stroke-linejoin="round"
+              d="M10 50 H120 L140 30 H220 L240 50 H333"
+            ></path>
+            {mobileStops.map((stop, index) => (
+              <g class="route-fade" style={`--fade-delay: ${0.4 + index * 0.5}s`}>
+                <circle
+                  cx={stop.x}
+                  cy={stop.y}
+                  r="6"
+                  fill={index === 1 ? '#0a1628' : '#ffb81c'}
+                  stroke="#ffb81c"
+                  stroke-width="3"
+                />
+                <text
+                  class="route-label"
+                  x={stop.x}
+                  y={stop.y === 50 ? 76 : 16}
+                  text-anchor={index === 0 ? 'start' : index === 2 ? 'end' : 'middle'}
+                >
+                  {stop.code}
+                </text>
+              </g>
+            ))}
+          </svg>
+        </div>
+      </section>
+
+      {corporate && (
+        <section class="section" aria-labelledby="services-title">
+          <div class="wrap">
+            <div class="section-head">
+              <div>
+                <p class="mono kicker">Services</p>
+                <h2 id="services-title" class="h-section" style="margin-top: 1rem">
+                  A travel desk that works to your policy.
+                </h2>
+              </div>
+              <p>{corporate.copy}</p>
+            </div>
+            <div class="b-services">
+              <div class="b-board-wrap">
+                <div class="b-board-head mono" aria-hidden="true">
+                  <span>Code</span>
+                  <span>{corporate.name}</span>
+                </div>
+                <ol class="b-board">
+                  {corporate.items.map((item) => {
+                    const detail = corporateDetail[item.id];
+                    return (
+                      <li>
+                        <span class="b-code" aria-hidden="true">
+                          {(detail?.code ?? '').split('').map((char) => (
+                            <span>{char}</span>
+                          ))}
+                        </span>
+                        <div>
+                          <h3>{item.name}</h3>
+                          {detail && <p>{detail.text}</p>}
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ol>
+              </div>
+              <div class="b-panels">
+                {secondary.map((group) => (
+                  <div class="b-panel">
+                    <h3>{group.name}</h3>
+                    <p>{group.copy}</p>
+                    <ul class="mono">
+                      {group.items.map((item) => (
+                        <li>{item.name}</li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      <section class="section section-light" aria-labelledby="packages-title">
+        <div class="wrap">
+          <div class="section-head">
+            <div>
+              <p class="mono kicker">Holidays</p>
+              <h2 id="packages-title" class="h-section" style="margin-top: 1rem">
+                Off the clock, planned just as carefully.
+              </h2>
+            </div>
+            <p>
+              Sample routes to show the format. Every holiday is built to order around your dates.
+              <span class="sample">Sample content</span>
+            </p>
+          </div>
+          <ul class="b-cards">
+            {shown.map((item) => (
+              <li class="b-card">
+                <Picture
+                  src={item.image}
+                  alt={item.alt}
+                  formats={['avif', 'webp']}
+                  widths={[400, 640, 960]}
+                  sizes="(min-width: 1024px) 30vw, (min-width: 768px) 45vw, 100vw"
+                />
+                <div class="b-card-body">
+                  <p class="mono b-card-meta">
+                    {item.kind} · {item.days}D/{item.nights}N
+                  </p>
+                  <h3>
+                    {item.slug === 'kerala' ? (
+                      <a href="/mocks/b/package">{item.name}</a>
+                    ) : (
+                      item.name
+                    )}
+                  </h3>
+                  <p class="b-card-price">
+                    <span class="mono">From</span> {formatPrice(item.fromPrice)}{' '}
+                    <span class="b-card-per">per person</span>
+                  </p>
+                  <span class="sample">Sample content</span>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    </main>
+    <Enquiry topic="corporate travel" />
+  </div>
+</BaseLayout>
+
+<style is:global>
+  .board .b-hero {
+    position: relative;
+    display: grid;
+    isolation: isolate;
+  }
+
+  .board .b-hero-inner {
+    display: grid;
+    gap: 1.5rem;
+    justify-items: start;
+    padding-block: 2.5rem 2rem;
+  }
+
+  .board .b-hero h1 {
+    font-size: clamp(3rem, 1.5rem + 6.5vw, 7rem);
+    max-width: 11ch;
+  }
+
+  .board .b-signal {
+    color: var(--signal);
+  }
+
+  .board .b-lede {
+    max-width: 34rem;
+    font-size: 1.125rem;
+    color: var(--muted);
+  }
+
+  .board .b-hero-media {
+    position: relative;
+  }
+
+  .board .b-hero-media img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+  }
+
+  .board .b-route {
+    padding-block: 1.5rem 3rem;
+  }
+
+  .board .b-route svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .board .b-route-lg {
+    display: none !important;
+  }
+
+  @media (min-width: 1024px) {
+    .board .b-hero {
+      min-height: 44rem;
+      grid-template-rows: 1fr auto;
+    }
+
+    .board .b-hero-inner {
+      align-content: center;
+      padding-block: 5rem 3rem;
+    }
+
+    .board .b-hero-media {
+      position: absolute;
+      inset: 0 0 0 auto;
+      width: 64%;
+      z-index: -1;
+    }
+
+    .board .b-hero-media::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg, var(--navy) 0%, rgb(10 22 40 / 0.85) 22%, rgb(10 22 40 / 0) 60%),
+        linear-gradient(
+          0deg,
+          var(--navy) 0%,
+          var(--navy) 16%,
+          rgb(10 22 40 / 0.7) 30%,
+          rgb(10 22 40 / 0) 55%
+        );
+    }
+
+    .board .b-hero-media picture,
+    .board .b-hero-media img {
+      height: 100%;
+    }
+
+    .board .b-hero-media img {
+      aspect-ratio: auto;
+      object-position: 60% 50%;
+    }
+
+    .board .b-route-lg {
+      display: block !important;
+    }
+
+    .board .b-route-sm {
+      display: none !important;
+    }
+  }
+
+  /* Board */
+  .board .b-services {
+    display: grid;
+    gap: 2.5rem;
+  }
+
+  @media (min-width: 1024px) {
+    .board .b-services {
+      grid-template-columns: 2fr 1fr;
+      gap: 3rem;
+    }
+  }
+
+  .board .b-board-wrap {
+    background: var(--navy-2);
+    border: 1px solid var(--line);
+  }
+
+  .board .b-board-head {
+    display: grid;
+    grid-template-columns: 7.5rem 1fr;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    color: var(--muted);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .board .b-board li {
+    display: grid;
+    grid-template-columns: 7.5rem 1fr;
+    gap: 1rem;
+    align-items: start;
+    padding: 1.25rem 1rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .board .b-board li:last-child {
+    border-bottom: 0;
+  }
+
+  .board .b-code {
+    display: flex;
+    gap: 3px;
+  }
+
+  .board .b-code span {
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2.5rem;
+    background: var(--navy);
+    border-radius: 2px;
+    box-shadow: inset 0 -1.25rem 0 rgb(255 255 255 / 0.03);
+    color: var(--signal);
+    font-family: var(--mono);
+    font-weight: 500;
+    font-size: 1.125rem;
+  }
+
+  .board .b-board h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+  }
+
+  .board .b-board p {
+    margin-top: 0.25rem;
+    color: var(--muted);
+    font-size: 0.9375rem;
+  }
+
+  @media (max-width: 479px) {
+    .board .b-board-head {
+      display: none;
+    }
+
+    .board .b-board li {
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+    }
+  }
+
+  .board .b-panels {
+    display: grid;
+    gap: 1.5rem;
+    align-content: start;
+  }
+
+  .board .b-panel {
+    padding: 1.5rem;
+    border: 1px solid var(--line);
+  }
+
+  .board .b-panel h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+  }
+
+  .board .b-panel p {
+    margin-top: 0.5rem;
+    color: var(--muted);
+    font-size: 0.9375rem;
+  }
+
+  .board .b-panel ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    font-size: 0.6875rem;
+  }
+
+  .board .b-panel li {
+    padding: 0.25rem 0.5rem;
+    border: 1px solid var(--line);
+    color: var(--fg);
+  }
+
+  /* Cards */
+  .board .b-cards {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .board .b-cards {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .board .b-cards {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .board .b-card {
+    background: #fff;
+    border: 1px solid var(--light-line);
+    border-top: 4px solid var(--ink);
+    transition: border-color 0.2s var(--ease);
+  }
+
+  .board .b-card:hover {
+    border-top-color: var(--signal);
+  }
+
+  .board .b-card img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+  }
+
+  .board .b-card-body {
+    display: grid;
+    gap: 0.5rem;
+    justify-items: start;
+    padding: 1.25rem;
+  }
+
+  .board .b-card-meta {
+    color: var(--ink-muted);
+  }
+
+  .board .b-card h3 {
+    font-size: 1.375rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+  }
+
+  .board .b-card h3 a {
+    color: var(--ink);
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.2em;
+  }
+
+  .board .b-card-price {
+    font-size: 1.125rem;
+    font-weight: 700;
+  }
+
+  .board .b-card-price .mono {
+    color: var(--ink-muted);
+    font-weight: 400;
+  }
+
+  .board .b-card-per {
+    color: var(--ink-muted);
+    font-size: 0.875rem;
+    font-weight: 400;
+  }
+</style>

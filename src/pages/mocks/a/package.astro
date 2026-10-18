@@ -1,0 +1,402 @@
+---
+import { Picture } from 'astro:assets';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import MockBar from '../_shared/MockBar.astro';
+import Masthead from '../_a/Masthead.astro';
+import Enquiry from '../_a/Enquiry.astro';
+import { brand, featured, formatPrice, whatsappFor } from '../_shared/data';
+import '../_shared/route.css';
+import '../_a/a.css';
+
+const pkg = featured;
+---
+
+<BaseLayout
+  title={`Mock A, Atlas: ${pkg.name}, ${brand}`}
+  description="Design direction A for the Unicorp Travel demo: a sample holiday package page."
+>
+  <div class="atlas">
+    <MockBar letter="a" name="Atlas" />
+    <Masthead />
+    <main>
+      <section class="a-pk-hero" aria-labelledby="pk-title">
+        <div class="wrap a-pk-hero-grid">
+          <div class="a-pk-copy">
+            <nav aria-label="Breadcrumb" class="a-crumbs">
+              <ol>
+                <li>
+                  <a href="/mocks/a">Home</a>
+                </li>
+                <li aria-current="page">{pkg.region}</li>
+              </ol>
+            </nav>
+            <span class="sample">Sample content</span>
+            <h1 id="pk-title" class="display">
+              Kerala: <em>backwaters</em> and hills
+            </h1>
+            <p class="lede">{pkg.intro}</p>
+            <dl class="a-pk-facts">
+              <div>
+                <dt>Length</dt>
+                <dd>
+                  {pkg.days} days, {pkg.nights} nights
+                </dd>
+              </div>
+              <div>
+                <dt>Route</dt>
+                <dd>{pkg.route}</dd>
+              </div>
+              <div>
+                <dt>From</dt>
+                <dd>
+                  {formatPrice(pkg.fromPrice)} per person
+                  <span class="a-pk-valid">Valid to {pkg.validTo}</span>
+                </dd>
+              </div>
+            </dl>
+            <div class="actions">
+              <a class="btn" href={whatsappFor(`the ${pkg.name} holiday`)}>
+                Ask about this trip
+              </a>
+            </div>
+          </div>
+          <figure class="a-pk-figure">
+            <Picture
+              src={pkg.image}
+              alt={pkg.alt}
+              formats={['avif', 'webp']}
+              widths={[480, 768, 1080, 1440, 1920]}
+              sizes="(min-width: 1024px) 55vw, 100vw"
+              loading="eager"
+              fetchpriority="high"
+            />
+          </figure>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="highlights-title">
+        <div class="wrap">
+          <div class="section-head">
+            <h2 id="highlights-title" class="display">
+              What you <em>will remember</em>
+            </h2>
+            <p>
+              Four moments we build the trip around. <span class="sample">Sample content</span>
+            </p>
+          </div>
+          <ol class="a-highlights">
+            {pkg.highlights.map((item, index) => (
+              <li>
+                <span class="a-hl-num display">{String(index + 1).padStart(2, '0')}</span>
+                <h3 class="display">{item.title}</h3>
+                <p>{item.text}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      <section class="section a-itin-section" aria-labelledby="itinerary-title">
+        <div class="wrap a-itin-grid">
+          <div class="a-itin-head">
+            <h2 id="itinerary-title" class="display">
+              Day <em>by</em> day
+            </h2>
+            <p>
+              The route, one stop at a time. <span class="sample">Sample content</span>
+            </p>
+            <Picture
+              src={pkg.secondImage}
+              alt={pkg.secondAlt}
+              formats={['avif', 'webp']}
+              widths={[480, 768, 1080]}
+              sizes="(min-width: 1024px) 30vw, 100vw"
+              class="a-itin-photo"
+            />
+          </div>
+          <div class="a-itin route-scroll">
+            <svg
+              class="a-itin-line"
+              viewBox="0 0 24 1000"
+              preserveAspectRatio="none"
+              fill="none"
+              aria-hidden="true"
+            >
+              <defs>
+                <mask
+                  id="a-itin-mask"
+                  maskUnits="userSpaceOnUse"
+                  x="0"
+                  y="0"
+                  width="24"
+                  height="1000"
+                >
+                  <path
+                    class="route-draw"
+                    pathLength="1"
+                    d="M12 0 V1000"
+                    stroke="#fff"
+                    stroke-width="24"
+                  ></path>
+                </mask>
+              </defs>
+              <path
+                d="M12 0 V1000"
+                stroke="#a8361b"
+                stroke-width="2"
+                stroke-dasharray="6 6"
+                mask="url(#a-itin-mask)"
+              ></path>
+            </svg>
+            <ol>
+              {pkg.itinerary.map((stop) => (
+                <li class="a-day">
+                  <span class="a-day-dot" aria-hidden="true" />
+                  <p class="a-day-label">
+                    Day {stop.day} · {stop.place}
+                  </p>
+                  <h3 class="display">{stop.title}</h3>
+                  <p>{stop.text}</p>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </div>
+      </section>
+    </main>
+    <Enquiry topic={`the ${pkg.name} holiday`} />
+  </div>
+</BaseLayout>
+
+<style is:global>
+  .atlas .a-pk-hero-grid {
+    display: grid;
+    gap: 2.5rem;
+    padding-block: 2rem 4rem;
+  }
+
+  .atlas .a-pk-copy {
+    display: grid;
+    gap: 1.25rem;
+    justify-items: start;
+    align-content: center;
+  }
+
+  .atlas .a-crumbs ol {
+    display: flex;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--ink-soft);
+  }
+
+  .atlas .a-crumbs li + li::before {
+    content: '/';
+    margin-right: 0.5rem;
+  }
+
+  .atlas .a-crumbs a {
+    color: var(--ink);
+  }
+
+  .atlas .a-pk-hero h1 {
+    font-size: clamp(2.75rem, 1.6rem + 5vw, 5.75rem);
+  }
+
+  .atlas .a-pk-facts {
+    display: grid;
+    gap: 0;
+    width: 100%;
+    border-top: 1px solid var(--rule);
+  }
+
+  .atlas .a-pk-facts > div {
+    display: grid;
+    grid-template-columns: 6rem 1fr;
+    gap: 1rem;
+    padding-block: 0.75rem;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .atlas .a-pk-facts dt {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    padding-top: 0.125rem;
+  }
+
+  .atlas .a-pk-valid {
+    display: block;
+    font-size: 0.875rem;
+    color: var(--ink-soft);
+  }
+
+  .atlas .a-pk-figure img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+  }
+
+  @media (min-width: 1024px) {
+    .atlas .a-pk-hero-grid {
+      grid-template-columns: 5fr 6fr;
+      gap: 4rem;
+      padding-block: 3rem 6rem;
+    }
+
+    .atlas .a-pk-figure img {
+      aspect-ratio: 4 / 5;
+    }
+  }
+
+  .atlas .a-highlights {
+    display: grid;
+    gap: 2rem;
+  }
+
+  .atlas .a-highlights li {
+    display: grid;
+    gap: 0.5rem;
+    align-content: start;
+    padding-top: 1rem;
+    border-top: 1px solid var(--ink);
+  }
+
+  .atlas .a-hl-num {
+    font-style: italic;
+    color: var(--accent);
+    font-size: 1.25rem;
+  }
+
+  .atlas .a-highlights h3 {
+    font-size: 1.625rem;
+    line-height: 1.1;
+  }
+
+  .atlas .a-highlights p {
+    color: var(--ink-soft);
+  }
+
+  @media (min-width: 768px) {
+    .atlas .a-highlights {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2.5rem 3rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .atlas .a-highlights {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .atlas .a-itin-section {
+    background: var(--paper-deep);
+  }
+
+  .atlas .a-itin-grid {
+    display: grid;
+    gap: 2.5rem;
+  }
+
+  .atlas .a-itin-head {
+    display: grid;
+    gap: 1rem;
+    align-content: start;
+  }
+
+  .atlas .a-itin-head h2 {
+    font-size: clamp(2.25rem, 1.5rem + 3vw, 4rem);
+  }
+
+  .atlas .a-itin-head p {
+    color: var(--ink-soft);
+  }
+
+  .atlas .a-itin-photo {
+    display: none;
+  }
+
+  @media (min-width: 1024px) {
+    .atlas .a-itin-grid {
+      grid-template-columns: 5fr 7fr;
+      gap: 5rem;
+    }
+
+    .atlas .a-itin-head {
+      position: sticky;
+      top: 2rem;
+    }
+
+    .atlas .a-itin-photo {
+      display: block;
+      width: 100%;
+      height: auto;
+      aspect-ratio: 3 / 2;
+      object-fit: cover;
+      margin-top: 1.5rem;
+    }
+  }
+
+  .atlas .a-itin {
+    position: relative;
+    padding-left: 2.75rem;
+  }
+
+  .atlas .a-itin-line {
+    position: absolute;
+    top: 0.5rem;
+    bottom: 0.5rem;
+    left: 0;
+    width: 24px;
+    height: calc(100% - 1rem);
+  }
+
+  .atlas .a-day {
+    position: relative;
+    display: grid;
+    gap: 0.375rem;
+    padding-bottom: 2.5rem;
+  }
+
+  .atlas .a-day:last-child {
+    padding-bottom: 0;
+  }
+
+  .atlas .a-day-dot {
+    position: absolute;
+    top: 0.3rem;
+    left: calc(-2.75rem + 5px);
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--paper-deep);
+    border: 2px solid var(--accent);
+  }
+
+  .atlas .a-day:first-child .a-day-dot,
+  .atlas .a-day:last-child .a-day-dot {
+    background: var(--accent);
+  }
+
+  .atlas .a-day-label {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .atlas .a-day h3 {
+    font-size: 1.75rem;
+    line-height: 1.1;
+  }
+
+  .atlas .a-day p:last-child {
+    max-width: 36rem;
+    color: var(--ink-soft);
+  }
+</style>

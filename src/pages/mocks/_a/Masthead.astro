@@ -1,0 +1,25 @@
+---
+import { brand, callHref, mobile } from '../_shared/data';
+---
+
+<header class="masthead">
+  <div class="wrap">
+    <a class="wordmark" href="/mocks/a">
+      {brand}
+    </a>
+    <nav aria-label="Main">
+      <ul>
+        <li class="hide-sm">
+          <a href="/mocks/a/package">Sample holiday</a>
+        </li>
+        {callHref && mobile && (
+          <li>
+            <a href={callHref}>
+              Call<span class="hide-sm"> {mobile.display}</span>
+            </a>
+          </li>
+        )}
+      </ul>
+    </nav>
+  </div>
+</header>
