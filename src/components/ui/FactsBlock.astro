@@ -1,0 +1,132 @@
+---
+/**
+ * Company facts and credentials (F-09): legal name, CIN, GSTIN, offices and memberships.
+ * Renders only facts that `shown()` returns; a missing fact leaves no label, blank or link.
+ * `condensed` is the one-line footer form.
+ */
+import { shown, site } from '../../config/site';
+
+interface Props {
+  variant?: 'full' | 'condensed';
+  title?: string;
+  class?: string;
+}
+
+const { variant = 'full', title, class: className } = Astro.props;
+
+const facts = [
+  { label: 'Legal name', value: shown(site.legalName) },
+  { label: 'CIN', value: shown(site.cin) },
+  { label: 'GSTIN', value: shown(site.gstin) },
+].filter((fact): fact is { label: string; value: string } => fact.value !== null);
+
+const operating = shown(site.offices.operating);
+const registered = shown(site.offices.registered);
+const memberships = site.memberships;
+const hasAny =
+  facts.length > 0 || operating !== null || registered !== null || memberships.length > 0;
+---
+
+{hasAny &&
+  (variant === 'condensed' ? (
+    <p class:list={['facts-condensed', className]}>
+      {facts.map((fact, index) => (
+        <>
+          {index > 0 && <span aria-hidden="true"> · </span>}
+          <span>{fact.label === 'Legal name' ? fact.value : `${fact.label} ${fact.value}`}</span>
+        </>
+      ))}
+    </p>
+  ) : (
+    <div class:list={['facts', className]}>
+      {title && <h3 class="facts-title">{title}</h3>}
+      <dl class="facts-list">
+        {facts.map((fact) => (
+          <div>
+            <dt>{fact.label}</dt>
+            <dd>{fact.value}</dd>
+          </div>
+        ))}
+        {operating && (
+          <div>
+            <dt>Office</dt>
+            <dd>
+              <address>
+                {operating.lines.map((line) => (
+                  <span class="facts-line">{line}</span>
+                ))}
+              </address>
+            </dd>
+          </div>
+        )}
+        {registered && (
+          <div>
+            <dt>Registered office</dt>
+            <dd>
+              <address>
+                {registered.lines.map((line) => (
+                  <span class="facts-line">{line}</span>
+                ))}
+              </address>
+            </dd>
+          </div>
+        )}
+        {memberships.length > 0 && (
+          <div>
+            <dt>Memberships</dt>
+            <dd>{memberships.join(', ')}</dd>
+          </div>
+        )}
+      </dl>
+    </div>
+  ))}
+
+<style>
+  .facts {
+    display: grid;
+    gap: var(--space-4);
+    padding: var(--space-6);
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+    color: var(--text);
+    box-shadow: inset 0 0 0 1px var(--border);
+  }
+
+  .facts-title {
+    font-size: var(--text-xl);
+  }
+
+  .facts-list {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  @media (min-width: 768px) {
+    .facts-list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .facts-list dt {
+    font-size: var(--text-xs);
+    font-weight: var(--weight-black);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .facts-list dd {
+    font-weight: var(--weight-medium);
+    overflow-wrap: anywhere;
+  }
+
+  .facts-line {
+    display: block;
+  }
+
+  .facts-condensed {
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+    overflow-wrap: anywhere;
+  }
+</style>

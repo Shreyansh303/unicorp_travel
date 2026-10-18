@@ -1,1 +1,287 @@
 @import 'tailwindcss';
+@import './tokens.css';
+
+/* ---------- Fonts: self-hosted, Latin subset only, variable weight ---------- */
+@font-face {
+  font-family: 'Bricolage Grotesque';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 200 800;
+  src: url('@fontsource-variable/bricolage-grotesque/files/bricolage-grotesque-latin-wght-normal.woff2')
+    format('woff2-variations');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+20B9, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Figtree';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 300 900;
+  src: url('@fontsource-variable/figtree/files/figtree-latin-wght-normal.woff2')
+    format('woff2-variations');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+20B9, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* ---------- Tailwind theme: utilities read the tokens; Tailwind's own palette is switched off ---------- */
+@theme inline reference {
+  --color-*: initial;
+  --color-white: var(--white);
+  --color-paper: var(--paper);
+  --color-sand-100: var(--sand-100);
+  --color-sand-200: var(--sand-200);
+  --color-stone-300: var(--stone-300);
+  --color-stone-400: var(--stone-400);
+  --color-stone-600: var(--stone-600);
+  --color-stone-800: var(--stone-800);
+  --color-ink: var(--ink);
+  --color-red-50: var(--red-50);
+  --color-red-100: var(--red-100);
+  --color-red-400: var(--red-400);
+  --color-red-600: var(--red-600);
+  --color-red-700: var(--red-700);
+  --color-red-800: var(--red-800);
+  --color-success: var(--success-700);
+  --color-success-soft: var(--success-50);
+  --color-warning: var(--warning-700);
+  --color-warning-soft: var(--warning-50);
+  --color-error: var(--error-700);
+  --color-error-soft: var(--error-50);
+  --color-info: var(--info-700);
+  --color-info-soft: var(--info-50);
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-text: var(--text);
+  --color-muted: var(--text-muted);
+  --color-accent: var(--accent);
+  --color-accent-text: var(--accent-text);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+
+  --font-*: initial;
+  --font-display: var(--font-display);
+  --font-sans: var(--font-text);
+
+  --text-xs: var(--text-xs);
+  --text-sm: var(--text-sm);
+  --text-base: var(--text-base);
+  --text-lg: var(--text-lg);
+  --text-xl: var(--text-xl);
+  --text-2xl: var(--text-2xl);
+  --text-3xl: var(--text-3xl);
+  --text-display: var(--text-display);
+
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+  --radius-pill: var(--radius-pill);
+
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+
+  --ease-out: var(--ease-out);
+  --ease-in-out: var(--ease-in-out);
+  --ease-bounce: var(--ease-bounce);
+
+  --container-page: var(--container);
+}
+
+/* ---------- Base ---------- */
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    min-height: 100vh;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-text);
+    font-size: var(--text-base);
+    line-height: var(--leading-body);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--focus);
+    outline-offset: 3px;
+  }
+
+  ::selection {
+    background: var(--red-600);
+    color: var(--white);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: var(--weight-black);
+    letter-spacing: var(--tracking-heading);
+    line-height: var(--leading-snug);
+    text-wrap: balance;
+  }
+
+  a {
+    color: inherit;
+  }
+
+  address {
+    font-style: normal;
+  }
+
+  [hidden]:where(:not([hidden='until-found'])) {
+    display: none !important;
+  }
+}
+
+/* ---------- Shared layout and type classes ---------- */
+@layer components {
+  .wrap {
+    width: 100%;
+    max-width: var(--container);
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  /* Section heading row: heading left, short intro right from 1024px. */
+  .section-head {
+    display: grid;
+    gap: var(--space-4);
+    margin-bottom: var(--space-10);
+  }
+
+  .section-head > p {
+    max-width: 32rem;
+    color: var(--text-muted);
+  }
+
+  @media (min-width: 1024px) {
+    .section-head {
+      grid-template-columns: 1.2fr 1fr;
+      align-items: end;
+      margin-bottom: var(--space-12);
+    }
+  }
+
+  .t-display {
+    font-family: var(--font-display);
+    font-size: var(--text-display);
+    font-weight: var(--weight-black);
+    letter-spacing: var(--tracking-display);
+    line-height: 0.92;
+    text-wrap: balance;
+  }
+
+  .t-h2 {
+    font-family: var(--font-display);
+    font-size: var(--text-3xl);
+    font-weight: var(--weight-black);
+    letter-spacing: var(--tracking-display);
+    line-height: var(--leading-tight);
+    text-wrap: balance;
+  }
+
+  .t-h3 {
+    font-family: var(--font-display);
+    font-size: var(--text-2xl);
+    font-weight: var(--weight-black);
+    letter-spacing: var(--tracking-heading);
+    line-height: 1;
+  }
+
+  .t-h4 {
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    font-weight: var(--weight-bold);
+    letter-spacing: -0.02em;
+    line-height: var(--leading-snug);
+  }
+
+  .t-lede {
+    max-width: var(--measure);
+    font-size: var(--text-lg);
+    color: var(--text-muted);
+  }
+
+  .t-eyebrow {
+    font-size: var(--text-xs);
+    font-weight: var(--weight-black);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--accent-text);
+  }
+
+  .t-muted {
+    color: var(--text-muted);
+  }
+
+  /* The red word in a headline. */
+  .t-accent {
+    color: var(--accent-display);
+  }
+
+  /* Arched photo frame, a nod to the jharokha window. */
+  .arch {
+    overflow: hidden;
+    border-radius: var(--radius-arch);
+  }
+
+  .arch img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+/* ---------- Reveal and Stagger (armed by src/components/motion/reveal.ts) ---------- */
+.reveal-armed {
+  opacity: 0;
+  transform: translateY(var(--reveal-distance));
+}
+
+.reveal-armed.is-revealed {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity var(--duration-reveal) var(--ease-out),
+    transform var(--duration-reveal) var(--ease-out);
+  transition-delay: calc(var(--reveal-index, 0) * var(--stagger) + var(--reveal-delay, 0ms));
+}
+
+/* ---------- Page transitions (Astro view transitions) ---------- */
+@keyframes page-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(var(--reveal-distance));
+  }
+}
+
+::view-transition-old(root) {
+  animation: page-out var(--duration-fast) var(--ease-in-out) both;
+}
+
+::view-transition-new(root) {
+  animation: page-in var(--duration-slow) var(--ease-out) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
+}

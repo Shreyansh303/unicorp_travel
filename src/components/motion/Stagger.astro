@@ -1,0 +1,23 @@
+---
+/**
+ * Stagger: reveals each direct child in turn (index x --stagger). Same rules as Reveal: visible
+ * by default, only children below the fold are armed, nothing armed under reduced motion.
+ * Pass the list element through `as` so the children stay valid <li> items.
+ */
+interface Props {
+  as?: 'div' | 'ul' | 'ol';
+  class?: string;
+}
+
+const { as: Tag = 'div', class: className, ...rest } = Astro.props;
+---
+
+<Tag class:list={['stagger', className]} data-stagger {...rest}>
+  <slot />
+</Tag>
+
+<script>
+  import { initReveal } from './reveal';
+
+  document.addEventListener('astro:page-load', initReveal);
+</script>

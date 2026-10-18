@@ -1,0 +1,321 @@
+---
+/**
+ * Site footer on ink. Every fact comes from site.ts through `shown()`: a phone, email, hours
+ * entry or social profile that is not supplied renders nothing, and no icon appears without
+ * a real destination.
+ */
+import Icon from './Icon.astro';
+import FactsBlock from './FactsBlock.astro';
+import type { NavLink } from './types';
+import {
+  mailtoHref,
+  shown,
+  site,
+  telHref,
+  weekdays,
+  whatsappHref,
+  type Weekday,
+} from '../../config/site';
+
+interface Props {
+  homeHref: string;
+  /** Page links, grouped. Only real routes belong here. */
+  groups?: { title: string; links: NavLink[] }[];
+  /** Render as a <div> (styleguide demo, so the page keeps one contentinfo landmark). */
+  asDemo?: boolean;
+}
+
+const { homeHref, groups = [], asDemo = false } = Astro.props;
+const Tag = asDemo ? 'div' : 'footer';
+
+const phones = [
+  { label: 'Mobile and WhatsApp', phone: shown(site.phones.mobile) },
+  { label: 'Office', phone: shown(site.phones.landline) },
+  { label: 'Mobile', phone: shown(site.phones.secondMobile) },
+].filter((entry) => entry.phone !== null);
+const mobile = shown(site.phones.mobile);
+const email = shown(site.email);
+const office = shown(site.offices.operating);
+const hours = shown(site.hours);
+
+const dayNames: Record<Weekday, string> = {
+  monday: 'Monday',
+  tuesday: 'Tuesday',
+  wednesday: 'Wednesday',
+  thursday: 'Thursday',
+  friday: 'Friday',
+  saturday: 'Saturday',
+  sunday: 'Sunday',
+};
+const hourRows = hours
+  ? weekdays
+      .map((day) => ({ day: dayNames[day], value: hours[day] }))
+      .filter((row) => row.value?.opens && row.value.closes)
+  : [];
+
+const socialLabels: Record<string, string> = {
+  facebook: 'Facebook',
+  instagram: 'Instagram',
+  linkedin: 'LinkedIn',
+  x: 'X',
+  youtube: 'YouTube',
+};
+const social = Object.entries(site.social)
+  .map(([key, fact]) => ({ key, label: socialLabels[key] ?? key, href: shown(fact) }))
+  .filter((entry): entry is { key: string; label: string; href: string } => entry.href !== null);
+const year = new Date().getFullYear();
+---
+
+<Tag class="site-footer tone-ink">
+  <div class="wrap footer-grid">
+    <div class="footer-brand">
+      <a class="footer-wordmark" href={homeHref}>
+        {site.displayName}
+        <span class="footer-dot" aria-hidden="true"></span>
+      </a>
+      <p class="footer-line">
+        Holidays, business travel and the paperwork around them
+        {office ? `, from ${office.locality}` : ''}.
+      </p>
+      {social.length > 0 && (
+        <ul class="footer-social">
+          {social.map((entry) => (
+            <li>
+              <a href={entry.href} target="_blank" rel="noopener noreferrer">
+                {entry.key === 'facebook' && <Icon name="facebook" size={18} />}
+                {entry.label}
+                <span class="sr-only"> (opens in a new tab)</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+
+    {(phones.length > 0 || email) && (
+      <div>
+        <h2 class="footer-heading">Talk to us</h2>
+        <ul class="footer-list">
+          {phones.map(
+            (entry) =>
+              entry.phone && (
+                <li>
+                  <span class="footer-label">{entry.label}</span>
+                  <a href={telHref(entry.phone)}>{entry.phone.display}</a>
+                </li>
+              ),
+          )}
+          {mobile && (
+            <li>
+              <span class="footer-label">WhatsApp</span>
+              <a href={whatsappHref()} target="_blank" rel="noopener noreferrer">
+                Chat on WhatsApp<span class="sr-only"> (opens in a new tab)</span>
+              </a>
+            </li>
+          )}
+          {email && (
+            <li>
+              <span class="footer-label">Email</span>
+              <a href={mailtoHref(email)}>{email}</a>
+            </li>
+          )}
+        </ul>
+      </div>
+    )}
+
+    {office && (
+      <div>
+        <h2 class="footer-heading">Visit</h2>
+        <address class="footer-address">
+          {office.lines.map((line) => (
+            <span>{line}</span>
+          ))}
+        </address>
+        {hourRows.length > 0 && (
+          <dl class="footer-hours">
+            {hourRows.map((row) => (
+              <div>
+                <dt>{row.day}</dt>
+                <dd>
+                  {row.value?.opens} to {row.value?.closes}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        )}
+      </div>
+    )}
+
+    {groups.map((group) => (
+      <div>
+        <h2 class="footer-heading">{group.title}</h2>
+        <ul class="footer-list">
+          {group.links.map((link) => (
+            <li>
+              <a href={link.href}>{link.label}</a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))}
+  </div>
+  <div class="wrap footer-base">
+    <FactsBlock variant="condensed" />
+    <p class="footer-copy">
+      &copy; {year} {site.displayName}
+    </p>
+  </div>
+</Tag>
+
+<style>
+  .site-footer {
+    background: var(--bg);
+    color: var(--text);
+    padding-block: var(--space-16) var(--space-8);
+  }
+
+  .footer-grid {
+    display: grid;
+    gap: var(--space-10);
+  }
+
+  @media (min-width: 768px) {
+    .footer-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .footer-grid {
+      grid-template-columns: 1.4fr repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .footer-brand {
+    display: grid;
+    gap: var(--space-4);
+    align-content: start;
+  }
+
+  .site-footer .footer-wordmark {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.125rem;
+    justify-self: start;
+    color: var(--text);
+    font-family: var(--font-display);
+    font-size: 2rem;
+    font-weight: var(--weight-black);
+    letter-spacing: -0.04em;
+    text-decoration: none;
+  }
+
+  .footer-dot {
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  .footer-line {
+    max-width: 22rem;
+    color: var(--text-muted);
+  }
+
+  .footer-heading {
+    margin-bottom: var(--space-3);
+    font-family: var(--font-text);
+    font-size: var(--text-xs);
+    font-weight: var(--weight-black);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--accent-text);
+  }
+
+  .footer-list {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .footer-list li {
+    display: grid;
+  }
+
+  .footer-label {
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+  }
+
+  /* Every footer link is at least 24px tall (WCAG 2.5.8). */
+  .site-footer a {
+    display: inline-flex;
+    align-items: center;
+    justify-self: start;
+    min-height: 1.5rem;
+    color: var(--text);
+    text-decoration: underline;
+    text-decoration-color: rgb(255 255 255 / 0.35);
+    text-underline-offset: 0.2em;
+    overflow-wrap: anywhere;
+  }
+
+  .site-footer a:hover {
+    text-decoration-color: var(--red-400);
+    text-decoration-thickness: 2px;
+  }
+
+  .footer-address span {
+    display: block;
+  }
+
+  .footer-hours {
+    display: grid;
+    gap: var(--space-1);
+    margin-top: var(--space-4);
+    font-size: var(--text-sm);
+  }
+
+  .footer-hours div {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-4);
+  }
+
+  .footer-social {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+
+  .footer-social a {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: var(--tap);
+    padding-inline: var(--space-4);
+    border-radius: var(--radius-pill);
+    box-shadow: inset 0 0 0 1px var(--border-strong);
+    font-weight: var(--weight-bold);
+    text-decoration: none;
+  }
+
+  .footer-base {
+    display: grid;
+    gap: var(--space-2);
+    margin-top: var(--space-12);
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--border);
+  }
+
+  @media (min-width: 768px) {
+    .footer-base {
+      grid-template-columns: 1fr auto;
+      align-items: center;
+    }
+  }
+
+  .footer-copy {
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+  }
+</style>

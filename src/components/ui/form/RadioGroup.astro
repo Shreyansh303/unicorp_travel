@@ -1,0 +1,146 @@
+---
+/** Radio buttons in a fieldset with a visible legend, optional hint and error. */
+import FieldMessage from './FieldMessage.astro';
+import { fieldAria } from './field';
+
+interface Option {
+  value: string;
+  label: string;
+  disabled?: boolean;
+}
+
+interface Props {
+  id: string;
+  name: string;
+  legend: string;
+  options: Option[];
+  value?: string;
+  hint?: string;
+  error?: string;
+  optional?: boolean;
+  inline?: boolean;
+  disabled?: boolean;
+  class?: string;
+}
+
+const {
+  id,
+  name,
+  legend,
+  options,
+  value,
+  hint,
+  error,
+  optional = false,
+  inline = false,
+  disabled = false,
+  class: className,
+} = Astro.props;
+const aria = fieldAria(id, hint, error);
+---
+
+<fieldset
+  class:list={['radios', inline && 'radios-inline', className]}
+  id={id}
+  role="radiogroup"
+  aria-labelledby={`${id}-legend`}
+  aria-describedby={aria.describedBy}
+  aria-invalid={aria.invalid}
+  aria-required={optional ? undefined : 'true'}
+  disabled={disabled}
+>
+  <legend class="radios-legend" id={`${id}-legend`}>
+    {legend}
+    {optional && <span class="radios-optional"> (optional)</span>}
+  </legend>
+  <FieldMessage id={aria.hintId} kind="hint" text={hint} />
+  <div class="radios-options">
+    {options.map((option, index) => (
+      <div class="radio-row">
+        <input
+          class="radio-input"
+          type="radio"
+          id={`${id}-${index}`}
+          name={name}
+          value={option.value}
+          checked={option.value === value}
+          disabled={option.disabled}
+          required={!optional}
+        />
+        <label class="radio-label" for={`${id}-${index}`}>
+          {option.label}
+        </label>
+      </div>
+    ))}
+  </div>
+  <FieldMessage id={aria.errorId} kind="error" text={error} />
+</fieldset>
+
+<style>
+  .radios {
+    display: grid;
+    gap: var(--space-2);
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .radios-legend {
+    padding: 0;
+    margin-bottom: var(--space-1);
+    font-weight: var(--weight-bold);
+  }
+
+  .radios-optional {
+    font-weight: var(--weight-regular);
+    color: var(--text-muted);
+  }
+
+  .radios-options {
+    display: grid;
+    gap: var(--space-1);
+  }
+
+  .radios-inline .radios-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1) var(--space-6);
+  }
+
+  .radio-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    min-height: var(--tap);
+  }
+
+  .radio-input {
+    flex: none;
+    width: 1.5rem;
+    height: 1.5rem;
+    margin: 0;
+    accent-color: var(--red-700);
+    cursor: pointer;
+  }
+
+  .radio-input:focus-visible {
+    outline: 3px solid var(--focus);
+    outline-offset: 3px;
+  }
+
+  .radios[aria-invalid='true'] .radio-input:not(:focus-visible) {
+    outline: 2px solid var(--error-700);
+    outline-offset: 2px;
+  }
+
+  .radio-input:disabled,
+  .radio-input:disabled + .radio-label {
+    cursor: not-allowed;
+    color: var(--stone-600);
+  }
+
+  .radio-label {
+    cursor: pointer;
+  }
+</style>

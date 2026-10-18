@@ -1,0 +1,48 @@
+---
+/** Text input with a visible label, optional hint and error, wired with aria-describedby and aria-invalid. */
+import type { HTMLAttributes } from 'astro/types';
+import FieldMessage from './FieldMessage.astro';
+import { fieldAria } from './field';
+import './field.css';
+
+interface Props extends Omit<HTMLAttributes<'input'>, 'id' | 'name'> {
+  id: string;
+  name: string;
+  label: string;
+  hint?: string;
+  error?: string;
+  optional?: boolean;
+  state?: 'hover' | 'focus';
+}
+
+const {
+  id,
+  name,
+  label,
+  hint,
+  error,
+  optional = false,
+  state,
+  class: className,
+  ...rest
+} = Astro.props;
+const aria = fieldAria(id, hint, error);
+---
+
+<div class:list={['field', className]}>
+  <label class="field-label" for={id}>
+    {label}
+    {optional && <span class="field-optional"> (optional)</span>}
+  </label>
+  <FieldMessage id={aria.hintId} kind="hint" text={hint} />
+  <input
+    class:list={['field-control', state && `is-${state}`]}
+    id={id}
+    name={name}
+    required={!optional}
+    aria-describedby={aria.describedBy}
+    aria-invalid={aria.invalid}
+    {...rest}
+  />
+  <FieldMessage id={aria.errorId} kind="error" text={error} />
+</div>

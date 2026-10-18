@@ -1,0 +1,168 @@
+---
+/**
+ * Accordion (F-10): each question is a heading containing a button with aria-expanded that
+ * controls a labelled region. Panels start closed; `open` lists the indexes to start open.
+ * Without JavaScript every panel is shown.
+ */
+import Icon from './Icon.astro';
+
+interface Item {
+  title: string;
+  /** Plain text or simple HTML written in this codebase (never user input). */
+  body: string;
+}
+
+interface Props {
+  id: string;
+  items: Item[];
+  open?: number[];
+  headingLevel?: 2 | 3 | 4;
+  class?: string;
+}
+
+const { id, items, open = [], headingLevel = 3, class: className } = Astro.props;
+const Heading = `h${headingLevel}` as 'h2' | 'h3' | 'h4';
+---
+
+<div class:list={['accordion', className]} data-accordion>
+  {items.map((item, index) => {
+    const isOpen = open.includes(index);
+    const buttonId = `${id}-button-${index}`;
+    const panelId = `${id}-panel-${index}`;
+    return (
+      <div class="acc-item">
+        <Heading class="acc-heading">
+          <button
+            type="button"
+            class="acc-button"
+            id={buttonId}
+            aria-expanded={isOpen ? 'true' : 'false'}
+            aria-controls={panelId}
+            data-accordion-button
+          >
+            <span>{item.title}</span>
+            <span class="acc-icon" aria-hidden="true">
+              <Icon name="chevron-down" size={22} />
+            </span>
+          </button>
+        </Heading>
+        <div
+          class="acc-panel"
+          id={panelId}
+          role="region"
+          aria-labelledby={buttonId}
+          hidden={!isOpen}
+        >
+          <div class="acc-body" set:html={item.body} />
+        </div>
+      </div>
+    );
+  })}
+  <noscript>
+    <style is:inline>
+      .acc-panel[hidden] {
+        display: block !important;
+      }
+    </style>
+  </noscript>
+</div>
+
+<style>
+  .accordion {
+    border-top: 1px solid var(--border);
+  }
+
+  .acc-item {
+    border-bottom: 1px solid var(--border);
+  }
+
+  .acc-heading {
+    font-family: var(--font-text);
+    font-size: var(--text-lg);
+    font-weight: var(--weight-bold);
+    letter-spacing: 0;
+  }
+
+  .acc-button {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    width: 100%;
+    min-height: 3.5rem;
+    padding: var(--space-4) var(--space-1);
+    border: 0;
+    background: transparent;
+    color: var(--text);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .acc-button:hover span:first-child {
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.25em;
+  }
+
+  .acc-icon {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 50%;
+    background: var(--surface-sunken);
+    transition:
+      transform var(--duration-base) var(--ease-out),
+      background-color var(--duration-fast) var(--ease-out);
+  }
+
+  .acc-button[aria-expanded='true'] .acc-icon {
+    background: var(--accent);
+    color: var(--on-accent);
+    transform: rotate(var(--turn));
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .acc-icon {
+      transition: background-color var(--duration-fast) var(--ease-out);
+    }
+  }
+
+  .acc-panel:not([hidden]) {
+    animation: acc-in var(--duration-base) var(--ease-out);
+  }
+
+  @keyframes acc-in {
+    from {
+      opacity: 0;
+    }
+  }
+
+  .acc-body {
+    max-width: 44rem;
+    padding: 0 var(--space-1) var(--space-6);
+    color: var(--text-muted);
+  }
+</style>
+
+<script>
+  function bind(root: HTMLElement): void {
+    if (root.dataset['bound']) return;
+    root.dataset['bound'] = 'true';
+    root.querySelectorAll<HTMLButtonElement>('[data-accordion-button]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const panel = document.getElementById(button.getAttribute('aria-controls') ?? '');
+        const open = button.getAttribute('aria-expanded') !== 'true';
+        button.setAttribute('aria-expanded', String(open));
+        if (panel) panel.hidden = !open;
+      });
+    });
+  }
+
+  document.addEventListener('astro:page-load', () => {
+    document.querySelectorAll<HTMLElement>('[data-accordion]').forEach(bind);
+  });
+</script>

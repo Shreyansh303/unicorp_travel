@@ -3,11 +3,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { site } from '../config/site';
 
 const { displayName } = site;
+const locality = site.offices.operating.value.locality;
 ---
 
 <BaseLayout
   title={displayName}
-  description={`${displayName}: corporate and leisure travel from Noida.`}
+  description={`${displayName}: corporate and leisure travel from ${locality}.`}
 >
   <main>
     <h1>{displayName}</h1>

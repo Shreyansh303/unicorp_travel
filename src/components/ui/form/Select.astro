@@ -1,0 +1,92 @@
+---
+/** Native select with a custom chevron, label, hint and error. */
+import type { HTMLAttributes } from 'astro/types';
+import FieldMessage from './FieldMessage.astro';
+import Icon from '../Icon.astro';
+import { fieldAria } from './field';
+import './field.css';
+
+interface Option {
+  value: string;
+  label: string;
+}
+
+interface Props extends Omit<HTMLAttributes<'select'>, 'id' | 'name'> {
+  id: string;
+  name: string;
+  label: string;
+  options: Option[];
+  /** First, empty option such as "Choose a budget". */
+  prompt?: string;
+  value?: string;
+  hint?: string;
+  error?: string;
+  optional?: boolean;
+  state?: 'hover' | 'focus';
+}
+
+const {
+  id,
+  name,
+  label,
+  options,
+  prompt,
+  value,
+  hint,
+  error,
+  optional = false,
+  state,
+  class: className,
+  ...rest
+} = Astro.props;
+const aria = fieldAria(id, hint, error);
+---
+
+<div class:list={['field', className]}>
+  <label class="field-label" for={id}>
+    {label}
+    {optional && <span class="field-optional"> (optional)</span>}
+  </label>
+  <FieldMessage id={aria.hintId} kind="hint" text={hint} />
+  <div class="select-wrap">
+    <select
+      class:list={['field-control', 'field-select', state && `is-${state}`]}
+      id={id}
+      name={name}
+      required={!optional}
+      aria-describedby={aria.describedBy}
+      aria-invalid={aria.invalid}
+      {...rest}
+    >
+      {prompt && <option value="">{prompt}</option>}
+      {options.map((option) => (
+        <option value={option.value} selected={option.value === value}>
+          {option.label}
+        </option>
+      ))}
+    </select>
+    <Icon name="chevron-down" size={20} class="select-chevron" />
+  </div>
+  <FieldMessage id={aria.errorId} kind="error" text={error} />
+</div>
+
+<style>
+  .select-wrap {
+    position: relative;
+  }
+
+  .field-select {
+    appearance: none;
+    padding-right: var(--space-12);
+    cursor: pointer;
+  }
+
+  .select-wrap :global(.select-chevron) {
+    position: absolute;
+    top: 50%;
+    right: var(--space-4);
+    translate: 0 -50%;
+    color: var(--ink);
+    pointer-events: none;
+  }
+</style>

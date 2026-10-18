@@ -1,0 +1,508 @@
+---
+/**
+ * Site header: wordmark, main navigation with keyboard-operable submenus, a call button and,
+ * below 1024px, a menu button that opens the navigation in a drawer.
+ *
+ * Submenus: a button with aria-expanded controls a list of links. Enter or Space toggles it,
+ * Escape closes it and returns focus to the button, and it closes when focus or a click
+ * leaves it. Facts (name, phone) come from site.ts.
+ */
+import Button from './Button.astro';
+import Dialog from './Dialog.astro';
+import Icon from './Icon.astro';
+import { hasChildren, type NavItem } from './types';
+import { shown, site, telHref, whatsappHref } from '../../config/site';
+
+interface Props {
+  items: NavItem[];
+  homeHref: string;
+  /** Path of the current page; the matching link gets aria-current="page". */
+  currentPath?: string;
+  /** Prefix for element ids, so a second header (the styleguide demo) stays unique. */
+  idPrefix?: string;
+  /** Accessible name of the navigation landmark. */
+  navLabel?: string;
+  /** Render as a plain <div> (styleguide demos, so the page keeps one banner landmark). */
+  asDemo?: boolean;
+  /** Styleguide only: render the first submenu open. */
+  openFirst?: boolean;
+  /** WhatsApp message for the drawer's WhatsApp button. */
+  whatsappMessage?: string;
+}
+
+const {
+  items,
+  homeHref,
+  currentPath,
+  idPrefix = 'site',
+  navLabel = 'Main',
+  asDemo = false,
+  openFirst = false,
+  whatsappMessage,
+} = Astro.props;
+
+const mobile = shown(site.phones.mobile);
+const drawerId = `${idPrefix}-nav-drawer`;
+const Tag = asDemo ? 'div' : 'header';
+const current = (href: string) => (currentPath === href ? 'page' : undefined);
+const firstSubmenuIndex = items.findIndex(hasChildren);
+const links = items.flatMap((item) => (hasChildren(item) ? item.children : [item]));
+const waHref = mobile
+  ? whatsappHref(whatsappMessage ?? `Hello ${site.displayName}, I would like help planning a trip.`)
+  : null;
+---
+
+<Tag class="site-header tone-paper">
+  <div class="wrap header-row">
+    <a class="wordmark" href={homeHref}>
+      {site.displayName}
+      <span class="wordmark-dot" aria-hidden="true"></span>
+    </a>
+
+    <nav class="nav-desktop" aria-label={navLabel}>
+      <ul class="nav-list">
+        {items.map((item, index) =>
+          hasChildren(item) ? (
+            <li class="nav-item" data-submenu>
+              <button
+                type="button"
+                class="nav-link nav-trigger"
+                aria-expanded={openFirst && index === firstSubmenuIndex ? 'true' : 'false'}
+                aria-controls={`${idPrefix}-submenu-${index}`}
+                data-submenu-trigger
+              >
+                {item.label}
+                <Icon name="chevron-down" size={18} class="nav-chevron" />
+              </button>
+              <ul
+                id={`${idPrefix}-submenu-${index}`}
+                class="submenu"
+                hidden={!(openFirst && index === firstSubmenuIndex)}
+              >
+                {item.children.map((child) => (
+                  <li>
+                    <a class="submenu-link" href={child.href} aria-current={current(child.href)}>
+                      <span class="submenu-label">{child.label}</span>
+                      {child.description && <span class="submenu-desc">{child.description}</span>}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </li>
+          ) : (
+            <li class="nav-item">
+              <a class="nav-link" href={item.href} aria-current={current(item.href)}>
+                {item.label}
+              </a>
+            </li>
+          ),
+        )}
+      </ul>
+    </nav>
+
+    <div class="header-actions">
+      {mobile && (
+        <Button variant="secondary" size="sm" href={telHref(mobile)} iconStart="phone">
+          <span class="call-text">Call</span>
+          <span class="call-number">&nbsp;{mobile.display}</span>
+        </Button>
+      )}
+      <button
+        type="button"
+        class="menu-btn"
+        aria-haspopup="dialog"
+        aria-expanded="false"
+        data-dialog-open={drawerId}
+      >
+        <Icon name="menu" size={22} />
+        <span>Menu</span>
+      </button>
+    </div>
+  </div>
+
+  {/* Without JavaScript the submenu and drawer cannot open, so every link is listed plainly. */}
+  <noscript>
+    <nav class="nav-noscript" aria-label={`${navLabel} (all links)`}>
+      <ul class="wrap">
+        {links.map((link) => (
+          <li>
+            <a href={link.href} aria-current={current(link.href)}>
+              {link.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+    <style is:inline>
+      .menu-btn,
+      .nav-desktop {
+        display: none !important;
+      }
+    </style>
+  </noscript>
+
+  <Dialog id={drawerId} title="Menu" variant="drawer">
+    <nav aria-label={`${navLabel} (menu)`}>
+      <ul class="drawer-list">
+        {items.map((item) =>
+          hasChildren(item) ? (
+            <li>
+              <p class="drawer-group">{item.label}</p>
+              <ul>
+                {item.children.map((child) => (
+                  <li>
+                    <a class="drawer-link" href={child.href} aria-current={current(child.href)}>
+                      {child.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </li>
+          ) : (
+            <li>
+              <a class="drawer-link" href={item.href} aria-current={current(item.href)}>
+                {item.label}
+              </a>
+            </li>
+          ),
+        )}
+      </ul>
+    </nav>
+    <div class="drawer-actions">
+      {waHref && (
+        <Button href={waHref} iconStart="whatsapp" external>
+          Chat on WhatsApp
+        </Button>
+      )}
+      {mobile && (
+        <Button variant="secondary" href={telHref(mobile)} iconStart="phone">
+          Call {mobile.display}
+        </Button>
+      )}
+    </div>
+  </Dialog>
+</Tag>
+
+<style>
+  .site-header {
+    position: relative;
+    z-index: var(--z-header);
+    background: var(--bg);
+    color: var(--text);
+  }
+
+  .header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    min-height: 4.5rem;
+    padding-block: var(--space-3);
+  }
+
+  .wordmark {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.125rem;
+    min-height: var(--tap);
+    align-content: center;
+    padding-block: var(--space-2);
+    color: var(--text);
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: var(--weight-black);
+    letter-spacing: -0.04em;
+    line-height: 1.2;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .wordmark-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  .nav-desktop {
+    display: none;
+  }
+
+  .nav-list {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+  }
+
+  .nav-item {
+    position: relative;
+  }
+
+  .nav-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    min-height: var(--tap);
+    padding: var(--space-2) var(--space-4);
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: transparent;
+    color: var(--text);
+    font: inherit;
+    font-weight: var(--weight-bold);
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color var(--duration-fast) var(--ease-out);
+  }
+
+  .nav-link:hover,
+  .nav-trigger[aria-expanded='true'] {
+    background: var(--surface-sunken);
+  }
+
+  .nav-link[aria-current='page'] {
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: 3px;
+    text-underline-offset: 0.35em;
+  }
+
+  .nav-link :global(.nav-chevron) {
+    transition: transform var(--duration-base) var(--ease-out);
+  }
+
+  .nav-trigger[aria-expanded='true'] :global(.nav-chevron) {
+    transform: rotate(var(--turn));
+  }
+
+  .submenu {
+    position: absolute;
+    top: calc(100% + var(--space-2));
+    left: 0;
+    z-index: var(--z-raised);
+    display: grid;
+    gap: var(--space-1);
+    width: max-content;
+    min-width: 16rem;
+    max-width: 22rem;
+    padding: var(--space-2);
+    border-radius: var(--radius-md);
+    background: var(--white);
+    box-shadow:
+      var(--shadow-lg),
+      0 0 0 1px var(--sand-200);
+  }
+
+  .submenu:not([hidden]) {
+    animation: submenu-in var(--duration-base) var(--ease-out);
+  }
+
+  @keyframes submenu-in {
+    from {
+      opacity: 0;
+      transform: translateY(calc(var(--reveal-distance) * -0.4));
+    }
+  }
+
+  .submenu-link {
+    display: grid;
+    gap: 0.125rem;
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-sm);
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .submenu-link:hover {
+    background: var(--red-50);
+  }
+
+  .submenu-label {
+    font-weight: var(--weight-bold);
+  }
+
+  .submenu-link:hover .submenu-label,
+  .submenu-link[aria-current='page'] .submenu-label {
+    text-decoration: underline;
+    text-decoration-color: var(--red-600);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.25em;
+  }
+
+  .submenu-desc {
+    font-size: var(--text-sm);
+    color: var(--stone-600);
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .call-number {
+    display: none;
+  }
+
+  /* Below 420px the call button shows only its icon; "Call" is still its accessible name. */
+  @media (max-width: 419px) {
+    .call-text {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+
+    .header-actions :global(.btn) {
+      padding-inline: var(--space-3);
+    }
+  }
+
+  .menu-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: var(--tap);
+    padding: var(--space-2) var(--space-4);
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: var(--ink);
+    color: var(--white);
+    font: inherit;
+    font-size: var(--text-sm);
+    font-weight: var(--weight-black);
+    cursor: pointer;
+  }
+
+  .menu-btn:hover {
+    background: var(--stone-800);
+  }
+
+  @media (min-width: 640px) {
+    .call-number {
+      display: inline;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .nav-desktop {
+      display: block;
+      margin-inline: auto var(--space-4);
+    }
+
+    .menu-btn {
+      display: none;
+    }
+  }
+
+  /* No-JavaScript link list */
+  :global(.nav-noscript ul) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1) var(--space-4);
+    padding-bottom: var(--space-3);
+  }
+
+  :global(.nav-noscript a) {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--tap);
+    color: var(--text);
+    font-weight: var(--weight-bold);
+    text-underline-offset: 0.25em;
+  }
+
+  /* Drawer contents */
+  .drawer-list {
+    display: grid;
+    gap: var(--space-1);
+  }
+
+  .drawer-group {
+    margin-top: var(--space-4);
+    padding-inline: var(--space-3);
+    font-size: var(--text-xs);
+    font-weight: var(--weight-black);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--accent-text);
+  }
+
+  .drawer-link {
+    display: flex;
+    align-items: center;
+    min-height: 3rem;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    font-weight: var(--weight-bold);
+    letter-spacing: -0.02em;
+    text-decoration: none;
+  }
+
+  .drawer-link:hover,
+  .drawer-link[aria-current='page'] {
+    background: var(--red-50);
+  }
+
+  .drawer-actions {
+    display: grid;
+    gap: var(--space-3);
+    margin-top: var(--space-8);
+  }
+</style>
+
+<script>
+  function closeAll(except?: HTMLElement): void {
+    document.querySelectorAll<HTMLElement>('[data-submenu]').forEach((item) => {
+      if (item !== except) setOpen(item, false);
+    });
+  }
+
+  function setOpen(item: HTMLElement, open: boolean): void {
+    const trigger = item.querySelector<HTMLButtonElement>('[data-submenu-trigger]');
+    const menu = item.querySelector<HTMLElement>('.submenu');
+    if (!trigger || !menu) return;
+    trigger.setAttribute('aria-expanded', String(open));
+    menu.hidden = !open;
+  }
+
+  function bind(item: HTMLElement): void {
+    if (item.dataset['bound']) return;
+    item.dataset['bound'] = 'true';
+    const trigger = item.querySelector<HTMLButtonElement>('[data-submenu-trigger]');
+    if (!trigger) return;
+
+    trigger.addEventListener('click', () => {
+      const open = trigger.getAttribute('aria-expanded') !== 'true';
+      closeAll(item);
+      setOpen(item, open);
+    });
+
+    item.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && trigger.getAttribute('aria-expanded') === 'true') {
+        event.preventDefault();
+        setOpen(item, false);
+        trigger.focus();
+      }
+    });
+
+    item.addEventListener('focusout', (event) => {
+      const next = event.relatedTarget as Node | null;
+      if (next && !item.contains(next)) setOpen(item, false);
+    });
+  }
+
+  document.addEventListener('click', (event) => {
+    const target = event.target as Element | null;
+    if (!target?.closest('[data-submenu]')) closeAll();
+  });
+
+  document.addEventListener('astro:page-load', () => {
+    document.querySelectorAll<HTMLElement>('[data-submenu]').forEach(bind);
+  });
+</script>

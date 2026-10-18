@@ -1,0 +1,210 @@
+---
+/**
+ * The route line: an SVG path drawn by animating stroke-dashoffset (pathLength is 1, so the
+ * dash maths is the same for every shape). Decorative, so it is hidden from assistive tech.
+ *
+ * draw="load"   draws once when the page loads (hero).
+ * draw="scroll" draws as the line scrolls through the viewport: CSS scroll timelines where
+ *               supported, otherwise GSAP ScrollTrigger loaded lazily after first paint.
+ * draw="none"   static.
+ *
+ * The default state is the finished line: without JS, without animation support or under
+ * reduced motion the line is simply drawn. End markers fade in after the draw.
+ */
+interface Marker {
+  cx: number;
+  cy: number;
+  r?: number;
+}
+
+interface Props {
+  d: string;
+  viewBox: string;
+  draw?: 'load' | 'scroll' | 'none';
+  /** Wider stroke in the surface colour behind the line, so it reads over photos. */
+  halo?: boolean;
+  strokeWidth?: number;
+  /** Dotted line (planned route) instead of a solid one. */
+  dotted?: boolean;
+  preserveAspectRatio?: string;
+  /** Delay before a load draw starts, in ms. */
+  delay?: number;
+  markers?: Marker[];
+  class?: string;
+}
+
+const {
+  d,
+  viewBox,
+  draw = 'load',
+  halo = false,
+  strokeWidth = 5,
+  dotted = false,
+  preserveAspectRatio,
+  delay = 200,
+  markers = [],
+  class: className,
+  ...rest
+} = Astro.props;
+---
+
+<svg
+  class:list={['route', `route-${draw}`, dotted && 'route-dotted', className]}
+  viewBox={viewBox}
+  preserveAspectRatio={preserveAspectRatio}
+  fill="none"
+  aria-hidden="true"
+  focusable="false"
+  data-route={draw}
+  style={`--route-delay: ${delay}ms`}
+  {...rest}
+>
+  {halo && (
+    <path
+      class="route-path route-halo"
+      pathLength="1"
+      d={d}
+      stroke-width={strokeWidth * 2.2}
+      stroke-linecap="round"
+    />
+  )}
+  <path
+    class="route-path route-ink"
+    pathLength="1"
+    d={d}
+    stroke-width={strokeWidth}
+    stroke-linecap="round"
+  />
+  {markers.map((marker) => (
+    <circle
+      class="route-marker"
+      cx={marker.cx}
+      cy={marker.cy}
+      r={marker.r ?? strokeWidth * 2.2}
+      stroke-width={strokeWidth * 0.8}
+    />
+  ))}
+</svg>
+
+<style is:global>
+  .route {
+    overflow: visible;
+    pointer-events: none;
+  }
+
+  .route-path {
+    stroke-dasharray: 1 1;
+    stroke-dashoffset: 0;
+  }
+
+  .route-halo {
+    stroke: var(--route-halo);
+  }
+
+  .route-ink {
+    stroke: var(--route);
+  }
+
+  /* A dotted line cannot also use the dash for drawing, so it fades in instead. */
+  .route-dotted .route-ink {
+    stroke-dasharray: 0.004 0.012;
+  }
+
+  .route-marker {
+    fill: var(--route);
+    stroke: var(--route-halo);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .route-load .route-path {
+      animation: route-draw var(--duration-route) var(--ease-route) var(--route-delay, 200ms) both;
+    }
+
+    .route-load .route-marker {
+      animation: route-fade var(--duration-slow) var(--ease-out)
+        calc(var(--route-delay, 200ms) + var(--duration-route) - 200ms) both;
+    }
+
+    .route-dotted.route-load .route-ink {
+      animation: route-fade var(--duration-reveal) var(--ease-out) var(--route-delay, 200ms) both;
+    }
+
+    @supports (animation-timeline: view()) {
+      .route-scroll {
+        view-timeline: --route-scroll block;
+      }
+
+      .route-scroll .route-path {
+        animation: route-draw linear both;
+        animation-timeline: --route-scroll;
+        animation-range: entry 10% cover 60%;
+      }
+
+      .route-scroll .route-marker {
+        animation: route-fade linear both;
+        animation-timeline: --route-scroll;
+        animation-range: cover 50% cover 60%;
+      }
+    }
+  }
+
+  /* GSAP draws these (see gsap-fallback.ts); start undrawn to avoid a flash of the full line. */
+  .gsap-scroll .route-scroll:not(.route-dotted) .route-path {
+    stroke-dashoffset: 1;
+  }
+
+  .gsap-scroll .route-scroll .route-marker {
+    opacity: 0;
+  }
+
+  @keyframes route-draw {
+    from {
+      stroke-dashoffset: 1;
+    }
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @keyframes route-fade {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+</style>
+
+<script>
+  import { needsGsapFallback, withGsap } from './gsap-fallback';
+
+  document.addEventListener('astro:page-load', () => {
+    const lines = Array.from(
+      document.querySelectorAll<SVGSVGElement>('[data-route="scroll"]:not(.route-dotted)'),
+    );
+    if (lines.length === 0 || !needsGsapFallback()) return;
+    withGsap((gsap) => {
+      lines.forEach((svg) => {
+        gsap.fromTo(
+          svg.querySelectorAll('.route-path'),
+          { strokeDashoffset: 1 },
+          {
+            strokeDashoffset: 0,
+            ease: 'none',
+            scrollTrigger: { trigger: svg, start: 'top 90%', end: 'bottom 60%', scrub: true },
+          },
+        );
+        gsap.fromTo(
+          svg.querySelectorAll('.route-marker'),
+          { opacity: 0 },
+          {
+            opacity: 1,
+            ease: 'none',
+            scrollTrigger: { trigger: svg, start: 'bottom 70%', end: 'bottom 60%', scrub: true },
+          },
+        );
+      });
+    });
+  });
+</script>

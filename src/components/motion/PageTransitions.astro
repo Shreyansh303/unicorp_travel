@@ -1,0 +1,13 @@
+---
+/**
+ * Page transitions through Astro view transitions. The default is a short cross-fade with a
+ * small rise on the incoming page (see the view-transition rules in global.css). Under
+ * reduced motion Astro skips the animation and the page swaps at once.
+ *
+ * Scripts in components must initialise on `astro:page-load`, which fires on the first load
+ * and after every client-side navigation.
+ */
+import { ClientRouter } from 'astro:transitions';
+---
+
+<ClientRouter />

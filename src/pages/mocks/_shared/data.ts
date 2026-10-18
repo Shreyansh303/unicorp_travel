@@ -27,15 +27,7 @@ export interface SamplePackage {
   alt: string;
 }
 
-const priceFormat = new Intl.NumberFormat('en-IN', {
-  style: 'currency',
-  currency: 'INR',
-  maximumFractionDigits: 0,
-});
-
-export function formatPrice(value: number): string {
-  return priceFormat.format(value);
-}
+export { formatINR as formatPrice } from '../../../lib/format';
 
 export const packages: SamplePackage[] = [
   {
@@ -179,30 +171,6 @@ export const groupCopy: Record<'corporate' | 'leisure' | 'related', string> = {
     'Holidays in India and abroad, planned day by day around who is travelling and what they enjoy.',
   related:
     'The paperwork and bookings around a trip: visas, forex, insurance, hotels, rail, cruises and ground transport.',
-};
-
-/** One-line descriptions and short board codes for the corporate services. */
-export const corporateDetail: Record<string, { code: string; text: string }> = {
-  'travel-management': {
-    code: 'TMS',
-    text: 'Bookings, changes and records for every business trip, kept in one place.',
-  },
-  'policy-adherence': {
-    code: 'POL',
-    text: 'Fares and hotels checked against your travel policy before anything is booked.',
-  },
-  'supplier-negotiations': {
-    code: 'NEG',
-    text: 'Rates discussed with airlines and hotels on the routes your teams use most.',
-  },
-  'travel-implant': {
-    code: 'DSK',
-    text: 'A named team for your account, or a travel desk placed in your office.',
-  },
-  'support-24x7': {
-    code: '24H',
-    text: 'Someone to call when plans change outside office hours.',
-  },
 };
 
 /** Service groups from site.ts, keeping only items that may be shown. */

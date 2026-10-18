@@ -1,13 +1,17 @@
 ---
 import '../styles/global.css';
+import displayFont from '@fontsource-variable/bricolage-grotesque/files/bricolage-grotesque-latin-wght-normal.woff2?url';
+import PageTransitions from '../components/motion/PageTransitions.astro';
 import { DEMO } from '../config/env';
 
 interface Props {
   title: string;
   description: string;
+  /** Class names for <body>, e.g. a tone such as `tone-white`. */
+  bodyClass?: string;
 }
 
-const { title, description } = Astro.props;
+const { title, description, bodyClass } = Astro.props;
 ---
 
 <!doctype html>
@@ -18,8 +22,22 @@ const { title, description } = Astro.props;
     <title>{title}</title>
     <meta name="description" content={description} />
     {DEMO && <meta name="robots" content="noindex, nofollow" />}
+    <link rel="preload" href={displayFont} as="font" type="font/woff2" crossorigin />
+    <script is:inline>
+      // Browsers without CSS scroll timelines draw scroll-linked route lines with GSAP. Flag
+      // them before first paint so those lines start undrawn instead of flashing fully drawn.
+      // Without JavaScript, or under reduced motion, the flag is never set and lines stay drawn.
+      if (
+        window.CSS &&
+        !CSS.supports('animation-timeline: view()') &&
+        matchMedia('(prefers-reduced-motion: no-preference)').matches
+      ) {
+        document.documentElement.classList.add('gsap-scroll');
+      }
+    </script>
+    <PageTransitions />
   </head>
-  <body>
+  <body class={bodyClass}>
     <slot />
   </body>
 </html>

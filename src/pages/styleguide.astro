@@ -1,0 +1,1960 @@
+---
+import { Picture } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/ui/Header.astro';
+import Footer from '../components/ui/Footer.astro';
+import Section from '../components/ui/Section.astro';
+import Button from '../components/ui/Button.astro';
+import Link from '../components/ui/Link.astro';
+import ServiceCard from '../components/ui/ServiceCard.astro';
+import PackageCard from '../components/ui/PackageCard.astro';
+import Input from '../components/ui/form/Input.astro';
+import Select from '../components/ui/form/Select.astro';
+import Textarea from '../components/ui/form/Textarea.astro';
+import Checkbox from '../components/ui/form/Checkbox.astro';
+import RadioGroup from '../components/ui/form/RadioGroup.astro';
+import Stepper from '../components/ui/Stepper.astro';
+import Accordion from '../components/ui/Accordion.astro';
+import FilterChips from '../components/ui/FilterChips.astro';
+import Dialog from '../components/ui/Dialog.astro';
+import Toast from '../components/ui/Toast.astro';
+import Breadcrumbs from '../components/ui/Breadcrumbs.astro';
+import SampleLabel from '../components/ui/SampleLabel.astro';
+import FactsBlock from '../components/ui/FactsBlock.astro';
+import FloatingContact from '../components/ui/FloatingContact.astro';
+import Icon from '../components/ui/Icon.astro';
+import RouteLine from '../components/motion/RouteLine.astro';
+import Reveal from '../components/motion/Reveal.astro';
+import Stagger from '../components/motion/Stagger.astro';
+import Parallax from '../components/motion/Parallax.astro';
+import { mockFooterGroups, mockNav } from './mocks/_shared/nav';
+import { callHref, packages, serviceGroups } from './mocks/_shared/data';
+import { shown, site } from '../config/site';
+import { contrast, formatRatio, readColourTokens, threshold, type Use } from '../lib/contrast';
+import tokensCss from '../styles/tokens.css?raw';
+import jaipur from '../assets/photos/rajasthan-2.jpg';
+
+const tokens = readColourTokens(tokensCss);
+const hex = (name: string): string => {
+  const value = tokens.get(name);
+  if (!value) throw new Error(`Colour token --${name} not found in tokens.css`);
+  return value;
+};
+
+const swatchGroups = [
+  {
+    title: 'Brand red',
+    note: 'Red is deliberate: primary buttons, the route line, markers and one key word in a headline. Not whole pages.',
+    names: ['red-50', 'red-100', 'red-400', 'red-600', 'red-700', 'red-800'],
+  },
+  {
+    title: 'Neutrals',
+    note: 'Warm black and white carry most of every page. Paper is the default background.',
+    names: [
+      'white',
+      'paper',
+      'sand-100',
+      'sand-200',
+      'stone-300',
+      'stone-400',
+      'stone-600',
+      'stone-800',
+      'ink',
+    ],
+  },
+  {
+    title: 'Semantic',
+    note: 'Subdued, and always shown with an icon and words. Error is a cooler crimson so it never reads as brand red.',
+    names: [
+      'success-700',
+      'success-50',
+      'warning-700',
+      'warning-50',
+      'error-700',
+      'error-50',
+      'info-700',
+      'info-50',
+    ],
+  },
+];
+
+const swatches = swatchGroups.map((group) => ({
+  ...group,
+  items: group.names.map((name) => {
+    const value = hex(name);
+    return {
+      name,
+      value,
+      onWhite: contrast(value, hex('white')),
+      onInk: contrast(value, hex('ink')),
+    };
+  }),
+}));
+
+const pairings: { fg: string; bg: string; use: Use; where: string }[] = [
+  { fg: 'ink', bg: 'white', use: 'body', where: 'Body text on white sections and cards' },
+  { fg: 'ink', bg: 'paper', use: 'body', where: 'Body text on the default background' },
+  { fg: 'ink', bg: 'sand-100', use: 'body', where: 'Body text on sand sections' },
+  { fg: 'stone-600', bg: 'white', use: 'body', where: 'Muted text, hints' },
+  { fg: 'stone-600', bg: 'paper', use: 'body', where: 'Muted text, hints' },
+  { fg: 'stone-600', bg: 'sand-100', use: 'body', where: 'Muted text on sand' },
+  { fg: 'red-700', bg: 'white', use: 'body', where: 'Small red text: links, eyebrows, meta' },
+  { fg: 'red-700', bg: 'paper', use: 'body', where: 'Small red text on paper' },
+  { fg: 'red-700', bg: 'sand-100', use: 'body', where: 'Small red text on sand' },
+  { fg: 'red-700', bg: 'red-50', use: 'body', where: 'Text on the red tint' },
+  { fg: 'ink', bg: 'red-50', use: 'body', where: 'Submenu and drawer hover' },
+  { fg: 'red-600', bg: 'white', use: 'body', where: 'Sample label on red sections' },
+  { fg: 'red-600', bg: 'paper', use: 'large', where: 'Red headline words on paper' },
+  { fg: 'red-600', bg: 'sand-100', use: 'large', where: 'Red headline words on sand' },
+  { fg: 'white', bg: 'red-600', use: 'body', where: 'Primary buttons, red sections, WhatsApp bar' },
+  { fg: 'white', bg: 'red-700', use: 'body', where: 'Primary button hover and pressed' },
+  { fg: 'ink', bg: 'red-600', use: 'large', where: 'Accent headline word on red sections' },
+  { fg: 'white', bg: 'ink', use: 'body', where: 'Text on ink sections, footer, call buttons' },
+  { fg: 'stone-300', bg: 'ink', use: 'body', where: 'Muted text on ink' },
+  { fg: 'red-400', bg: 'ink', use: 'body', where: 'Red text on ink (eyebrows, footer headings)' },
+  { fg: 'white', bg: 'stone-800', use: 'body', where: 'Raised surfaces on ink' },
+  { fg: 'error-700', bg: 'white', use: 'body', where: 'Field error text' },
+  { fg: 'error-700', bg: 'paper', use: 'body', where: 'Field error text on paper' },
+  { fg: 'error-700', bg: 'error-50', use: 'body', where: 'Text in an invalid field' },
+  { fg: 'success-700', bg: 'success-50', use: 'body', where: 'Success notices' },
+  { fg: 'warning-700', bg: 'warning-50', use: 'body', where: 'Warning notices' },
+  { fg: 'info-700', bg: 'info-50', use: 'body', where: 'Information notices' },
+  { fg: 'stone-400', bg: 'white', use: 'ui', where: 'Field, chip and stepper outlines' },
+  { fg: 'stone-400', bg: 'paper', use: 'ui', where: 'Field, chip and stepper outlines' },
+  { fg: 'stone-400', bg: 'ink', use: 'ui', where: 'Outlines on ink' },
+  { fg: 'red-600', bg: 'paper', use: 'ui', where: 'Primary button edge against paper' },
+  { fg: 'red-600', bg: 'white', use: 'ui', where: 'Route line, markers, primary button edge' },
+  { fg: 'red-600', bg: 'ink', use: 'ui', where: 'Primary button edge against ink' },
+  { fg: 'white', bg: 'red-600', use: 'ui', where: 'White button and focus ring on red' },
+  { fg: 'ink', bg: 'paper', use: 'ui', where: 'Focus ring on light surfaces' },
+  { fg: 'white', bg: 'ink', use: 'ui', where: 'Focus ring on ink' },
+];
+
+const pairingRows = pairings.map((pair) => {
+  const ratio = contrast(hex(pair.fg), hex(pair.bg));
+  return { ...pair, ratio, pass: ratio >= threshold[pair.use] };
+});
+
+const typeScale = [
+  { token: '--text-display', className: 't-display', sample: 'Pack light.' },
+  { token: '--text-3xl', className: 't-h2', sample: 'Holidays first.' },
+  { token: '--text-2xl', className: 't-h3', sample: 'Kerala, slowly' },
+  { token: '--text-xl', className: 't-h4', sample: 'A night on a houseboat' },
+  {
+    token: '--text-lg',
+    className: 'sg-type-lg',
+    sample: 'Tell us who is travelling and what you love.',
+  },
+  {
+    token: '--text-base',
+    className: 'sg-type-base',
+    sample: 'We plan the holiday day by day, then talk it through with you.',
+  },
+  {
+    token: '--text-sm',
+    className: 'sg-type-sm',
+    sample: 'Valid to 31 March 2027, subject to availability.',
+  },
+  { token: '--text-xs', className: 't-eyebrow', sample: 'Kerala · 6 days' },
+];
+
+const spacing = ['1', '2', '3', '4', '5', '6', '8', '10', '12', '16', '24'];
+const radii = ['sm', 'md', 'lg', 'xl', 'pill', 'arch'];
+const shadows = ['sm', 'md', 'lg'];
+const layers = [
+  ['--z-base', '0', 'Page content'],
+  ['--z-raised', '10', 'Submenus, stacked cards'],
+  ['--z-header', '100', 'Site header'],
+  ['--z-floating', '200', 'WhatsApp and call buttons'],
+  ['--z-overlay', '300', 'Reserved for overlays outside the top layer'],
+  ['--z-toast', '400', 'Toast messages'],
+];
+const durations = [
+  ['--duration-instant', '100ms', 'Press feedback'],
+  ['--duration-fast', '160ms', 'Colour changes, page fade-out'],
+  ['--duration-base', '240ms', 'Hover lifts, chevrons, accordions'],
+  ['--duration-slow', '480ms', 'Dialogs, toasts, page fade-in'],
+  ['--duration-reveal', '700ms', 'Reveal on scroll'],
+  ['--duration-route', '2800ms', 'Route line draw on load'],
+];
+const easings = [
+  ['--ease-out', 'cubic-bezier(0.22, 1, 0.36, 1)', 'Things arriving'],
+  ['--ease-in-out', 'cubic-bezier(0.65, 0, 0.35, 1)', 'Things moving across'],
+  ['--ease-bounce', 'cubic-bezier(0.34, 1.56, 0.64, 1)', 'Playful lifts on buttons and cards'],
+  ['--ease-route', 'cubic-bezier(0.45, 0, 0.2, 1)', 'The route line'],
+];
+const others = [
+  ['--stagger', '80ms', 'Delay between staggered items'],
+  ['--reveal-distance', '1.5rem', 'How far revealed content rises'],
+  ['--lift', '-3px', 'Hover lift'],
+  ['--tilt', '-1deg', 'Primary button tilt on hover'],
+  ['--parallax-shift', '8%', 'Parallax drift each way'],
+];
+
+const groupsById = Object.fromEntries(serviceGroups.map((group) => [group.id, group]));
+const leisure = groupsById['leisure'];
+const corporate = groupsById['corporate'];
+const related = groupsById['related'];
+const kerala = packages[0];
+const andaman = packages[2];
+const budgetOptions = [
+  { value: 'under-50k', label: 'Under ₹50,000 per person' },
+  { value: '50k-1l', label: '₹50,000 to ₹1,00,000 per person' },
+  { value: 'over-1l', label: 'Over ₹1,00,000 per person' },
+];
+const timeOptions = [
+  { value: 'morning', label: 'Morning, 10 am to 1 pm' },
+  { value: 'afternoon', label: 'Afternoon, 1 pm to 4 pm' },
+  { value: 'evening', label: 'Evening, 4 pm to 7 pm' },
+];
+const tripSteps = ['Trip type', 'Destinations', 'Dates', 'Travellers', 'Contact'];
+const faq = [
+  {
+    title: 'Can you change the hotels in a package?',
+    body: 'Yes. Every package is a starting point. Tell us your budget and the kind of stay you like, and we swap hotels to suit.',
+  },
+  {
+    title: 'Do you help with visas for international holidays?',
+    body: 'Yes. We tell you which documents your destination asks for, check them with you and book visa appointments where needed.',
+  },
+  {
+    title: 'How far ahead should we plan a family holiday?',
+    body: 'Six to eight weeks is comfortable for most trips. For school holidays and festival weeks, start earlier: flights and hotels fill up fast.',
+  },
+];
+const toc = [
+  ['colour', 'Colour'],
+  ['tones', 'Tones and moods'],
+  ['type', 'Typography'],
+  ['space', 'Spacing, radii, shadows, layers'],
+  ['motion', 'Motion'],
+  ['buttons', 'Buttons and links'],
+  ['cards', 'Cards'],
+  ['navigation', 'Header and navigation'],
+  ['forms', 'Form fields'],
+  ['progress', 'Stepper'],
+  ['disclosure', 'Accordion and filter chips'],
+  ['overlays', 'Dialog, drawer and toast'],
+  ['wayfinding', 'Breadcrumbs and labels'],
+  ['facts', 'Facts, footer and contact'],
+];
+const stepLabel = (index: number) => `Step ${index + 1}`;
+const facebook = shown(site.social.facebook);
+---
+
+<BaseLayout
+  title={`Styleguide: ${site.displayName}`}
+  description={`Internal styleguide for the ${site.displayName} demo: design tokens and every component in every state.`}
+>
+  <Header items={mockNav} homeHref="/mocks/c" currentPath="/styleguide" />
+  <main id="main">
+    <Section tone="paper" spacing="tight">
+      <div class="sg-intro">
+        <p class="sg-internal">
+          <Icon name="info" size={18} />
+          <span>
+            Internal page for the design team and client review. It is not part of the public site.
+          </span>
+        </p>
+        <h1 class="t-display">
+          The design <span class="t-accent">system</span>
+        </h1>
+        <p class="t-lede">
+          Direction C, Monsoon, in the brand’s red, black and white: Bricolage Grotesque and
+          Figtree, arched photographs and the looping route line. Every page is built from these
+          tokens and components.
+        </p>
+        <nav aria-label="On this page" class="sg-toc">
+          <ul>
+            {toc.map(([id, label]) => (
+              <li>
+                <a href={`#${id}`}>{label}</a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </div>
+    </Section>
+
+    <!-- Colour -->
+    <Section tone="white" aria-labelledby="colour" id="colour-section">
+      <div class="section-head">
+        <h2 id="colour" class="t-h2">
+          Colour
+        </h2>
+        <p>
+          Ratios are worked out from tokens.css at build time, against white and against ink (the
+          site’s black).
+        </p>
+      </div>
+      {swatches.map((group) => (
+        <div class="sg-block">
+          <h3 class="t-h4">{group.title}</h3>
+          <p class="t-muted sg-note">{group.note}</p>
+          <ul class="sg-swatches">
+            {group.items.map((item) => (
+              <li class="sg-swatch">
+                <span class="sg-chip" style={`background: ${item.value}`} />
+                <span class="sg-swatch-name">--{item.name}</span>
+                <span class="sg-swatch-hex">{item.value.toUpperCase()}</span>
+                <span class="sg-swatch-ratio">
+                  White {formatRatio(item.onWhite)} · Ink {formatRatio(item.onInk)}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+      <div class="sg-block">
+        <h3 class="t-h4">Pairings in use</h3>
+        <p class="t-muted sg-note">
+          AA needs 4.5:1 for body text, 3:1 for large text (24px, or 18.66px bold) and for UI parts
+          such as outlines and focus rings.
+        </p>
+        <div class="sg-table-wrap">
+          <table class="sg-table">
+            <thead>
+              <tr>
+                <th scope="col">Sample</th>
+                <th scope="col">Foreground on background</th>
+                <th scope="col">Use</th>
+                <th scope="col">Ratio</th>
+                <th scope="col">Where</th>
+              </tr>
+            </thead>
+            <tbody>
+              {pairingRows.map((row) => (
+                <tr>
+                  <td>
+                    <span
+                      class:list={['sg-pair', row.use === 'large' && 'sg-pair-large']}
+                      style={`background: ${hex(row.bg)}; color: ${hex(row.fg)}; ${row.use === 'ui' ? `box-shadow: inset 0 0 0 3px ${hex(row.fg)}` : ''}`}
+                    >
+                      {row.use === 'ui' ? '' : 'Aa'}
+                    </span>
+                  </td>
+                  <td>
+                    --{row.fg} on --{row.bg}
+                  </td>
+                  <td>
+                    {row.use === 'body'
+                      ? 'Body text'
+                      : row.use === 'large'
+                        ? 'Large text only'
+                        : 'UI part'}
+                  </td>
+                  <td>
+                    <strong>{formatRatio(row.ratio)}</strong>{' '}
+                    <span class:list={['sg-pass', !row.pass && 'sg-fail']}>
+                      {row.pass ? 'Pass' : 'Fail'}
+                    </span>
+                  </td>
+                  <td>{row.where}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </Section>
+
+    <!-- Tones and moods -->
+    <Section tone="paper" aria-labelledby="tones">
+      <div class="section-head">
+        <h2 id="tones" class="t-h2">
+          Tones and moods
+        </h2>
+        <p>
+          A tone sets the background and every colour role inside it, so components adapt. Corporate
+          pages lean on white and ink; holiday pages use paper, red and photography.
+        </p>
+      </div>
+      <ul class="sg-tones">
+        {(['white', 'paper', 'sand', 'ink', 'red'] as const).map((tone) => (
+          <li class:list={['sg-tone', `tone-${tone}`]}>
+            <p class="t-eyebrow">tone-{tone}</p>
+            <p class="sg-tone-head">
+              Where to <span class="t-accent">next?</span>
+            </p>
+            <p class="t-muted">Tell us who is travelling and roughly when.</p>
+            <div class="sg-row">
+              <Button size="sm">Plan my holiday</Button>
+              <Button size="sm" variant="secondary">
+                Call us
+              </Button>
+            </div>
+          </li>
+        ))}
+      </ul>
+      <div class="sg-moods">
+        <div class="sg-mood tone-white mood-corporate">
+          <p class="t-eyebrow">mood-corporate</p>
+          <p class="sg-tone-head">
+            One desk for every <span class="t-accent">business trip.</span>
+          </p>
+          <p class="t-muted">
+            Headings stay black and white. Red appears on buttons and the route line only.
+          </p>
+          <div class="sg-row">
+            <Button size="sm">Talk to the corporate desk</Button>
+          </div>
+        </div>
+        <div class="sg-mood tone-paper mood-holiday">
+          <p class="t-eyebrow">mood-holiday</p>
+          <p class="sg-tone-head">
+            Pack light. <span class="t-accent">We’ll plan</span> the rest.
+          </p>
+          <p class="t-muted">
+            One red word in the headline, arched photos and the route line looping through.
+          </p>
+          <div class="sg-row">
+            <Button size="sm">Plan my holiday</Button>
+          </div>
+        </div>
+      </div>
+    </Section>
+
+    <!-- Typography -->
+    <Section tone="white" aria-labelledby="type">
+      <div class="section-head">
+        <h2 id="type" class="t-h2">
+          Typography
+        </h2>
+        <p>
+          Bricolage Grotesque for display, Figtree for text. Both self-hosted, Latin subset,
+          variable weight, font-display swap. Only the display face is preloaded. Sizes are fluid
+          with clamp().
+        </p>
+      </div>
+      <ul class="sg-type">
+        {typeScale.map((row) => (
+          <li>
+            <span class="sg-token">{row.token}</span>
+            <span class={row.className}>{row.sample}</span>
+          </li>
+        ))}
+      </ul>
+    </Section>
+
+    <!-- Spacing, radii, shadows, layers -->
+    <Section tone="paper" aria-labelledby="space">
+      <div class="section-head">
+        <h2 id="space" class="t-h2">
+          Spacing, radii, shadows, layers
+        </h2>
+        <p>A 4px base. Section padding is fluid: --space-section runs from 4rem to 7rem.</p>
+      </div>
+      <div class="sg-grid-2">
+        <div class="sg-block">
+          <h3 class="t-h4">Spacing</h3>
+          <ul class="sg-space">
+            {spacing.map((step) => (
+              <li>
+                <span class="sg-token">--space-{step}</span>
+                <span class="sg-bar" style={`width: var(--space-${step})`} />
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div class="sg-block">
+          <h3 class="t-h4">Radii</h3>
+          <ul class="sg-radii">
+            {radii.map((radius) => (
+              <li>
+                <span class="sg-radius" style={`border-radius: var(--radius-${radius})`} />
+                <span class="sg-token">--radius-{radius}</span>
+              </li>
+            ))}
+          </ul>
+          <h3 class="t-h4 sg-sub">Shadows</h3>
+          <ul class="sg-shadows">
+            {shadows.map((shadow) => (
+              <li style={`box-shadow: var(--shadow-${shadow})`}>
+                <span class="sg-token">--shadow-{shadow}</span>
+              </li>
+            ))}
+          </ul>
+          <h3 class="t-h4 sg-sub">Layers</h3>
+          <dl class="sg-dl">
+            {layers.map(([token, value, use]) => (
+              <div>
+                <dt>
+                  <span class="sg-token">{token}</span> {value}
+                </dt>
+                <dd>{use}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      </div>
+    </Section>
+
+    <!-- Motion -->
+    <Section tone="white" aria-labelledby="motion">
+      <div class="section-head">
+        <h2 id="motion" class="t-h2">
+          Motion
+        </h2>
+        <p>
+          Only transform and opacity move, plus the SVG stroke of the route line. With reduced
+          motion turned on, the distance tokens drop to zero: things fade or simply appear, and
+          nothing drifts.
+        </p>
+      </div>
+      <div class="sg-grid-2">
+        <div class="sg-block">
+          <h3 class="t-h4">Durations</h3>
+          <dl class="sg-dl">
+            {durations.map(([token, value, use]) => (
+              <div>
+                <dt>
+                  <span class="sg-token">{token}</span> {value}
+                </dt>
+                <dd>{use}</dd>
+              </div>
+            ))}
+          </dl>
+          <h3 class="t-h4 sg-sub">Easings and distances</h3>
+          <dl class="sg-dl">
+            {[...easings, ...others].map(([token, value, use]) => (
+              <div>
+                <dt>
+                  <span class="sg-token">{token}</span> {value}
+                </dt>
+                <dd>{use}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+        <div class="sg-block">
+          <h3 class="t-h4">Easing demo</h3>
+          <p class="t-muted sg-note">Each dot travels with its easing over --duration-slow.</p>
+          <div class="sg-ease" data-ease-demo>
+            {easings.map(([token]) => (
+              <div class="sg-ease-row">
+                <span class="sg-token">{token}</span>
+                <span class="sg-ease-track">
+                  <span class="sg-ease-dot" style={`transition-timing-function: var(${token})`} />
+                </span>
+              </div>
+            ))}
+          </div>
+          <Button size="sm" variant="secondary" data-ease-play aria-pressed="false">
+            Play the easing demo
+          </Button>
+
+          <h3 class="t-h4 sg-sub">Route line</h3>
+          <p class="t-muted sg-note">
+            Draws on load (top), or as you scroll (bottom). Dotted means a route still to plan.
+          </p>
+          <div class="sg-route-demo tone-paper">
+            <RouteLine
+              d="M10 60 C80 0 140 110 210 60 S330 10 390 60"
+              viewBox="0 0 400 120"
+              halo
+              markers={[{ cx: 390, cy: 60 }]}
+            />
+            <RouteLine
+              d="M10 60 C80 0 140 110 210 60 S330 10 390 60"
+              viewBox="0 0 400 120"
+              draw="scroll"
+              strokeWidth={4}
+            />
+            <RouteLine
+              d="M10 60 C80 0 140 110 210 60 S330 10 390 60"
+              viewBox="0 0 400 120"
+              dotted
+              strokeWidth={4}
+              draw="none"
+            />
+          </div>
+          <Button size="sm" variant="secondary" data-route-replay>
+            Replay the draw
+          </Button>
+        </div>
+      </div>
+
+      <div class="sg-grid-2 sg-motion-row">
+        <div class="sg-block">
+          <h3 class="t-h4">Reveal and stagger</h3>
+          <p class="t-muted sg-note">
+            Content is visible without JavaScript. Only items that start below the fold are armed.
+          </p>
+          <Reveal class="sg-reveal-card">
+            <p class="t-h4">Revealed on scroll</p>
+            <p class="t-muted">Rises by --reveal-distance and fades in over --duration-reveal.</p>
+          </Reveal>
+          <Stagger as="ul" class="sg-stagger">
+            <li>Munnar</li>
+            <li>Thekkady</li>
+            <li>Alappuzha</li>
+            <li>Kochi</li>
+          </Stagger>
+        </div>
+        <div class="sg-block">
+          <h3 class="t-h4">Parallax image</h3>
+          <p class="t-muted sg-note">
+            Drifts by --parallax-shift as it scrolls past. Off under reduced motion.
+          </p>
+          <Parallax shape="arch" class="sg-parallax">
+            <Picture
+              src={jaipur}
+              alt="The pink sandstone facade of the Hawa Mahal in Jaipur"
+              formats={['avif', 'webp']}
+              widths={[400, 640, 960]}
+              sizes="(min-width: 1024px) 34vw, 90vw"
+            />
+          </Parallax>
+          <p class="t-muted sg-note">
+            Page transitions use Astro view transitions: a short fade with a small rise, and an
+            instant swap under reduced motion. Follow any header link to see it.
+          </p>
+        </div>
+      </div>
+    </Section>
+
+    <!-- Buttons and links -->
+    <Section tone="paper" aria-labelledby="buttons">
+      <div class="section-head">
+        <h2 id="buttons" class="t-h2">
+          Buttons and links
+        </h2>
+        <p>
+          Primary is the red fill, one per view. Secondary is outlined; ghost is for low-emphasis
+          actions. A link that looks like a button is still a link.
+        </p>
+      </div>
+      {(['primary', 'secondary', 'ghost'] as const).map((variant) => (
+        <div class="sg-block">
+          <h3 class="t-h4">
+            {variant[0]?.toUpperCase()}
+            {variant.slice(1)}
+          </h3>
+          <ul class="sg-states">
+            <li>
+              <Button variant={variant}>Plan my holiday</Button>
+              <span class="sg-caption">Default</span>
+            </li>
+            <li>
+              <Button variant={variant} state="hover">
+                Plan my holiday
+              </Button>
+              <span class="sg-caption">Hover</span>
+            </li>
+            <li>
+              <Button variant={variant} state="focus">
+                Plan my holiday
+              </Button>
+              <span class="sg-caption">Focus visible</span>
+            </li>
+            <li>
+              <Button variant={variant} state="active">
+                Plan my holiday
+              </Button>
+              <span class="sg-caption">Active</span>
+            </li>
+            <li>
+              <Button variant={variant} disabled>
+                Plan my holiday
+              </Button>
+              <span class="sg-caption">Disabled</span>
+            </li>
+            <li>
+              <Button variant={variant} loading>
+                Sending your enquiry
+              </Button>
+              <span class="sg-caption">Loading</span>
+            </li>
+          </ul>
+        </div>
+      ))}
+      <div class="sg-block">
+        <h3 class="t-h4">Sizes, icons and links as buttons</h3>
+        <ul class="sg-states">
+          <li>
+            <Button size="sm">Small</Button>
+            <span class="sg-caption">sm (44px tall)</span>
+          </li>
+          <li>
+            <Button>Medium</Button>
+            <span class="sg-caption">md</span>
+          </li>
+          <li>
+            <Button size="lg">Large</Button>
+            <span class="sg-caption">lg</span>
+          </li>
+          <li>
+            <Button href="/mocks/c/package" iconEnd="arrow-right">
+              See a sample trip
+            </Button>
+            <span class="sg-caption">Link as button, icon end</span>
+          </li>
+          <li>
+            {callHref && (
+              <Button variant="secondary" href={callHref} iconStart="phone">
+                Call us
+              </Button>
+            )}
+            <span class="sg-caption">Secondary call link, icon start</span>
+          </li>
+        </ul>
+      </div>
+      <div class="sg-grid-2">
+        <div class="sg-tone-demo tone-ink">
+          <p class="t-eyebrow">On ink</p>
+          <div class="sg-row">
+            <Button>Plan my holiday</Button>
+            <Button variant="secondary">Call us</Button>
+            <Button variant="ghost">Read more</Button>
+          </div>
+        </div>
+        <div class="sg-tone-demo tone-red">
+          <p class="t-eyebrow">On red</p>
+          <div class="sg-row">
+            <Button>Plan my holiday</Button>
+            <Button variant="secondary">Call us</Button>
+            <Button variant="ghost">Read more</Button>
+          </div>
+        </div>
+      </div>
+      <div class="sg-block">
+        <h3 class="t-h4">Links</h3>
+        <p class="sg-prose">
+          Inline links are always underlined, as in this link to the
+          <Link href="/mocks/c/package">sample Kerala itinerary</Link> and these forced states:
+          <Link href="/mocks/c" state="hover">
+            hover
+          </Link>
+          <Link href="/mocks/c" state="focus">
+            focus
+          </Link>
+          <Link href="/mocks/c" state="active">
+            pressed
+          </Link>
+        </p>
+        {facebook && (
+          <p class="sg-prose">
+            An external link says so to screen readers: our
+            <Link href={facebook} external>
+              Facebook page
+            </Link>
+          </p>
+        )}
+        <ul class="sg-states">
+          <li>
+            <Link href="/mocks/c" variant="standalone">
+              See all holidays
+            </Link>
+            <span class="sg-caption">Standalone</span>
+          </li>
+          <li>
+            <Link href="/mocks/c" variant="standalone" state="hover">
+              See all holidays
+            </Link>
+            <span class="sg-caption">Standalone, hover</span>
+          </li>
+        </ul>
+      </div>
+    </Section>
+
+    <!-- Cards -->
+    <Section tone="sand" aria-labelledby="cards">
+      <div class="section-head">
+        <h2 id="cards" class="t-h2">
+          Cards
+        </h2>
+        <p>
+          Service cards in red, ink and white. Package cards with an arched photo; demo data shows
+          the label.
+        </p>
+      </div>
+      <ul class="sg-cards">
+        {leisure && (
+          <li>
+            <ServiceCard
+              title={leisure.name}
+              text={leisure.copy}
+              items={leisure.items.map((i) => i.name)}
+              tone="red"
+              href="/mocks/c#services"
+            />
+          </li>
+        )}
+        {corporate && (
+          <li>
+            <ServiceCard
+              title={corporate.name}
+              text={corporate.copy}
+              items={corporate.items.map((i) => i.name)}
+              tone="ink"
+            />
+          </li>
+        )}
+        {related && (
+          <li>
+            <ServiceCard
+              title={related.name}
+              text={related.copy}
+              items={related.items.slice(0, 4).map((i) => i.name)}
+              tone="white"
+            />
+          </li>
+        )}
+      </ul>
+      <ul class="sg-states sg-card-states">
+        {leisure && (
+          <li>
+            <ServiceCard
+              title="Hover"
+              text="Lifts and gains a shadow; the arrow moves."
+              tone="red"
+              href="/mocks/c#services"
+              state="hover"
+            />
+          </li>
+        )}
+        {leisure && (
+          <li>
+            <ServiceCard
+              title="Focus"
+              text="A two-tone ring shows on any background."
+              tone="white"
+              href="/mocks/c#services"
+              state="focus"
+            />
+          </li>
+        )}
+      </ul>
+      <ul class="sg-pkgs">
+        {kerala && (
+          <li>
+            <PackageCard
+              name={kerala.name}
+              region={kerala.region}
+              days={kerala.days}
+              nights={kerala.nights}
+              fromPrice={kerala.fromPrice}
+              validTo={kerala.validTo}
+              image={kerala.image}
+              alt={kerala.alt}
+              href="/mocks/c/package"
+              demo
+            />
+            <span class="sg-caption">Default, with link</span>
+          </li>
+        )}
+        {andaman && (
+          <li>
+            <PackageCard
+              name={andaman.name}
+              region={andaman.region}
+              days={andaman.days}
+              nights={andaman.nights}
+              fromPrice={andaman.fromPrice}
+              image={andaman.image}
+              alt={andaman.alt}
+              href="/mocks/c/package"
+              demo
+              state="hover"
+            />
+            <span class="sg-caption">Hover</span>
+          </li>
+        )}
+        {kerala && (
+          <li>
+            <PackageCard
+              name={kerala.name}
+              region={kerala.region}
+              days={kerala.days}
+              nights={kerala.nights}
+              fromPrice={kerala.fromPrice}
+              image={kerala.image}
+              alt={kerala.alt}
+              href="/mocks/c/package"
+              demo
+              state="focus"
+            />
+            <span class="sg-caption">Focus</span>
+          </li>
+        )}
+      </ul>
+    </Section>
+
+    <!-- Navigation -->
+    <Section tone="white" aria-labelledby="navigation">
+      <div class="section-head">
+        <h2 id="navigation" class="t-h2">
+          Header and navigation
+        </h2>
+        <p>
+          The header at the top of this page is live: open Holidays with Enter or Space, close it
+          with Escape. Below 1024px the links move into a drawer.
+        </p>
+      </div>
+      <p class="sg-caption sg-caption-block">Submenu open (static copy)</p>
+      <div class="sg-frame sg-frame-nav">
+        <Header
+          items={mockNav}
+          homeHref="/mocks/c"
+          idPrefix="demo"
+          navLabel="Main (example)"
+          asDemo
+          openFirst
+        />
+      </div>
+      <div class="sg-row sg-gap-top">
+        <Button
+          variant="secondary"
+          iconStart="menu"
+          data-dialog-open="site-nav-drawer"
+          aria-haspopup="dialog"
+          aria-expanded="false"
+        >
+          Open the mobile menu drawer
+        </Button>
+      </div>
+    </Section>
+
+    <!-- Forms -->
+    <Section tone="paper" aria-labelledby="forms">
+      <div class="section-head">
+        <h2 id="forms" class="t-h2">
+          Form fields
+        </h2>
+        <p>
+          Every field has a visible label. Hints and errors are tied to the field with
+          aria-describedby; an error also sets aria-invalid and shows an icon and words.
+        </p>
+      </div>
+      <form class="sg-form" action="/styleguide" method="get" novalidate>
+        <div class="sg-fields">
+          <Input id="f-name" name="name" label="Your name" autocomplete="name" />
+          <Input
+            id="f-name-hover"
+            name="name-hover"
+            label="Your name (hover)"
+            state="hover"
+            value="Ananya Sharma"
+          />
+          <Input
+            id="f-name-focus"
+            name="name-focus"
+            label="Your name (focus)"
+            state="focus"
+            value="Ananya Sharma"
+          />
+          <Input
+            id="f-phone"
+            name="phone"
+            type="tel"
+            label="Phone number"
+            hint="Indian mobile or landline, with or without +91."
+            autocomplete="tel"
+            inputmode="tel"
+          />
+          <Input
+            id="f-phone-error"
+            name="phone-error"
+            type="tel"
+            label="Phone number"
+            hint="Indian mobile or landline, with or without +91."
+            error="Enter a phone number with 10 digits after +91."
+            value="12345"
+          />
+          <Input
+            id="f-company"
+            name="company"
+            label="Company name"
+            optional
+            disabled
+            value="Not needed for holidays"
+          />
+          <Select
+            id="f-budget"
+            name="budget"
+            label="Budget"
+            prompt="Choose a budget"
+            options={budgetOptions}
+            hint="Per person, flights included."
+          />
+          <Select
+            id="f-budget-error"
+            name="budget-error"
+            label="Budget"
+            prompt="Choose a budget"
+            options={budgetOptions}
+            error="Choose a budget so we can suggest hotels."
+          />
+          <Select
+            id="f-time"
+            name="time"
+            label="Best time to call"
+            options={timeOptions}
+            value="evening"
+            optional
+          />
+          <Textarea
+            id="f-message"
+            name="message"
+            label="Tell us about your trip"
+            hint="Who is travelling, roughly when, and what you love doing."
+            optional
+          />
+          <Textarea
+            id="f-message-error"
+            name="message-error"
+            label="Tell us about your trip"
+            error="Keep your message under 1,000 characters."
+          />
+          <Textarea
+            id="f-message-disabled"
+            name="message-disabled"
+            label="Message (disabled)"
+            disabled
+            optional
+            value="This field is switched off."
+          />
+        </div>
+        <div class="sg-fields">
+          <div class="sg-stack">
+            <Checkbox
+              id="f-consent"
+              name="consent"
+              label="I agree to be contacted about this enquiry."
+              hint="We use your details only to reply to you."
+            />
+            <Checkbox
+              id="f-consent-checked"
+              name="consent-checked"
+              label="Send me holiday ideas by email now and then."
+              checked
+            />
+            <Checkbox
+              id="f-consent-error"
+              name="consent-error"
+              label="I agree to be contacted about this enquiry."
+              error="Tick this box so we can reply to you."
+            />
+            <Checkbox
+              id="f-consent-disabled"
+              name="consent-disabled"
+              label="Disabled checkbox"
+              disabled
+            />
+          </div>
+          <RadioGroup
+            id="f-trip"
+            name="trip"
+            legend="Trip type"
+            options={[
+              { value: 'holiday', label: 'Holiday' },
+              { value: 'business', label: 'Business trip' },
+              { value: 'group', label: 'Group or event' },
+            ]}
+            value="holiday"
+            hint="Pick the closest one; you can explain later."
+          />
+          <RadioGroup
+            id="f-trip-error"
+            name="trip-error"
+            legend="Where to?"
+            inline
+            options={[
+              { value: 'india', label: 'Within India' },
+              { value: 'abroad', label: 'Abroad' },
+            ]}
+            error="Choose India or abroad."
+          />
+          <RadioGroup
+            id="f-trip-disabled"
+            name="trip-disabled"
+            legend="Disabled group"
+            disabled
+            optional
+            options={[
+              { value: 'one', label: 'One way' },
+              { value: 'return', label: 'Return' },
+            ]}
+            value="return"
+          />
+        </div>
+      </form>
+    </Section>
+
+    <!-- Stepper -->
+    <Section tone="white" aria-labelledby="progress">
+      <div class="section-head">
+        <h2 id="progress" class="t-h2">
+          Stepper
+        </h2>
+        <p>
+          For “Plan my trip”. Finished steps are joined by the solid red route; the rest is dotted.
+        </p>
+      </div>
+      <div class="sg-stack sg-stack-lg">
+        {[0, 2, 4].map((current) => (
+          <div>
+            <p class="sg-caption sg-caption-block">{stepLabel(current)} current</p>
+            <Stepper
+              steps={tripSteps}
+              current={current}
+              label={`Plan my trip progress, example ${current + 1}`}
+            />
+          </div>
+        ))}
+      </div>
+    </Section>
+
+    <!-- Accordion and chips -->
+    <Section tone="paper" aria-labelledby="disclosure">
+      <div class="section-head">
+        <h2 id="disclosure" class="t-h2">
+          Accordion and filter chips
+        </h2>
+        <p>
+          The second question starts open. Chips are toggle buttons; a pressed chip shows a tick.
+        </p>
+      </div>
+      <div class="sg-grid-2">
+        <div class="sg-block">
+          <h3 class="t-h4">Questions about holidays</h3>
+          <Accordion id="sg-faq" items={faq} open={[1]} headingLevel={4} />
+        </div>
+        <div class="sg-block sg-stack">
+          <FilterChips
+            label="Theme"
+            name="theme"
+            chips={[
+              { value: 'family', label: 'Family', pressed: true },
+              { value: 'honeymoon', label: 'Honeymoon' },
+              { value: 'adventure', label: 'Adventure' },
+              { value: 'wildlife', label: 'Wildlife' },
+            ]}
+          />
+          <FilterChips
+            label="States"
+            name="states"
+            chips={[
+              { value: 'default', label: 'Default' },
+              { value: 'hover', label: 'Hover', state: 'hover' },
+              { value: 'focus', label: 'Focus', state: 'focus' },
+              { value: 'pressed', label: 'Pressed', pressed: true },
+              { value: 'disabled', label: 'Disabled', disabled: true },
+            ]}
+          />
+        </div>
+      </div>
+    </Section>
+
+    <!-- Overlays -->
+    <Section tone="white" aria-labelledby="overlays">
+      <div class="section-head">
+        <h2 id="overlays" class="t-h2">
+          Dialog, drawer and toast
+        </h2>
+        <p>
+          Dialogs trap focus, close with Escape or the backdrop, keep the page behind them inert and
+          return focus to the button that opened them. Toasts are announced politely.
+        </p>
+      </div>
+      <div class="sg-row">
+        <Button
+          data-dialog-open="sg-dialog"
+          aria-haspopup="dialog"
+          aria-expanded="false"
+          iconStart="phone"
+        >
+          Request a callback
+        </Button>
+        <Button
+          variant="secondary"
+          data-dialog-open="sg-drawer"
+          aria-haspopup="dialog"
+          aria-expanded="false"
+        >
+          Filter holidays
+        </Button>
+        <Button
+          variant="ghost"
+          data-toast="Styleguide preview: your details were not sent anywhere."
+          data-toast-tone="info"
+        >
+          Show an info toast
+        </Button>
+        <Button
+          variant="ghost"
+          data-toast="Saved. You can come back to this plan later."
+          data-toast-tone="success"
+        >
+          Show a success toast
+        </Button>
+        <Button
+          variant="ghost"
+          data-toast="We could not open WhatsApp. Call us instead."
+          data-toast-tone="error"
+        >
+          Show an error toast
+        </Button>
+      </div>
+      <p class="sg-caption sg-caption-block sg-gap-top">Toast appearance (static)</p>
+      <div class="sg-toasts">
+        <div class="toast" data-tone="success">
+          <span class="toast-icon" aria-hidden="true">
+            ✓
+          </span>
+          <p class="toast-text">Saved. You can come back to this plan later.</p>
+        </div>
+        <div class="toast" data-tone="error">
+          <span class="toast-icon" aria-hidden="true">
+            !
+          </span>
+          <p class="toast-text">Error: we could not open WhatsApp. Call us instead.</p>
+        </div>
+      </div>
+
+      <Dialog id="sg-dialog" title="Request a callback">
+        <p class="t-muted">
+          Leave your number and a good time to call. We call back within office hours.
+        </p>
+        <div class="sg-stack">
+          <Input id="d-name" name="d-name" label="Your name" autocomplete="name" />
+          <Input
+            id="d-phone"
+            name="d-phone"
+            type="tel"
+            label="Phone number"
+            autocomplete="tel"
+            inputmode="tel"
+          />
+          <Select id="d-time" name="d-time" label="Best time to call" options={timeOptions} />
+        </div>
+        <Fragment slot="footer">
+          <Button
+            data-dialog-close
+            data-toast="Styleguide preview: no request was sent."
+            data-toast-tone="info"
+          >
+            Request callback
+          </Button>
+          <Button variant="secondary" data-dialog-close>
+            Cancel
+          </Button>
+        </Fragment>
+      </Dialog>
+
+      <Dialog id="sg-drawer" title="Filter holidays" variant="drawer">
+        <div class="sg-stack">
+          <FilterChips
+            label="Destination"
+            name="drawer-destination"
+            chips={[
+              { value: 'india', label: 'India', pressed: true },
+              { value: 'abroad', label: 'Abroad' },
+            ]}
+          />
+          <FilterChips
+            label="Length"
+            name="drawer-length"
+            chips={[
+              { value: 'short', label: 'Up to 5 days' },
+              { value: 'week', label: '6 to 8 days' },
+              { value: 'long', label: '9 days or more' },
+            ]}
+          />
+        </div>
+        <Fragment slot="footer">
+          <Button data-dialog-close>Show holidays</Button>
+        </Fragment>
+      </Dialog>
+    </Section>
+
+    <!-- Breadcrumbs and labels -->
+    <Section tone="paper" aria-labelledby="wayfinding">
+      <div class="section-head">
+        <h2 id="wayfinding" class="t-h2">
+          Breadcrumbs and labels
+        </h2>
+        <p>The last crumb is the current page. The sample label marks every piece of demo data.</p>
+      </div>
+      <div class="sg-stack">
+        <Breadcrumbs
+          items={[
+            { label: 'Home', href: '/mocks/c' },
+            { label: 'Holidays', href: '/mocks/c#packages' },
+            { label: 'Kerala backwaters and hills' },
+          ]}
+        />
+        <div class="sg-row">
+          <span class="sg-label-demo tone-paper">
+            <SampleLabel />
+          </span>
+          <span class="sg-label-demo tone-ink">
+            <SampleLabel />
+          </span>
+          <span class="sg-label-demo tone-red">
+            <SampleLabel />
+          </span>
+        </div>
+      </div>
+    </Section>
+
+    <!-- Facts and contact -->
+    <Section tone="white" aria-labelledby="facts">
+      <div class="section-head">
+        <h2 id="facts" class="t-h2">
+          Facts, footer and contact
+        </h2>
+        <p>
+          Facts come only from site.ts. A fact that is unknown or not to be shown renders nothing:
+          no label, no blank, no icon. The footer at the bottom of this page is live.
+        </p>
+      </div>
+      <div class="sg-grid-2">
+        <div class="sg-stack">
+          <FactsBlock title="Company details" />
+          <div>
+            <p class="sg-caption sg-caption-block">Condensed (footer)</p>
+            <FactsBlock variant="condensed" />
+          </div>
+        </div>
+        <div class="sg-stack">
+          <p class="sg-caption sg-caption-block">Floating contact, as shown below 1360px</p>
+          <FloatingContact
+            inline
+            message={`Hello ${site.displayName}, I am looking at your styleguide page.`}
+          />
+          <p class="t-muted">
+            The live bar sits at the bottom of this page. Below 1360px the page reserves its height,
+            so it never covers the last lines of content; from 1360px it becomes two round buttons
+            in the side margin.
+          </p>
+        </div>
+      </div>
+    </Section>
+  </main>
+  <Footer homeHref="/mocks/c" groups={mockFooterGroups} />
+  <FloatingContact message={`Hello ${site.displayName}, I would like help planning a trip.`} />
+  <Toast />
+</BaseLayout>
+
+<style>
+  .sg-intro {
+    display: grid;
+    gap: var(--space-6);
+    justify-items: start;
+  }
+
+  .sg-internal {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-pill);
+    background: var(--info-50);
+    color: var(--info-700);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-bold);
+  }
+
+  .sg-toc ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .sg-toc a {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--tap);
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-pill);
+    box-shadow: inset 0 0 0 1.5px var(--stone-400);
+    color: var(--ink);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-bold);
+    text-decoration: none;
+  }
+
+  .sg-toc a:hover {
+    box-shadow: inset 0 0 0 2px var(--ink);
+  }
+
+  .sg-block {
+    display: grid;
+    gap: var(--space-4);
+    align-content: start;
+    margin-bottom: var(--space-12);
+  }
+
+  .sg-block > :global(.btn) {
+    justify-self: start;
+  }
+
+  .sg-block:last-child {
+    margin-bottom: 0;
+  }
+
+  .sg-note {
+    max-width: 40rem;
+  }
+
+  .sg-sub {
+    margin-top: var(--space-8);
+  }
+
+  .sg-grid-2 {
+    display: grid;
+    gap: var(--space-10);
+  }
+
+  @media (min-width: 1024px) {
+    .sg-grid-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-16);
+    }
+  }
+
+  .sg-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .sg-gap-top {
+    margin-top: var(--space-8);
+  }
+
+  .sg-stack {
+    display: grid;
+    gap: var(--space-6);
+    align-content: start;
+  }
+
+  .sg-stack-lg {
+    gap: var(--space-10);
+  }
+
+  .sg-caption {
+    font-size: var(--text-xs);
+    font-weight: var(--weight-black);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .sg-caption-block {
+    display: block;
+    margin-bottom: var(--space-3);
+  }
+
+  .sg-token {
+    font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+  }
+
+  /* Swatches */
+  .sg-swatches {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+    gap: var(--space-4);
+  }
+
+  .sg-swatch {
+    display: grid;
+    gap: var(--space-1);
+    font-size: var(--text-sm);
+  }
+
+  .sg-chip {
+    display: block;
+    height: 4.5rem;
+    margin-bottom: var(--space-2);
+    border-radius: var(--radius-md);
+    box-shadow: inset 0 0 0 1px rgb(20 17 16 / 0.12);
+  }
+
+  .sg-swatch-name {
+    font-weight: var(--weight-black);
+  }
+
+  .sg-swatch-hex,
+  .sg-swatch-ratio {
+    color: var(--text-muted);
+  }
+
+  /* Pairings table */
+  .sg-table-wrap {
+    border-radius: var(--radius-md);
+    box-shadow: inset 0 0 0 1px var(--sand-200);
+  }
+
+  .sg-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--text-sm);
+  }
+
+  /* Below 768px each row stacks into a small card, so the table never scrolls sideways. */
+  @media (max-width: 767px) {
+    .sg-table thead {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+    }
+
+    .sg-table tr {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: var(--space-1) var(--space-3);
+      padding: var(--space-3) var(--space-4);
+      border-bottom: 1px solid var(--sand-200);
+    }
+
+    .sg-table td {
+      padding: 0;
+      border: 0;
+    }
+
+    .sg-table td:first-child {
+      grid-row: span 4;
+    }
+  }
+
+  .sg-table th,
+  .sg-table td {
+    padding: var(--space-3) var(--space-4);
+    border-bottom: 1px solid var(--sand-200);
+    text-align: left;
+    vertical-align: middle;
+  }
+
+  .sg-table th {
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .sg-pair {
+    display: inline-grid;
+    place-items: center;
+    width: 3rem;
+    height: 2.25rem;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-display);
+    font-weight: var(--weight-black);
+    box-shadow: inset 0 0 0 1px rgb(20 17 16 / 0.12);
+  }
+
+  /* Large-text-only pairings are shown at 24px, the size they are allowed at. */
+  .sg-pair-large {
+    width: 4rem;
+    height: 2.75rem;
+    font-size: 1.5rem;
+  }
+
+  .sg-pass {
+    display: inline-block;
+    padding: 0 var(--space-2);
+    border-radius: var(--radius-pill);
+    background: var(--success-50);
+    color: var(--success-700);
+    font-size: var(--text-xs);
+    font-weight: var(--weight-black);
+  }
+
+  .sg-fail {
+    background: var(--error-50);
+    color: var(--error-700);
+  }
+
+  /* Tones */
+  .sg-tones {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  @media (min-width: 768px) {
+    .sg-tones {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .sg-tones {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+  }
+
+  .sg-tone,
+  .sg-mood,
+  .sg-tone-demo {
+    display: grid;
+    gap: var(--space-3);
+    align-content: start;
+    padding: var(--space-6);
+    border-radius: var(--radius-lg);
+    background: var(--bg);
+    color: var(--text);
+    box-shadow: inset 0 0 0 1px rgb(20 17 16 / 0.1);
+  }
+
+  .sg-tone-head {
+    font-family: var(--font-display);
+    font-size: var(--text-2xl);
+    font-weight: var(--weight-black);
+    letter-spacing: var(--tracking-heading);
+    line-height: 1;
+  }
+
+  .sg-moods {
+    display: grid;
+    gap: var(--space-4);
+    margin-top: var(--space-6);
+  }
+
+  @media (min-width: 768px) {
+    .sg-moods {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  /* Type */
+  .sg-type {
+    display: grid;
+    gap: var(--space-6);
+  }
+
+  .sg-type li {
+    display: grid;
+    gap: var(--space-1);
+    padding-bottom: var(--space-6);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sg-type-lg {
+    font-size: var(--text-lg);
+  }
+
+  .sg-type-base {
+    font-size: var(--text-base);
+  }
+
+  .sg-type-sm {
+    font-size: var(--text-sm);
+  }
+
+  /* Spacing, radii, shadows */
+  .sg-space {
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .sg-space li {
+    display: grid;
+    grid-template-columns: 7rem 1fr;
+    align-items: center;
+  }
+
+  .sg-bar {
+    display: block;
+    height: 0.75rem;
+    border-radius: var(--radius-pill);
+    background: var(--red-600);
+  }
+
+  .sg-radii {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+  }
+
+  .sg-radii li {
+    display: grid;
+    gap: var(--space-2);
+    justify-items: center;
+  }
+
+  .sg-radius {
+    display: block;
+    width: 4.5rem;
+    height: 4.5rem;
+    background: var(--ink);
+  }
+
+  .sg-shadows {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-6);
+  }
+
+  .sg-shadows li {
+    display: grid;
+    place-items: center;
+    width: 8rem;
+    height: 5rem;
+    border-radius: var(--radius-md);
+    background: var(--white);
+  }
+
+  .sg-dl {
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .sg-dl div {
+    display: grid;
+    gap: 0 var(--space-4);
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--border);
+  }
+
+  @media (min-width: 640px) {
+    .sg-dl div {
+      grid-template-columns: 16rem 1fr;
+    }
+  }
+
+  .sg-dl dt {
+    font-weight: var(--weight-bold);
+  }
+
+  .sg-dl dd {
+    color: var(--text-muted);
+  }
+
+  /* Motion demos */
+  .sg-ease {
+    display: grid;
+    gap: var(--space-3);
+    margin-bottom: var(--space-2);
+  }
+
+  .sg-ease-row {
+    display: grid;
+    gap: var(--space-1);
+  }
+
+  .sg-ease-track {
+    position: relative;
+    display: block;
+    height: 1.5rem;
+    border-radius: var(--radius-pill);
+    background: var(--sand-100);
+  }
+
+  .sg-ease-dot {
+    position: absolute;
+    top: 0.25rem;
+    left: 0.25rem;
+    width: 1rem;
+    height: 1rem;
+    border-radius: 50%;
+    background: var(--red-600);
+    transition-property: transform;
+    transition-duration: var(--duration-slow);
+  }
+
+  .sg-ease.is-playing .sg-ease-dot {
+    transform: translateX(calc(min(30rem, 70vw) - 1.5rem));
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sg-ease.is-playing .sg-ease-dot {
+      transform: none;
+      background: var(--ink);
+    }
+  }
+
+  .sg-route-demo {
+    display: grid;
+    gap: var(--space-4);
+    padding: var(--space-6);
+    border-radius: var(--radius-lg);
+    background: var(--bg);
+  }
+
+  .sg-route-demo :global(svg) {
+    width: 100%;
+    height: auto;
+  }
+
+  .sg-motion-row {
+    margin-top: var(--space-16);
+  }
+
+  .sg-reveal-card {
+    padding: var(--space-6);
+    border-radius: var(--radius-lg);
+    background: var(--red-50);
+  }
+
+  .sg-stagger {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .sg-stagger li {
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-pill);
+    background: var(--ink);
+    color: var(--white);
+    font-weight: var(--weight-bold);
+  }
+
+  .sg-parallax {
+    aspect-ratio: 4 / 5;
+    max-width: 22rem;
+  }
+
+  /* Buttons */
+  .sg-states {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: var(--space-6) var(--space-8);
+  }
+
+  .sg-states > li {
+    display: grid;
+    gap: var(--space-2);
+    justify-items: start;
+  }
+
+  .sg-prose {
+    max-width: 44rem;
+  }
+
+  .sg-tone-demo {
+    margin-bottom: var(--space-12);
+  }
+
+  /* Cards */
+  .sg-cards {
+    display: grid;
+    gap: var(--space-4);
+    margin-bottom: var(--space-8);
+  }
+
+  @media (min-width: 1024px) {
+    .sg-cards {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .sg-card-states {
+    margin-bottom: var(--space-12);
+  }
+
+  .sg-card-states > li {
+    width: min(100%, 22rem);
+  }
+
+  .sg-pkgs {
+    display: grid;
+    gap: var(--space-10) var(--space-8);
+  }
+
+  @media (min-width: 768px) {
+    .sg-pkgs {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .sg-pkgs > li {
+    display: grid;
+    gap: var(--space-3);
+    align-content: start;
+  }
+
+  /* Navigation */
+  .sg-frame {
+    border-radius: var(--radius-lg);
+    box-shadow: inset 0 0 0 1px var(--sand-200);
+  }
+
+  .sg-frame-nav {
+    min-height: 15rem;
+    background: var(--paper);
+    border-radius: var(--radius-lg);
+  }
+
+  .sg-frame-nav :global(.site-header) {
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  }
+
+  /* Forms */
+  .sg-form {
+    display: grid;
+    gap: var(--space-10);
+  }
+
+  @media (min-width: 1024px) {
+    .sg-form {
+      grid-template-columns: 3fr 2fr;
+      gap: var(--space-16);
+    }
+  }
+
+  .sg-fields {
+    display: grid;
+    gap: var(--space-8);
+    align-content: start;
+  }
+
+  @media (min-width: 768px) {
+    .sg-form > .sg-fields:first-child {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  /* Toasts */
+  .sg-toasts {
+    display: grid;
+    gap: var(--space-2);
+    max-width: 26rem;
+  }
+
+  .sg-toasts :global(.toast) {
+    animation: none;
+  }
+
+  .sg-label-demo {
+    display: inline-flex;
+    padding: var(--space-4) var(--space-6);
+    border-radius: var(--radius-md);
+    background: var(--bg);
+  }
+</style>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const play = document.querySelector<HTMLButtonElement>('[data-ease-play]');
+    const demo = document.querySelector<HTMLElement>('[data-ease-demo]');
+    if (play && demo && !play.dataset['bound']) {
+      play.dataset['bound'] = 'true';
+      play.addEventListener('click', () => {
+        const on = demo.classList.toggle('is-playing');
+        play.setAttribute('aria-pressed', String(on));
+      });
+    }
+
+    const replay = document.querySelector<HTMLButtonElement>('[data-route-replay]');
+    if (replay && !replay.dataset['bound']) {
+      replay.dataset['bound'] = 'true';
+      replay.addEventListener('click', () => {
+        document.querySelectorAll<SVGElement>('.sg-route-demo .route-load').forEach((svg) => {
+          svg.classList.remove('route-load');
+          // Force a style recalculation so the animation restarts.
+          void svg.getBoundingClientRect();
+          svg.classList.add('route-load');
+        });
+      });
+    }
+  });
+</script>

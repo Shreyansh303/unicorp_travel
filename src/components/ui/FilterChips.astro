@@ -1,0 +1,147 @@
+---
+/**
+ * Filter chips: a labelled group of toggle buttons with aria-pressed. A pressed chip shows a
+ * tick as well as a fill, so the state never relies on colour alone. Each toggle dispatches a
+ * bubbling `chips:change` event with the group's pressed values.
+ */
+import Icon from './Icon.astro';
+
+interface Chip {
+  value: string;
+  label: string;
+  pressed?: boolean;
+  disabled?: boolean;
+  /** Styleguide only. */
+  state?: 'hover' | 'focus';
+}
+
+interface Props {
+  label: string;
+  name: string;
+  chips: Chip[];
+  /** Show the group label visibly (otherwise it only names the group). */
+  showLabel?: boolean;
+  class?: string;
+}
+
+const { label, name, chips, showLabel = true, class: className } = Astro.props;
+const labelId = `chips-${name}-label`;
+---
+
+<div class:list={['chips', className]}>
+  <p id={labelId} class:list={['chips-label', !showLabel && 'sr-only']}>
+    {label}
+  </p>
+  <div class="chips-list" role="group" aria-labelledby={labelId} data-chips={name}>
+    {chips.map((chip) => (
+      <button
+        type="button"
+        class:list={['chip', chip.state && `is-${chip.state}`]}
+        aria-pressed={chip.pressed ? 'true' : 'false'}
+        value={chip.value}
+        disabled={chip.disabled}
+        data-chip
+      >
+        <Icon name="check" size={16} class="chip-tick" />
+        {chip.label}
+      </button>
+    ))}
+  </div>
+</div>
+
+<style>
+  .chips {
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .chips-label {
+    font-weight: var(--weight-bold);
+  }
+
+  .chips-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    min-height: var(--tap);
+    padding: var(--space-2) var(--space-4);
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: var(--surface);
+    color: var(--text);
+    box-shadow: inset 0 0 0 1.5px var(--border-strong);
+    font: inherit;
+    font-size: var(--text-sm);
+    font-weight: var(--weight-bold);
+    cursor: pointer;
+    transition:
+      background-color var(--duration-fast) var(--ease-out),
+      box-shadow var(--duration-fast) var(--ease-out),
+      transform var(--duration-fast) var(--ease-bounce);
+  }
+
+  .chip :global(.chip-tick) {
+    display: none;
+  }
+
+  .chip:where(:hover, .is-hover):not(:disabled) {
+    box-shadow: inset 0 0 0 2px var(--text);
+  }
+
+  .chip:active:not(:disabled) {
+    transform: scale(var(--press-scale));
+  }
+
+  .chip.is-focus {
+    outline: 3px solid var(--focus);
+    outline-offset: 3px;
+  }
+
+  .chip[aria-pressed='true'] {
+    background: var(--text);
+    color: var(--bg);
+    box-shadow: none;
+  }
+
+  .chip[aria-pressed='true'] :global(.chip-tick) {
+    display: block;
+  }
+
+  .chip:disabled {
+    background: var(--sand-100);
+    color: var(--stone-600);
+    box-shadow: inset 0 0 0 1.5px var(--sand-200);
+    cursor: not-allowed;
+  }
+</style>
+
+<script>
+  function bind(group: HTMLElement): void {
+    if (group.dataset['bound']) return;
+    group.dataset['bound'] = 'true';
+    group.addEventListener('click', (event) => {
+      const chip = (event.target as Element | null)?.closest<HTMLButtonElement>('[data-chip]');
+      if (!chip || chip.disabled) return;
+      chip.setAttribute('aria-pressed', String(chip.getAttribute('aria-pressed') !== 'true'));
+      const values = Array.from(
+        group.querySelectorAll<HTMLButtonElement>('[data-chip][aria-pressed="true"]'),
+      ).map((item) => item.value);
+      group.dispatchEvent(
+        new CustomEvent('chips:change', {
+          bubbles: true,
+          detail: { name: group.dataset['chips'], values },
+        }),
+      );
+    });
+  }
+
+  document.addEventListener('astro:page-load', () => {
+    document.querySelectorAll<HTMLElement>('[data-chips]').forEach(bind);
+  });
+</script>

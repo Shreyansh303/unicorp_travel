@@ -1,0 +1,85 @@
+---
+/**
+ * Text link. `inline` sits inside running text (always underlined, so it never relies on
+ * colour alone). `standalone` is a bold call-to-action link with an arrow.
+ * `state` forces a visual state for the styleguide only.
+ */
+import type { HTMLAttributes } from 'astro/types';
+import Icon from './Icon.astro';
+
+interface Props extends HTMLAttributes<'a'> {
+  href: string;
+  variant?: 'inline' | 'standalone';
+  external?: boolean;
+  state?: 'hover' | 'focus' | 'active';
+}
+
+const {
+  href,
+  variant = 'inline',
+  external = false,
+  state,
+  class: className,
+  ...rest
+} = Astro.props;
+---
+
+<a
+  class:list={['link', `link-${variant}`, state && `is-${state}`, className]}
+  href={href}
+  target={external ? '_blank' : undefined}
+  rel={external ? 'noopener noreferrer' : undefined}
+  {...rest}
+>
+  <slot />
+  {external && <span class="sr-only"> (opens in a new tab)</span>}
+  {variant === 'standalone' && <Icon name="arrow-right" size={18} class="link-arrow" />}
+</a>
+
+<style>
+  .link {
+    color: var(--accent-text);
+    font-weight: var(--weight-medium);
+    text-decoration: underline;
+    text-decoration-thickness: 1.5px;
+    text-underline-offset: 0.2em;
+    transition:
+      color var(--duration-fast) var(--ease-out),
+      text-decoration-color var(--duration-fast) var(--ease-out);
+  }
+
+  .link:where(:hover, .is-hover) {
+    color: var(--text);
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: 3px;
+  }
+
+  .link:where(:active, .is-active) {
+    color: var(--text);
+  }
+
+  .link.is-focus {
+    outline: 3px solid var(--focus);
+    outline-offset: 3px;
+  }
+
+  .link-standalone {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: var(--tap);
+    color: var(--text);
+    font-weight: var(--weight-black);
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: 3px;
+  }
+
+  .link-standalone :global(.link-arrow) {
+    color: var(--accent-text);
+    transition: transform var(--duration-base) var(--ease-out);
+  }
+
+  .link-standalone:where(:hover, .is-hover) :global(.link-arrow) {
+    transform: translateX(calc(var(--lift) * -1.5));
+  }
+</style>

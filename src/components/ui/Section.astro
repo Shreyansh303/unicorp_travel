@@ -1,0 +1,81 @@
+---
+/**
+ * Page section. `tone` sets the background and every colour role inside it (see tokens.css).
+ * `mood` picks the voice: corporate keeps headings black and white with square edges;
+ * holiday uses red headline accents and a rounded top edge.
+ */
+import type { HTMLAttributes } from 'astro/types';
+
+export type Tone = 'white' | 'paper' | 'sand' | 'ink' | 'red';
+export type Mood = 'corporate' | 'holiday';
+
+interface Props extends HTMLAttributes<'section'> {
+  tone?: Tone;
+  mood?: Mood;
+  /** Rounded top corners (holiday default). */
+  rounded?: boolean;
+  /** Vertical padding: `default` uses the fluid section space, `tight` halves it. */
+  spacing?: 'default' | 'tight' | 'none';
+  /** Wrap the content in the page container. */
+  contained?: boolean;
+  as?: 'section' | 'div' | 'aside' | 'footer' | 'header';
+}
+
+const {
+  tone,
+  mood = 'holiday',
+  rounded,
+  spacing = 'default',
+  contained = true,
+  as: Tag = 'section',
+  class: className,
+  ...rest
+} = Astro.props;
+
+const resolvedTone = tone ?? (mood === 'corporate' ? 'white' : 'paper');
+const isRounded = rounded ?? false;
+---
+
+<Tag
+  class:list={[
+    'section',
+    `tone-${resolvedTone}`,
+    `mood-${mood}`,
+    `section-${spacing}`,
+    isRounded && 'section-rounded',
+    className,
+  ]}
+  {...rest}
+>
+  {contained ? (
+    <div class="wrap">
+      <slot />
+    </div>
+  ) : (
+    <slot />
+  )}
+</Tag>
+
+<style>
+  .section {
+    position: relative;
+    background: var(--bg);
+    color: var(--text);
+  }
+
+  .section-default {
+    padding-block: var(--space-section);
+  }
+
+  .section-tight {
+    padding-block: calc(var(--space-section) / 2);
+  }
+
+  .section-rounded {
+    border-radius: var(--section-radius, var(--radius-xl) var(--radius-xl) 0 0);
+  }
+
+  .mood-corporate.section-rounded {
+    border-radius: 0;
+  }
+</style>

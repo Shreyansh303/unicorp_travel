@@ -1,0 +1,31 @@
+---
+/**
+ * Reveal on scroll: the content rises and fades in as it enters the viewport.
+ * Content is visible by default. The script arms only elements that start below the fold, so
+ * nothing on the first screen (and never the LCP element) is hidden, and without JavaScript
+ * nothing is hidden at all. Under reduced motion nothing is armed, so nothing moves or hides.
+ */
+interface Props {
+  as?: 'div' | 'section' | 'li' | 'article' | 'header';
+  /** Extra delay in ms. */
+  delay?: number;
+  class?: string;
+}
+
+const { as: Tag = 'div', delay = 0, class: className, ...rest } = Astro.props;
+---
+
+<Tag
+  class:list={['reveal', className]}
+  data-reveal
+  style={delay ? `--reveal-delay: ${delay}ms` : undefined}
+  {...rest}
+>
+  <slot />
+</Tag>
+
+<script>
+  import { initReveal } from './reveal';
+
+  document.addEventListener('astro:page-load', initReveal);
+</script>

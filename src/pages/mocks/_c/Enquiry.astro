@@ -1,4 +1,7 @@
 ---
+/** Closing enquiry band for the direction C mocks, on the red tone. Facts come from site.ts. */
+import Section from '../../../components/ui/Section.astro';
+import Button from '../../../components/ui/Button.astro';
 import { callHref, email, mailHref, mobile, office, whatsappFor } from '../_shared/data';
 
 interface Props {
@@ -8,24 +11,24 @@ interface Props {
 const { topic } = Astro.props;
 ---
 
-<section class="enquiry" aria-labelledby="enquiry-title">
-  <div class="wrap enquiry-grid">
-    <div>
-      <h2 id="enquiry-title" class="h2">
-        Where to <em>next?</em>
+<Section tone="red" mood="holiday" aria-labelledby="enquiry-title" class="enquiry">
+  <div class="enquiry-grid">
+    <div class="enquiry-copy">
+      <h2 id="enquiry-title" class="t-h2">
+        Where to <span class="t-accent">next?</span>
       </h2>
-      <p style="margin-top: 1rem; max-width: 30rem">
+      <p class="enquiry-lede">
         Tell us who is travelling, roughly when, and what you love doing. We will send back a
         day-by-day plan to talk through.
       </p>
-      <div class="actions" style="margin-top: 2rem">
-        <a class="btn" href={whatsappFor(topic)}>
+      <div class="enquiry-actions">
+        <Button href={whatsappFor(topic)} iconStart="whatsapp" size="lg" external>
           Chat on WhatsApp
-        </a>
+        </Button>
         {callHref && mobile && (
-          <a class="btn btn-line" href={callHref}>
+          <Button href={callHref} variant="secondary" iconStart="phone" size="lg">
             Call {mobile.display}
-          </a>
+          </Button>
         )}
       </div>
     </div>
@@ -44,10 +47,7 @@ const { topic } = Astro.props;
           <dd>
             <address>
               {office.lines.map((line) => (
-                <>
-                  {line}
-                  <br />
-                </>
+                <span>{line}</span>
               ))}
             </address>
           </dd>
@@ -55,4 +55,65 @@ const { topic } = Astro.props;
       )}
     </dl>
   </div>
-</section>
+</Section>
+
+<style>
+  .enquiry-grid {
+    display: grid;
+    gap: var(--space-10);
+  }
+
+  @media (min-width: 1024px) {
+    .enquiry-grid {
+      grid-template-columns: 1.4fr 1fr;
+      align-items: end;
+    }
+  }
+
+  .enquiry-copy {
+    display: grid;
+    gap: var(--space-6);
+    justify-items: start;
+  }
+
+  .enquiry-lede {
+    max-width: 30rem;
+    font-size: var(--text-lg);
+  }
+
+  .enquiry-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+
+  .enquiry-card {
+    display: grid;
+    gap: var(--space-5);
+    padding: var(--space-6);
+    border-radius: var(--radius-lg);
+    background: var(--red-700);
+  }
+
+  .enquiry-card dt {
+    font-size: var(--text-xs);
+    font-weight: var(--weight-black);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+  }
+
+  /* At least 24px tall (WCAG 2.5.8). */
+  .enquiry-card a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 1.5rem;
+    color: var(--white);
+    font-weight: var(--weight-bold);
+    text-underline-offset: 0.2em;
+    overflow-wrap: anywhere;
+  }
+
+  .enquiry-card address span {
+    display: block;
+  }
+</style>

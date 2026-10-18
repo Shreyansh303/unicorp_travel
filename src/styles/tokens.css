@@ -1,0 +1,231 @@
+/*
+ * Design tokens for the Unicorp Travel site (direction C "Monsoon", in Unicorp red, black and white).
+ * Every colour, size, radius, shadow, layer and motion value used by components lives here.
+ * Tailwind reads these through `@theme inline` in global.css.
+ *
+ * Contrast rules (WCAG 2.2 AA; ratios are listed on /styleguide):
+ * - --red-600 (#ED0000) is the brand red. White on it is 4.56:1, fine for any text size.
+ *   As text it is for white backgrounds at any size, or large text (24px+, or 18.66px+ bold)
+ *   on paper and on ink. Small red text on paper or tints uses --red-700.
+ * - --red-400 is the red for text on ink.
+ * - --stone-400 is the lightest grey allowed for UI borders (3:1+ on white, paper and ink).
+ */
+
+:root {
+  /* ---------- Colour: brand red ---------- */
+  --red-50: #fff3f1;
+  --red-100: #ffe1dc;
+  --red-400: #ff5a4f;
+  --red-600: #ed0000;
+  --red-700: #b80000;
+  --red-800: #8c0000;
+
+  /* ---------- Colour: neutrals (warm) ---------- */
+  --white: #ffffff;
+  --paper: #faf7f2;
+  --sand-100: #f3eee7;
+  --sand-200: #e6dfd5;
+  --stone-300: #cfc7bd;
+  --stone-400: #8a8077;
+  --stone-600: #5c534b;
+  --stone-800: #2e2824;
+  --ink: #141110;
+
+  /* ---------- Colour: semantic (subdued; always paired with an icon and text) ---------- */
+  --success-700: #1d6b3b;
+  --success-50: #e7f4eb;
+  --warning-700: #7a4d00;
+  --warning-50: #fff3d4;
+  --error-700: #a3123f;
+  --error-50: #fdedf1;
+  --info-700: #1c4f8a;
+  --info-50: #e8f0fa;
+
+  /* ---------- Colour roles (light tone by default; Section tones redefine them) ---------- */
+  --bg: var(--paper);
+  --surface: var(--white);
+  --surface-sunken: var(--sand-100);
+  --text: var(--ink);
+  --text-muted: var(--stone-600);
+  --accent: var(--red-600); /* fills: primary buttons, route line, markers */
+  --accent-hover: var(--red-700);
+  --on-accent: var(--white);
+  --accent-text: var(--red-700); /* red text at body size */
+  --accent-display: var(--red-600); /* red words in large headings */
+  --border: var(--sand-200); /* decorative dividers */
+  --border-strong: var(--stone-400); /* field and control outlines (3:1) */
+  --focus: var(--ink);
+  --route: var(--red-600);
+  --route-halo: var(--bg);
+
+  /* ---------- Typography ---------- */
+  --font-display: 'Bricolage Grotesque', 'Segoe UI', system-ui, sans-serif;
+  --font-text: 'Figtree', 'Segoe UI', system-ui, sans-serif;
+
+  --text-xs: 0.8125rem;
+  --text-sm: 0.9375rem;
+  --text-base: clamp(1rem, 0.96rem + 0.2vw, 1.0625rem);
+  --text-lg: clamp(1.125rem, 1.06rem + 0.3vw, 1.25rem);
+  --text-xl: clamp(1.375rem, 1.2rem + 0.75vw, 1.75rem);
+  --text-2xl: clamp(1.75rem, 1.35rem + 1.6vw, 2.5rem);
+  --text-3xl: clamp(2.25rem, 1.4rem + 3.6vw, 4.5rem);
+  --text-display: clamp(3.25rem, 1.6rem + 7vw, 7.5rem);
+
+  --leading-tight: 0.95;
+  --leading-snug: 1.15;
+  --leading-body: 1.6;
+  --tracking-display: -0.045em;
+  --tracking-heading: -0.03em;
+  --tracking-label: 0.05em;
+
+  --weight-regular: 400;
+  --weight-medium: 600;
+  --weight-bold: 700;
+  --weight-black: 800;
+
+  /* ---------- Spacing (4px base) ---------- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-24: 6rem;
+  --space-section: clamp(4rem, 2.8rem + 5vw, 7rem);
+  --gutter: 1rem;
+  --container: 80rem;
+  --measure: 36rem;
+  --tap: 2.75rem; /* minimum target size (44px) */
+
+  /* ---------- Radii ---------- */
+  --radius-sm: 0.5rem;
+  --radius-md: 1rem;
+  --radius-lg: 1.5rem;
+  --radius-xl: 2.5rem;
+  --radius-pill: 999px;
+  --radius-arch: 999px 999px var(--radius-lg) var(--radius-lg);
+
+  /* ---------- Shadows (warm ink) ---------- */
+  --shadow-sm: 0 1px 2px rgb(20 17 16 / 0.08), 0 1px 1px rgb(20 17 16 / 0.04);
+  --shadow-md: 0 6px 16px -4px rgb(20 17 16 / 0.14), 0 2px 4px rgb(20 17 16 / 0.06);
+  --shadow-lg: 0 24px 48px -12px rgb(20 17 16 / 0.28);
+
+  /* ---------- Layers ---------- */
+  --z-base: 0;
+  --z-raised: 10;
+  --z-header: 100;
+  --z-floating: 200;
+  --z-overlay: 300;
+  --z-toast: 400;
+
+  /* ---------- Motion ---------- */
+  --duration-instant: 100ms;
+  --duration-fast: 160ms;
+  --duration-base: 240ms;
+  --duration-slow: 480ms;
+  --duration-reveal: 700ms;
+  --duration-route: 2800ms;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-route: cubic-bezier(0.45, 0, 0.2, 1);
+  --stagger: 80ms;
+  --reveal-distance: 1.5rem;
+  --lift: -3px; /* hover lift on buttons and cards */
+  --tilt: -1deg; /* playful tilt on primary buttons */
+  --parallax-shift: 8%;
+  --press-scale: 0.97; /* buttons and chips while pressed */
+  --hover-scale: 1.04; /* round floating buttons, package photos */
+  --turn: 180deg; /* chevrons on open submenus and accordions */
+}
+
+@media (min-width: 768px) {
+  :root {
+    --gutter: 2.5rem;
+  }
+}
+
+/* Reduced motion: no movement anywhere. Fades stay short; route lines are drawn at once. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-slow: 200ms;
+    --duration-reveal: 200ms;
+    --duration-route: 0ms;
+    --ease-bounce: ease;
+    --stagger: 0ms;
+    --reveal-distance: 0px;
+    --lift: 0px;
+    --tilt: 0deg;
+    --parallax-shift: 0%;
+    --press-scale: 1;
+    --hover-scale: 1;
+    --turn: 0deg; /* open state is shown by colour instead */
+  }
+}
+
+/* ---------- Tones: Section and other surfaces switch colour roles with one class ---------- */
+.tone-white {
+  --bg: var(--white);
+  --route-halo: var(--white);
+}
+
+.tone-paper {
+  --bg: var(--paper);
+  --route-halo: var(--paper);
+}
+
+.tone-sand {
+  --bg: var(--sand-100);
+  --surface: var(--white);
+  --route-halo: var(--sand-100);
+}
+
+.tone-ink {
+  --bg: var(--ink);
+  --surface: var(--stone-800);
+  --surface-sunken: var(--stone-800);
+  --text: var(--white);
+  --text-muted: var(--stone-300);
+  --accent: var(--red-600);
+  --accent-hover: var(--red-700);
+  --on-accent: var(--white);
+  --accent-text: var(--red-400);
+  --accent-display: var(--red-400);
+  --border: rgb(255 255 255 / 0.18);
+  --border-strong: var(--stone-400);
+  --focus: var(--white);
+  --route: var(--red-600);
+  --route-halo: var(--ink);
+}
+
+.tone-red {
+  --bg: var(--red-600);
+  --surface: var(--white);
+  --surface-sunken: var(--red-700);
+  --text: var(--white);
+  --text-muted: var(--white);
+  --accent: var(--white);
+  --accent-hover: var(--red-50);
+  --on-accent: var(--ink);
+  --accent-text: var(--white);
+  --accent-display: var(--ink);
+  --border: rgb(255 255 255 / 0.45);
+  --border-strong: var(--white);
+  --focus: var(--white);
+  --route: var(--white);
+  --route-halo: var(--red-600);
+}
+
+/* Moods: corporate is black and white with red used sparingly; holiday leans on red and photos. */
+.mood-corporate {
+  --accent-display: var(--text);
+  --section-radius: 0;
+}
+
+.mood-holiday {
+  --section-radius: var(--radius-xl) var(--radius-xl) 0 0;
+}

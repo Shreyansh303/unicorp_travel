@@ -1,0 +1,206 @@
+---
+/**
+ * Floating WhatsApp and call buttons (F-02). Below 1360px they form a bar fixed to the bottom of
+ * the screen, and the page reserves the bar's height at its end, so the bar never covers content
+ * (at 375px or anywhere else). From 1360px the page has a side margin wide enough to hold two
+ * round buttons in the bottom-right corner, clear of the 80rem content column.
+ * Numbers and links come from site.ts helpers; nothing renders without a number.
+ */
+import Icon from './Icon.astro';
+import { shown, site, telHref, whatsappHref } from '../../config/site';
+
+interface Props {
+  /** Page-specific WhatsApp message. */
+  message?: string;
+  /** Styleguide only: render in place instead of fixed to the screen. */
+  inline?: boolean;
+}
+
+const {
+  message = `Hello ${site.displayName}, I would like help planning a trip.`,
+  inline = false,
+} = Astro.props;
+const mobile = shown(site.phones.mobile);
+---
+
+{mobile && (
+  <div class:list={['floating', inline ? 'floating-inline' : 'floating-fixed']}>
+    <a
+      class="floating-btn floating-wa"
+      href={whatsappHref(message)}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <Icon name="whatsapp" size={22} />
+      <span class="floating-text">WhatsApp</span>
+      <span class="sr-only"> (opens in a new tab)</span>
+    </a>
+    <a class="floating-btn floating-call" href={telHref(mobile)}>
+      <Icon name="phone" size={22} />
+      <span class="floating-text">
+        Call<span class="floating-number"> {mobile.display}</span>
+      </span>
+    </a>
+  </div>
+)}
+
+<style>
+  .floating {
+    --floating-bar-height: 4.5rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--gutter);
+    background: var(--white);
+    box-shadow:
+      0 -1px 0 var(--sand-200),
+      0 -8px 24px -12px rgb(20 17 16 / 0.25);
+  }
+
+  .floating-fixed {
+    position: fixed;
+    inset: auto 0 0;
+    z-index: var(--z-floating);
+    padding-bottom: calc(var(--space-3) + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* Reserve the bar's height at the end of the page so nothing sits under it. */
+  :global(body:has(.floating-fixed)) {
+    --floating-bar-height: 4.5rem;
+    padding-bottom: calc(var(--floating-bar-height) + env(safe-area-inset-bottom, 0px));
+  }
+
+  /*
+   * Keep keyboard focus clear of the bar (WCAG 2.4.11): when focus moves to an element, the
+   * browser scrolls it into the area above the bar, not under it.
+   */
+  :global(html:has(.floating-fixed)) {
+    scroll-padding-bottom: calc(4.5rem + env(safe-area-inset-bottom, 0px) + 1rem);
+  }
+
+  .floating-inline {
+    border-radius: var(--radius-lg);
+  }
+
+  .floating-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    min-height: 3rem;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-pill);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-black);
+    text-decoration: none;
+    white-space: nowrap;
+    transition:
+      transform var(--duration-base) var(--ease-bounce),
+      background-color var(--duration-fast) var(--ease-out);
+  }
+
+  .floating-wa {
+    background: var(--red-600);
+    color: var(--white);
+  }
+
+  .floating-wa:hover {
+    background: var(--red-700);
+  }
+
+  .floating-call {
+    background: var(--ink);
+    color: var(--white);
+  }
+
+  .floating-call:hover {
+    background: var(--stone-800);
+  }
+
+  .floating-btn:focus-visible {
+    outline: 3px solid var(--ink);
+    outline-offset: 3px;
+    box-shadow: 0 0 0 6px var(--white);
+  }
+
+  /* On the narrowest phones the number is read out but not shown, so both buttons fit. */
+  @media (max-width: 419px) {
+    .floating-number {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .floating {
+      grid-template-columns: repeat(2, minmax(0, 15rem));
+      justify-content: center;
+    }
+  }
+
+  @media (min-width: 1360px) {
+    :global(html:has(.floating-fixed)) {
+      scroll-padding-bottom: 0;
+    }
+
+    :global(body:has(.floating-fixed)) {
+      padding-bottom: 0;
+      --floating-bar-height: 0px;
+    }
+
+    .floating-fixed {
+      inset: auto var(--space-6) var(--space-6) auto;
+      grid-template-columns: auto;
+      padding: 0;
+      background: transparent;
+      box-shadow: none;
+    }
+
+    .floating-fixed .floating-btn {
+      width: 3.5rem;
+      height: 3.5rem;
+      padding: 0;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .floating-fixed .floating-btn:hover {
+      transform: translateY(var(--lift)) scale(var(--hover-scale));
+    }
+
+    .floating-fixed .floating-text {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+  }
+</style>
+
+<script>
+  /*
+   * Backup for scroll-padding: text fields scroll only their caret into view, so a tall field
+   * can end up partly under the bar. After focus moves, lift the element clear of the bar.
+   */
+  document.addEventListener('focusin', (event) => {
+    const bar = document.querySelector<HTMLElement>('.floating-fixed');
+    const target = event.target as HTMLElement | null;
+    if (!bar || !target || bar.contains(target) || getComputedStyle(bar).position !== 'fixed') {
+      return;
+    }
+    // An open dialog sits above the bar and locks the page; don't scroll the page behind it.
+    if (target.closest('dialog[open], [aria-modal="true"]')) return;
+    const barTop = bar.getBoundingClientRect().top;
+    if (barTop >= window.innerHeight - 1 || bar.getBoundingClientRect().left > 0) return;
+    const rect = target.getBoundingClientRect();
+    const overlap = rect.bottom - barTop;
+    if (overlap > 0 && rect.height < barTop) {
+      window.scrollBy({ top: overlap + 16, behavior: 'instant' });
+    }
+  });
+</script>

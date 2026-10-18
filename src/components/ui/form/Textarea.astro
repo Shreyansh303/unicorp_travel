@@ -1,0 +1,61 @@
+---
+/** Multi-line text field with label, hint and error. */
+import type { HTMLAttributes } from 'astro/types';
+import FieldMessage from './FieldMessage.astro';
+import { fieldAria } from './field';
+import './field.css';
+
+interface Props extends Omit<HTMLAttributes<'textarea'>, 'id' | 'name'> {
+  id: string;
+  name: string;
+  label: string;
+  hint?: string;
+  error?: string;
+  optional?: boolean;
+  value?: string;
+  state?: 'hover' | 'focus';
+}
+
+const {
+  id,
+  name,
+  label,
+  hint,
+  error,
+  optional = false,
+  value,
+  state,
+  rows = 4,
+  class: className,
+  ...rest
+} = Astro.props;
+const aria = fieldAria(id, hint, error);
+---
+
+<div class:list={['field', className]}>
+  <label class="field-label" for={id}>
+    {label}
+    {optional && <span class="field-optional"> (optional)</span>}
+  </label>
+  <FieldMessage id={aria.hintId} kind="hint" text={hint} />
+  <textarea
+    class:list={['field-control', 'field-textarea', state && `is-${state}`]}
+    id={id}
+    name={name}
+    rows={rows}
+    required={!optional}
+    aria-describedby={aria.describedBy}
+    aria-invalid={aria.invalid}
+    set:text={value ?? ''}
+    {...rest}
+  />
+  <FieldMessage id={aria.errorId} kind="error" text={error} />
+</div>
+
+<style>
+  .field-textarea {
+    min-height: 8rem;
+    resize: vertical;
+    line-height: var(--leading-body);
+  }
+</style>

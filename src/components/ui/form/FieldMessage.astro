@@ -1,0 +1,45 @@
+---
+/** Hint or error line under a field. Errors carry an icon and the word "Error" for screen readers. */
+import Icon from '../Icon.astro';
+
+interface Props {
+  id: string | undefined;
+  kind: 'hint' | 'error';
+  text: string | undefined;
+}
+
+const { id, kind, text } = Astro.props;
+---
+
+{id && text && (
+  <p id={id} class:list={['field-msg', `field-${kind}`]}>
+    {kind === 'error' && <Icon name="alert-circle" size={18} />}
+    <span>
+      {kind === 'error' && <span class="sr-only">Error: </span>}
+      {text}
+    </span>
+  </p>
+)}
+
+<style>
+  .field-msg {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+    line-height: 1.45;
+  }
+
+  .field-hint {
+    color: var(--text-muted);
+  }
+
+  .field-error {
+    color: var(--error-700);
+    font-weight: var(--weight-bold);
+  }
+
+  .field-error :global(.icon) {
+    margin-top: 0.05em;
+  }
+</style>

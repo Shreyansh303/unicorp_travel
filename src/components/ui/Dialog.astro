@@ -1,0 +1,253 @@
+---
+/**
+ * Modal dialog or side drawer on the native <dialog> element.
+ * - Open it with any button carrying `data-dialog-open="<id>"`; close with `data-dialog-close`,
+ *   Escape or a click on the backdrop.
+ * - showModal() makes the rest of the page inert. Tab and Shift+Tab are kept inside the panel,
+ *   and focus returns to the button that opened it.
+ */
+import Icon from './Icon.astro';
+
+interface Props {
+  id: string;
+  title: string;
+  variant?: 'dialog' | 'drawer';
+  /** Visually hide the title (it still names the dialog). */
+  hideTitle?: boolean;
+  class?: string;
+}
+
+const { id, title, variant = 'dialog', hideTitle = false, class: className } = Astro.props;
+const titleId = `${id}-title`;
+---
+
+<dialog
+  id={id}
+  class:list={['dlg', `dlg-${variant}`, 'tone-white', className]}
+  aria-labelledby={titleId}
+  data-dialog
+>
+  <div class="dlg-panel">
+    <div class="dlg-head">
+      <h2 id={titleId} class:list={['dlg-title', hideTitle && 'sr-only']}>
+        {title}
+      </h2>
+      <button type="button" class="dlg-close" data-dialog-close aria-label={`Close: ${title}`}>
+        <Icon name="close" size={22} />
+      </button>
+    </div>
+    <div class="dlg-body">
+      <slot />
+    </div>
+    {Astro.slots.has('footer') && (
+      <div class="dlg-foot">
+        <slot name="footer" />
+      </div>
+    )}
+  </div>
+</dialog>
+
+<style>
+  .dlg {
+    max-width: none;
+    max-height: none;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--text);
+  }
+
+  .dlg::backdrop {
+    background: rgb(20 17 16 / 0.6);
+  }
+
+  .dlg-panel {
+    display: grid;
+    gap: var(--space-4);
+    background: var(--bg);
+    box-shadow: var(--shadow-lg);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .dlg-dialog[open] {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+    padding: var(--gutter);
+  }
+
+  .dlg-dialog .dlg-panel {
+    width: min(100%, 34rem);
+    max-height: calc(100dvh - 2 * var(--gutter));
+    padding: var(--space-6);
+    border-radius: var(--radius-lg);
+  }
+
+  .dlg-drawer[open] {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    height: 100%;
+  }
+
+  .dlg-drawer .dlg-panel {
+    align-content: start;
+    width: min(100%, 24rem);
+    height: 100%;
+    padding: var(--space-6);
+  }
+
+  .dlg-head {
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
+    gap: var(--space-4);
+  }
+
+  .dlg-title {
+    font-size: var(--text-xl);
+    line-height: 1.1;
+  }
+
+  .dlg-close {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: var(--tap);
+    height: var(--tap);
+    margin: calc(var(--space-2) * -1) calc(var(--space-2) * -1) 0 auto;
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: var(--surface-sunken);
+    color: var(--text);
+    cursor: pointer;
+    transition: background-color var(--duration-fast) var(--ease-out);
+  }
+
+  .dlg-close:hover {
+    background: var(--sand-200);
+  }
+
+  .dlg-foot {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    padding-top: var(--space-2);
+  }
+
+  /* Entry motion: fade plus a short move; under reduced motion the move token is 0. */
+  .dlg[open] .dlg-panel {
+    transition:
+      opacity var(--duration-base) var(--ease-out),
+      transform var(--duration-slow) var(--ease-out);
+  }
+
+  @starting-style {
+    .dlg-dialog[open] .dlg-panel {
+      opacity: 0;
+      transform: translateY(var(--reveal-distance)) scale(0.98);
+    }
+
+    .dlg-drawer[open] .dlg-panel {
+      opacity: 0;
+      transform: translateX(calc(var(--reveal-distance) * 2));
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    @starting-style {
+      .dlg-dialog[open] .dlg-panel,
+      .dlg-drawer[open] .dlg-panel {
+        transform: none;
+      }
+    }
+  }
+
+  :global(html:has(dialog[open])) {
+    overflow: hidden;
+  }
+</style>
+
+<script>
+  const FOCUSABLE =
+    'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+  const openers = new WeakMap<HTMLDialogElement, HTMLElement>();
+
+  function focusables(dialog: HTMLDialogElement): HTMLElement[] {
+    return Array.from(dialog.querySelectorAll<HTMLElement>(FOCUSABLE)).filter(
+      (el) => el.offsetParent !== null || el === document.activeElement,
+    );
+  }
+
+  function setExpanded(dialog: HTMLDialogElement, value: boolean): void {
+    document
+      .querySelectorAll<HTMLElement>(`[data-dialog-open="${dialog.id}"]`)
+      .forEach((trigger) => trigger.setAttribute('aria-expanded', String(value)));
+  }
+
+  function open(dialog: HTMLDialogElement, opener: HTMLElement | null): void {
+    if (dialog.open) return;
+    if (opener) openers.set(dialog, opener);
+    dialog.showModal();
+    setExpanded(dialog, true);
+    const body = dialog.querySelector<HTMLElement>('.dlg-body');
+    const first = body ? focusables(dialog).find((el) => body.contains(el)) : undefined;
+    (first ?? focusables(dialog)[0])?.focus();
+  }
+
+  function bind(dialog: HTMLDialogElement): void {
+    if (dialog.dataset['bound']) return;
+    dialog.dataset['bound'] = 'true';
+
+    dialog.addEventListener('close', () => {
+      setExpanded(dialog, false);
+      const opener = openers.get(dialog);
+      if (opener?.isConnected) opener.focus();
+    });
+
+    // A click on the backdrop lands on the <dialog> itself, outside the panel.
+    dialog.addEventListener('click', (event) => {
+      if (event.target === dialog) dialog.close();
+    });
+
+    // Keep Tab and Shift+Tab inside the dialog.
+    dialog.addEventListener('keydown', (event) => {
+      if (event.key !== 'Tab') return;
+      const items = focusables(dialog);
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (!first || !last) return;
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    });
+  }
+
+  document.addEventListener('click', (event) => {
+    const target = event.target as Element | null;
+    const opener = target?.closest<HTMLElement>('[data-dialog-open]');
+    if (opener) {
+      const dialog = document.getElementById(opener.dataset['dialogOpen'] ?? '');
+      if (dialog instanceof HTMLDialogElement) {
+        bind(dialog);
+        open(dialog, opener);
+      }
+      return;
+    }
+    const closer = target?.closest<HTMLElement>('[data-dialog-close]');
+    closer?.closest('dialog')?.close();
+  });
+
+  function init(): void {
+    document.querySelectorAll<HTMLDialogElement>('dialog[data-dialog]').forEach(bind);
+  }
+
+  document.addEventListener('astro:page-load', init);
+</script>

@@ -2,354 +2,316 @@
 import { Picture } from 'astro:assets';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import MockBar from '../_shared/MockBar.astro';
-import Nav from '../_c/Nav.astro';
 import Enquiry from '../_c/Enquiry.astro';
+import Header from '../../../components/ui/Header.astro';
+import Footer from '../../../components/ui/Footer.astro';
+import Section from '../../../components/ui/Section.astro';
+import Button from '../../../components/ui/Button.astro';
+import Breadcrumbs from '../../../components/ui/Breadcrumbs.astro';
+import SampleLabel from '../../../components/ui/SampleLabel.astro';
+import FloatingContact from '../../../components/ui/FloatingContact.astro';
+import RouteLine from '../../../components/motion/RouteLine.astro';
+import Stagger from '../../../components/motion/Stagger.astro';
+import Parallax from '../../../components/motion/Parallax.astro';
 import { brand, featured, formatPrice, whatsappFor } from '../_shared/data';
-import '../_shared/route.css';
-import '../_c/c.css';
+import { mockFooterGroups, mockNav } from '../_shared/nav';
 
 const pkg = featured;
 const topic = `the ${pkg.name} holiday`;
-const tints = ['c-tint-marigold', 'c-tint-rani', 'c-tint-peacock', 'c-tint-sand'];
+const highlightTones = ['tone-red', 'tone-white', 'tone-ink', 'tone-white'];
+const message = `Hello ${brand}, I would like to know more about ${topic}.`;
 ---
 
 <BaseLayout
-  title={`Mock C, Monsoon: ${pkg.name}, ${brand}`}
-  description="Design direction C for the Unicorp Travel demo: a sample holiday package page."
+  title={`Mock C, Monsoon in red: ${pkg.name}, ${brand}`}
+  description={`Design direction C for the ${brand} demo, recoloured: a sample holiday package page.`}
 >
-  <div class="monsoon">
-    <MockBar letter="c" name="Monsoon" />
-    <Nav />
-    <main>
-      <section class="c-pk-hero" aria-labelledby="pk-title">
-        <div class="wrap c-pk-grid">
-          <div class="c-pk-copy">
-            <nav aria-label="Breadcrumb">
-              <ol class="c-crumbs">
-                <li>
-                  <a href="/mocks/c">Home</a>
-                </li>
-                <li aria-current="page">{pkg.region}</li>
-              </ol>
-            </nav>
-            <span class="sample">Sample content</span>
-            <h1 id="pk-title" class="display">
-              Kerala, <span class="c-hl">slowly.</span>
-            </h1>
-            <p class="c-pk-sub">{pkg.name}</p>
-            <p class="lede">{pkg.intro}</p>
-            <ul class="c-chips">
-              <li class="c-chip-marigold">
-                {pkg.days} days, {pkg.nights} nights
-              </li>
-              <li class="c-chip-peacock">{pkg.route}</li>
-              <li class="c-chip-rani">{pkg.theme} holiday</li>
-            </ul>
-            <div class="c-price">
-              <p>
-                from <strong>{formatPrice(pkg.fromPrice)}</strong> per person
-              </p>
-              <p class="c-price-valid">Valid to {pkg.validTo}</p>
-            </div>
-            <div class="actions">
-              <a class="btn" href={whatsappFor(topic)}>
-                Ask about this trip
-              </a>
-            </div>
-          </div>
-          <figure class="arch c-pk-arch">
-            <Picture
-              src={pkg.image}
-              alt={pkg.alt}
-              formats={['avif', 'webp']}
-              widths={[400, 640, 960, 1280]}
-              sizes="(min-width: 1024px) 40vw, 100vw"
-              loading="eager"
-              fetchpriority="high"
-            />
-          </figure>
-        </div>
-      </section>
-
-      <section class="section c-hl-section" aria-labelledby="highlights-title">
-        <div class="wrap">
-          <div class="section-head">
-            <h2 id="highlights-title" class="h2">
-              The good bits
-            </h2>
-            <p>
-              Four things this trip is built around. <span class="sample">Sample content</span>
-            </p>
-          </div>
-          <ul class="c-hl-grid">
-            {pkg.highlights.map((item, index) => (
-              <li class={tints[index % tints.length]}>
-                <h3 class="display">{item.title}</h3>
-                <p>{item.text}</p>
-              </li>
-            ))}
+  <MockBar name="C, Monsoon in red, black and white" />
+  <Header
+    items={mockNav}
+    homeHref="/mocks/c"
+    currentPath="/mocks/c/package"
+    whatsappMessage={message}
+  />
+  <main id="main">
+    <Section tone="paper" spacing="none" aria-labelledby="pk-title">
+      <div class="pk-grid">
+        <div class="pk-copy">
+          <Breadcrumbs
+            items={[
+              { label: 'Home', href: '/mocks/c' },
+              { label: 'Holidays', href: '/mocks/c#packages' },
+              { label: pkg.region },
+            ]}
+          />
+          <SampleLabel />
+          <h1 id="pk-title" class="t-display">
+            Kerala, <span class="t-accent">slowly.</span>
+          </h1>
+          <p class="pk-sub">{pkg.name}</p>
+          <p class="t-lede">{pkg.intro}</p>
+          <ul class="pk-chips">
+            <li class="pk-chip-red">
+              {pkg.days} days, {pkg.nights} nights
+            </li>
+            <li class="pk-chip-ink">{pkg.route}</li>
+            <li class="pk-chip-line">{pkg.theme} holiday</li>
           </ul>
-        </div>
-      </section>
-
-      <section class="section" aria-labelledby="itinerary-title">
-        <div class="wrap c-itin-grid">
-          <div class="c-itin-head">
-            <h2 id="itinerary-title" class="h2">
-              Day by day
-            </h2>
+          <div class="pk-price">
             <p>
-              Follow the line from Kochi and back. <span class="sample">Sample content</span>
+              from <strong>{formatPrice(pkg.fromPrice)}</strong> per person
             </p>
+            <p class="pk-valid">Valid to {pkg.validTo}</p>
+          </div>
+          <Button href={whatsappFor(topic)} size="lg" iconStart="whatsapp" external>
+            Ask about this trip
+          </Button>
+        </div>
+        <figure class="arch pk-arch">
+          <Picture
+            src={pkg.image}
+            alt={pkg.alt}
+            formats={['avif', 'webp']}
+            widths={[400, 640, 960, 1280]}
+            sizes="(min-width: 1024px) 40vw, 100vw"
+            loading="eager"
+            fetchpriority="high"
+          />
+        </figure>
+      </div>
+    </Section>
+
+    <Section tone="sand" rounded aria-labelledby="highlights-title">
+      <div class="section-head">
+        <h2 id="highlights-title" class="t-h2">
+          The good <span class="t-accent">bits</span>
+        </h2>
+        <p>
+          Four things this trip is built around. <SampleLabel />
+        </p>
+      </div>
+      <Stagger as="ul" class="hl-grid">
+        {pkg.highlights.map((item, index) => (
+          <li class:list={['hl-card', highlightTones[index % highlightTones.length]]}>
+            <h3 class="t-h4 hl-title">{item.title}</h3>
+            <p>{item.text}</p>
+          </li>
+        ))}
+      </Stagger>
+    </Section>
+
+    <Section tone="paper" aria-labelledby="itinerary-title">
+      <div class="itin-grid">
+        <div class="itin-head">
+          <h2 id="itinerary-title" class="t-h2">
+            Day by day
+          </h2>
+          <p class="t-muted">
+            Follow the line from Kochi and back. <SampleLabel />
+          </p>
+          <Parallax class="itin-photo">
             <Picture
               src={pkg.secondImage}
               alt={pkg.secondAlt}
               formats={['avif', 'webp']}
               widths={[400, 640, 960]}
               sizes="(min-width: 1024px) 30vw, 100vw"
-              class="c-itin-photo"
             />
-          </div>
-          <div class="c-itin route-scroll">
-            <svg
-              class="c-itin-line"
-              viewBox="0 0 40 1000"
-              preserveAspectRatio="none"
-              fill="none"
-              aria-hidden="true"
-            >
-              <path
-                class="route-draw route-ink"
-                pathLength="1"
-                stroke-width="4"
-                stroke-linecap="round"
-                d="M20 0 C36 60 4 110 20 166 S36 276 20 333 S4 443 20 500 S36 610 20 666 S4 776 20 833 S36 943 20 1000"
-              ></path>
-            </svg>
-            <ol>
-              {pkg.itinerary.map((stop) => (
-                <li class="c-day">
-                  <span class="c-day-num" aria-hidden="true">
-                    {stop.day}
-                  </span>
-                  <p class="c-day-place">
-                    Day {stop.day} · {stop.place}
-                  </p>
-                  <h3 class="display">{stop.title}</h3>
-                  <p>{stop.text}</p>
-                </li>
-              ))}
-            </ol>
-          </div>
+          </Parallax>
         </div>
-      </section>
-    </main>
-    <Enquiry topic={topic} />
-  </div>
+        <div class="itin">
+          <RouteLine
+            class="itin-line"
+            d="M20 0 C36 60 4 110 20 166 S36 276 20 333 S4 443 20 500 S36 610 20 666 S4 776 20 833 S36 943 20 1000"
+            viewBox="0 0 40 1000"
+            preserveAspectRatio="none"
+            draw="scroll"
+            strokeWidth={4}
+          />
+          <ol>
+            {pkg.itinerary.map((stop) => (
+              <li class="day">
+                <span class="day-num" aria-hidden="true">
+                  {stop.day}
+                </span>
+                <p class="t-eyebrow">
+                  Day {stop.day} · {stop.place}
+                </p>
+                <h3 class="t-h3">{stop.title}</h3>
+                <p class="day-text">{stop.text}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </div>
+    </Section>
+  </main>
+  <Enquiry topic={topic} />
+  <Footer homeHref="/mocks/c" groups={mockFooterGroups} />
+  <FloatingContact message={message} />
 </BaseLayout>
 
-<style is:global>
-  .monsoon .c-pk-grid {
+<style>
+  .pk-grid {
     display: grid;
-    gap: 2.5rem;
-    padding-block: 1.5rem 4rem;
+    gap: var(--space-10);
+    padding-block: var(--space-6) var(--space-16);
   }
 
-  .monsoon .c-pk-copy {
+  .pk-copy {
     display: grid;
-    gap: 1.25rem;
+    gap: var(--space-5);
     justify-items: start;
     align-content: center;
   }
 
-  .monsoon .c-crumbs {
-    display: flex;
-    gap: 0.5rem;
-    font-size: 0.9375rem;
-    font-weight: 600;
-    color: var(--ink-soft);
-  }
-
-  .monsoon .c-crumbs li + li::before {
-    content: '→';
-    margin-right: 0.5rem;
-  }
-
-  .monsoon .c-crumbs a {
-    color: var(--ink);
-  }
-
-  .monsoon .c-pk-hero h1 {
-    font-size: clamp(3.25rem, 1.6rem + 7vw, 7.5rem);
-  }
-
-  .monsoon .c-hl {
-    color: var(--rani);
-  }
-
-  .monsoon .c-pk-sub {
-    font-family: var(--display);
-    font-size: 1.5rem;
-    font-weight: 700;
+  .pk-sub {
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    font-weight: var(--weight-bold);
     letter-spacing: -0.02em;
   }
 
-  .monsoon .c-chips {
+  .pk-chips {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
+    gap: var(--space-2);
   }
 
-  .monsoon .c-chips li {
-    padding: 0.375rem 0.875rem;
-    border-radius: 999px;
-    font-size: 0.9375rem;
-    font-weight: 700;
+  .pk-chips li {
+    padding: var(--space-1) var(--space-4);
+    border-radius: var(--radius-pill);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-bold);
   }
 
-  .monsoon .c-chip-marigold {
-    background: var(--marigold);
-    color: var(--ink);
+  .pk-chip-red {
+    background: var(--red-600);
+    color: var(--white);
   }
 
-  .monsoon .c-chip-peacock {
-    background: var(--peacock);
-    color: var(--sand);
+  .pk-chip-ink {
+    background: var(--ink);
+    color: var(--white);
   }
 
-  .monsoon .c-chip-rani {
-    background: var(--rani);
-    color: #fff;
+  .pk-chip-line {
+    box-shadow: inset 0 0 0 1.5px var(--ink);
   }
 
-  .monsoon .c-price p:first-child {
-    color: var(--ink-soft);
+  .pk-price p:first-child {
+    color: var(--text-muted);
   }
 
-  .monsoon .c-price strong {
-    font-family: var(--display);
-    font-size: 2.25rem;
+  .pk-price strong {
+    font-family: var(--font-display);
+    font-size: var(--text-2xl);
     letter-spacing: -0.03em;
-    color: var(--ink);
+    color: var(--text);
   }
 
-  .monsoon .c-price-valid {
-    font-size: 0.9375rem;
-    color: var(--ink-soft);
+  .pk-valid {
+    font-size: var(--text-sm);
+    color: var(--text-muted);
   }
 
-  .monsoon .c-pk-arch img {
+  .pk-arch {
     aspect-ratio: 4 / 5;
   }
 
+  .pk-arch :global(picture) {
+    display: block;
+    height: 100%;
+  }
+
   @media (min-width: 1024px) {
-    .monsoon .c-pk-grid {
+    .pk-grid {
       grid-template-columns: 1.2fr 1fr;
-      gap: 4rem;
-      padding-block: 3rem 6rem;
+      gap: var(--space-16);
+      padding-block: var(--space-12) var(--space-24);
     }
   }
 
-  .monsoon .c-hl-section {
-    background: var(--sand-2);
-    border-radius: 2.5rem 2.5rem 0 0;
-  }
-
-  .monsoon .c-hl-grid {
+  /* Highlights */
+  .hl-grid {
     display: grid;
-    gap: 1rem;
+    gap: var(--space-4);
   }
 
   @media (min-width: 768px) {
-    .monsoon .c-hl-grid {
-      grid-template-columns: repeat(2, 1fr);
+    .hl-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
 
   @media (min-width: 1024px) {
-    .monsoon .c-hl-grid {
-      grid-template-columns: repeat(4, 1fr);
+    .hl-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
     }
   }
 
-  .monsoon .c-hl-grid li {
+  .hl-card {
     display: grid;
-    gap: 0.5rem;
+    gap: var(--space-2);
     align-content: start;
     min-height: 12rem;
-    padding: 1.5rem;
-    border-radius: var(--radius);
+    padding: var(--space-6);
+    border-radius: var(--radius-lg);
+    background: var(--bg);
+    color: var(--text);
   }
 
-  .monsoon .c-hl-grid h3 {
-    font-size: 1.75rem;
-    line-height: 1;
+  .hl-card.tone-white {
+    box-shadow: inset 0 0 0 1px var(--sand-200);
   }
 
-  .monsoon .c-tint-marigold {
-    background: var(--marigold-soft);
+  .hl-title {
+    font-size: var(--text-xl);
+    font-weight: var(--weight-black);
+    line-height: 1.05;
   }
 
-  .monsoon .c-tint-rani {
-    background: var(--rani-soft);
-  }
-
-  .monsoon .c-tint-peacock {
-    background: var(--peacock-soft);
-  }
-
-  .monsoon .c-tint-sand {
-    background: var(--sand);
-  }
-
-  .monsoon .c-itin-grid {
+  /* Itinerary */
+  .itin-grid {
     display: grid;
-    gap: 2.5rem;
+    gap: var(--space-10);
   }
 
-  .monsoon .c-itin-head {
+  .itin-head {
     display: grid;
-    gap: 1rem;
+    gap: var(--space-4);
     align-content: start;
   }
 
-  .monsoon .c-itin-head p {
-    color: var(--ink-soft);
-  }
-
-  .monsoon .c-itin-photo {
+  .itin-head :global(.itin-photo) {
     display: none;
   }
 
   @media (min-width: 1024px) {
-    .monsoon .c-itin-grid {
+    .itin-grid {
       grid-template-columns: 5fr 7fr;
-      gap: 5rem;
+      gap: var(--space-20, 5rem);
     }
 
-    .monsoon .c-itin-head {
+    .itin-head {
       position: sticky;
-      top: 2rem;
+      top: var(--space-8);
       align-self: start;
     }
 
-    .monsoon .c-itin-photo {
+    .itin-head :global(.itin-photo) {
       display: block;
-      width: 100%;
-      height: auto;
       aspect-ratio: 4 / 3;
-      object-fit: cover;
-      border-radius: var(--radius);
-      margin-top: 1rem;
+      margin-top: var(--space-4);
     }
   }
 
-  .monsoon .c-itin {
+  .itin {
     position: relative;
-    padding-left: 4rem;
+    padding-left: var(--space-16);
   }
 
-  .monsoon .c-itin-line {
+  .itin :global(.itin-line) {
     position: absolute;
     top: 1.25rem;
     left: 0.25rem;
@@ -357,49 +319,36 @@ const tints = ['c-tint-marigold', 'c-tint-rani', 'c-tint-peacock', 'c-tint-sand'
     height: calc(100% - 2.5rem);
   }
 
-  .monsoon .c-day {
+  .day {
     position: relative;
     display: grid;
-    gap: 0.375rem;
-    padding-bottom: 2.75rem;
+    gap: var(--space-2);
+    padding-bottom: var(--space-12);
   }
 
-  .monsoon .c-day:last-child {
+  .day:last-child {
     padding-bottom: 0;
   }
 
-  .monsoon .c-day-num {
+  .day-num {
     position: absolute;
     top: 0;
-    left: -4rem;
+    left: calc(var(--space-16) * -1);
     display: grid;
     place-items: center;
     width: 2.75rem;
     height: 2.75rem;
     border-radius: 50%;
-    background: var(--marigold);
-    color: var(--ink);
-    font-family: var(--display);
+    background: var(--red-600);
+    color: var(--white);
+    font-family: var(--font-display);
     font-size: 1.25rem;
-    font-weight: 800;
-    box-shadow: 0 0 0 5px var(--sand);
+    font-weight: var(--weight-black);
+    box-shadow: 0 0 0 5px var(--paper);
   }
 
-  .monsoon .c-day-place {
-    font-size: 0.8125rem;
-    font-weight: 800;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: var(--rani);
-  }
-
-  .monsoon .c-day h3 {
-    font-size: 1.875rem;
-    line-height: 1;
-  }
-
-  .monsoon .c-day p:last-child {
-    max-width: 36rem;
-    color: var(--ink-soft);
+  .day-text {
+    max-width: var(--measure);
+    color: var(--text-muted);
   }
 </style>

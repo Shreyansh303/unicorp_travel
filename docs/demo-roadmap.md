@@ -16,6 +16,7 @@ Confirmed with the user on 2026-10-18 (M0).
 | Stack | Astro with React islands, as in section 2: Tailwind CSS, Motion, GSAP with ScrollTrigger, optional Lenis, Zod content collections, Playwright with axe, Lighthouse budget. Next.js is not used. |
 | Display name | "Unicorp Travel", everywhere. The legal name appears only in the facts block (F-09) and the footer. |
 | Creative direction | "The journey" route-line direction from section 6. M2 mocks 2 or 3 variations of it for the user to pick from. |
+| Visual direction (M2) | Mock C "Monsoon" (warm, expressive, holiday-first; Bricolage Grotesque and Figtree; route line looping through arched photos), recoloured to Unicorp's brand colours: mainly red, black and white. The reference red is `#ED0000`, the dominant colour on the old site. Chosen by the user on 2026-10-18. |
 | Preview hosting | Vercel. `X-Robots-Tag` set in `vercel.json`, driven by the `DEMO` flag. The user signs in to the Vercel CLI; deploys happen only with the user's approval. |
 
 ---
