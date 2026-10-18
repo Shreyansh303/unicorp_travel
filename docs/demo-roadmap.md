@@ -7,6 +7,17 @@ Prepared 2026-10-18 from the website audit of unicorptravel.com (17-18 October 2
 - **Audit doc (client-facing):** https://claude.ai/code/artifact/cd8d2fc3-29b4-4427-9bf7-512b2468b04b
 - **Local copy of the audit:** `D:/Programming/unicorp_travel/.orchestrator-research/results/DRAFT.md`. P-ids (problems) and F-ids (features) below refer to it.
 
+## Decisions
+
+Confirmed with the user on 2026-10-18 (M0).
+
+| Decision | Choice |
+|---|---|
+| Stack | Astro with React islands, as in section 2: Tailwind CSS, Motion, GSAP with ScrollTrigger, optional Lenis, Zod content collections, Playwright with axe, Lighthouse budget. Next.js is not used. |
+| Display name | "Unicorp Travel", everywhere. The legal name appears only in the facts block (F-09) and the footer. |
+| Creative direction | "The journey" route-line direction from section 6. M2 mocks 2 or 3 variations of it for the user to pick from. |
+| Preview hosting | Vercel. `X-Robots-Tag` set in `vercel.json`, driven by the `DEMO` flag. The user signs in to the Vercel CLI; deploys happen only with the user's approval. |
+
 ---
 
 ## 1. Brief
