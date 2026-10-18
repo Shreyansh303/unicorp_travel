@@ -12,7 +12,8 @@
     "typecheck": "astro check && tsc --noEmit",
     "test:e2e": "playwright test --project=e2e",
     "test:a11y": "playwright test --project=a11y",
-    "test:perf": "node scripts/lighthouse.mjs"
+    "test:perf": "node scripts/lighthouse.mjs",
+    "test:content": "node scripts/test-content.mjs"
   },
   "dependencies": {
     "@astrojs/react": "7.1.0",

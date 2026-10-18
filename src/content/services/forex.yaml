@@ -1,0 +1,33 @@
+slug: 'forex'
+title: 'Foreign exchange facilitation'
+shortTitle: 'Foreign exchange'
+category: 'related'
+order: 5
+summary: 'Help arranging foreign currency for your trip abroad.'
+intro: 'Travelling abroad usually means carrying some foreign currency, as cash, a travel card or both. We help you arrange it for your trip and tell you which documents are needed. Rates and rules depend on the provider and on regulations at the time.'
+whatWeHandle:
+  - 'Arranging foreign currency for leisure, business and study trips'
+  - 'Explaining the documents needed, such as your passport and ticket'
+  - 'Foreign currency in the form that suits your trip'
+  - 'Helping you plan how much to carry for each stage of your travel'
+howItWorks:
+  - title: 'Tell us your trip'
+    text: 'Share the countries you are visiting, your travel dates and the amount you expect to need.'
+  - title: 'We explain the options'
+    text: 'We tell you what forms of currency are available, the documents required and the rates on that day.'
+  - title: 'You choose'
+    text: 'Decide how much you want and in what form. Rates can change, so we confirm them when you decide.'
+  - title: 'We arrange it'
+    text: 'We complete the paperwork with you and arrange the currency before you travel.'
+whoItsFor:
+  - 'Holiday travellers going abroad'
+  - 'Business travellers who need currency for expenses'
+  - 'Families travelling together who want it handled in one place'
+formType: 'forex'
+image:
+  src: '../../assets/photos/service-forex.jpg'
+  alt: 'A close-up of scattered Indian rupee banknotes'
+seo:
+  title: 'Foreign exchange for your trip'
+  description: 'Get help arranging foreign currency for trips abroad, with a clear list of documents. Rates are confirmed on the day. Send us an enquiry.'
+demo: false

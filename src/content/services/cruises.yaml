@@ -1,0 +1,33 @@
+slug: 'cruises'
+title: 'Cruise reservations'
+category: 'related'
+order: 7
+summary: 'Cruise bookings for couples, families and groups, with cabins and itineraries explained.'
+intro: 'A cruise has many choices: the route, the cabin, the number of nights and what is included on board. We help you compare cruises and book the one you choose, including flights and hotel nights around it where needed.'
+whatWeHandle:
+  - 'Cruises on different routes, short and long'
+  - 'Cabin types and what is included in the fare'
+  - 'Flights, hotel nights and transfers before and after the cruise'
+  - 'Documents such as visas and insurance that your route may need'
+  - 'Group bookings for families and friends'
+howItWorks:
+  - title: 'Tell us your idea'
+    text: 'Share when you want to sail, where you would like to go and how many are travelling.'
+  - title: 'We suggest cruises'
+    text: 'We send a few cruises that fit, with routes, cabin types and what the fare covers.'
+  - title: 'You decide'
+    text: 'Choose the cruise and cabin. We explain the booking terms before you confirm.'
+  - title: 'We book the trip'
+    text: 'We reserve the cruise and arrange the flights, stays and papers around it.'
+whoItsFor:
+  - 'Couples and families planning a special trip'
+  - 'Friends or relatives travelling as a group'
+  - 'First-time cruisers who want the options explained'
+formType: 'cruise'
+image:
+  src: '../../assets/photos/service-cruise.jpg'
+  alt: 'A large white cruise ship on calm blue sea under a bright sky'
+seo:
+  title: 'Cruise reservations and planning'
+  description: 'Cruise bookings with cabins, routes and the flights around them arranged by our team. Share your plan and send an enquiry.'
+demo: false

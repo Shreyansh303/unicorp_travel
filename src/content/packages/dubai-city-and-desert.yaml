@@ -1,0 +1,63 @@
+slug: 'dubai-city-and-desert'
+title: 'Dubai city and desert'
+summary: 'A family trip with the city sights, the desert, a creek cruise and free time.'
+type: 'international'
+region: 'middle-east'
+destinations:
+  - 'Dubai'
+  - 'Abu Dhabi'
+duration:
+  days: 5
+  nights: 4
+themes:
+  - 'family'
+  - 'adventure'
+fromPrice: 46500
+priceBasis: 'per person, twin sharing, including return flights from Delhi'
+priceValidUntil: '2027-03-31'
+highlights:
+  - 'A desert safari with dune driving and an evening camp'
+  - 'A visit to the observation deck of the Burj Khalifa'
+  - 'A dhow cruise along Dubai Creek'
+  - 'A day trip to Abu Dhabi'
+  - 'Free time for malls or the beach'
+itinerary:
+  - day: 1
+    title: 'Arrive in Dubai'
+    description: 'Fly from Delhi to Dubai. Meet your driver and transfer to your hotel. The evening is free to rest or walk along the waterfront.'
+  - day: 2
+    title: 'Dubai city tour'
+    description: 'See the Jumeirah coast, a view of the Burj Al Arab, and the old quarter near the creek. In the evening, visit the Burj Khalifa observation deck and watch the fountain show.'
+  - day: 3
+    title: 'Desert safari'
+    description: 'Spend the morning at leisure. In the afternoon, go dune driving and watch the sunset at a desert camp, with a barbecue dinner and a cultural show.'
+  - day: 4
+    title: 'Abu Dhabi day trip'
+    description: 'Drive to Abu Dhabi to visit the Sheikh Zayed Grand Mosque and drive along the Corniche. Return to Dubai in the evening for a dhow cruise dinner.'
+  - day: 5
+    title: 'Departure from Dubai'
+    description: 'Check out after breakfast and transfer to Dubai airport for your return flight.'
+inclusions:
+  - 'Return economy flights from Delhi'
+  - 'Four nights of stay in a hotel, on twin sharing'
+  - 'Daily breakfast'
+  - 'Desert safari with dinner, and dhow cruise with dinner'
+  - 'Burj Khalifa observation deck ticket'
+  - 'Airport and sightseeing transfers by air-conditioned vehicle'
+exclusions:
+  - 'UAE visa fee'
+  - 'Lunches and other dinners'
+  - 'Theme park and attraction tickets not listed'
+  - 'Personal expenses, tips and travel insurance'
+images:
+  hero:
+    src: '../../assets/photos/dubai-1.jpg'
+    alt: 'Wide desert dunes stretching under a hazy sky'
+  gallery:
+    - src: '../../assets/photos/dubai-2.jpg'
+      alt: 'The Dubai skyline in silhouette at sunset with the Burj Khalifa rising above it'
+seo:
+  title: 'Dubai city and desert, 5 days'
+  description: 'Five days in Dubai with a desert safari, a dhow cruise and an Abu Dhabi day trip, flights from Delhi included. Day-wise itinerary and an indicative price.'
+featured: false
+demo: true

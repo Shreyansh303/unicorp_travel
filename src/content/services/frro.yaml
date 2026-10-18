@@ -1,0 +1,33 @@
+slug: 'frro'
+title: 'FRRO (Foreigners Regional Registration Office) assistance'
+shortTitle: 'FRRO assistance'
+category: 'related'
+order: 11
+summary: 'Help with FRRO registration and related paperwork for foreign nationals in India.'
+intro: 'Foreign nationals staying in India may need to register or deal with the Foreigners Regional Registration Office. We help with the forms, documents and appointments. The decision on every application rests with the authorities.'
+whatWeHandle:
+  - 'A checklist of documents for your type of visa and stay'
+  - 'Help filling in and checking online forms'
+  - 'Booking appointments, where the process allows it'
+  - 'Keeping track of your application and telling you what the office asks for'
+howItWorks:
+  - title: 'Tell us your situation'
+    text: 'Share your nationality, visa type, how long you will stay and what you need to do, such as register or extend.'
+  - title: 'We list the steps'
+    text: 'We explain the process for your case, the documents needed and what each step involves.'
+  - title: 'We prepare the file'
+    text: 'We go through your forms and papers with you and book an appointment where the process allows it.'
+  - title: 'You attend, we follow up'
+    text: 'We tell you what to expect at the office and keep track of the application. The authority makes the decision.'
+whoItsFor:
+  - 'Foreign nationals living or working in India'
+  - 'Companies hosting employees or visitors from abroad'
+  - 'Students and families staying in India for a longer period'
+formType: 'frro'
+image:
+  src: '../../assets/photos/service-frro.jpg'
+  alt: 'A passport resting on a notebook and clipboard'
+seo:
+  title: 'FRRO assistance for foreign nationals'
+  description: 'Help with FRRO forms, documents and appointments for foreign nationals in India. Decisions rest with the authorities. Send an enquiry.'
+demo: false

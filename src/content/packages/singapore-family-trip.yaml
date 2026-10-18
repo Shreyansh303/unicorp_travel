@@ -1,0 +1,66 @@
+slug: 'singapore-family-trip'
+title: 'Singapore family trip'
+summary: 'Gardens, a zoo, Sentosa and the waterfront, planned at an easy pace for families.'
+type: 'international'
+region: 'southeast-asia'
+destinations:
+  - 'Singapore'
+  - 'Sentosa'
+duration:
+  days: 6
+  nights: 5
+themes:
+  - 'family'
+  - 'nature'
+fromPrice: 89000
+priceBasis: 'per person, twin sharing, including return flights from Delhi'
+priceValidUntil: '2027-03-31'
+highlights:
+  - 'Gardens by the Bay and the evening Supertree light show'
+  - 'A day on Sentosa Island'
+  - 'A night safari or zoo visit'
+  - 'A river cruise at Marina Bay'
+  - 'Food courts with many local dishes'
+itinerary:
+  - day: 1
+    title: 'Fly to Singapore'
+    description: 'Depart from Delhi and arrive in Singapore. Transfer to your hotel and spend the evening at leisure.'
+  - day: 2
+    title: 'City highlights'
+    description: 'See the Merlion, Marina Bay and the old quarters of Chinatown and Little India. Take a river cruise in the evening.'
+  - day: 3
+    title: 'Gardens by the Bay'
+    description: 'Visit the conservatories and walk the skywalk among the Supertrees. Return in the evening for the light show.'
+  - day: 4
+    title: 'Sentosa Island'
+    description: 'Spend the day on Sentosa with beaches, rides and attractions. Entry to the main attractions is included as listed.'
+  - day: 5
+    title: 'Zoo and free time'
+    description: "Visit the zoo or the night safari, depending on the family's choice. Keep some time for shopping and a last meal at a food court."
+  - day: 6
+    title: 'Return to Delhi'
+    description: 'Check out and transfer to Changi airport for the flight home.'
+inclusions:
+  - 'Return economy flights from Delhi'
+  - 'Five nights of stay in a hotel, on twin sharing'
+  - 'Daily breakfast'
+  - 'Gardens by the Bay and Sentosa entry as listed'
+  - 'Zoo or night safari ticket'
+  - 'Airport and sightseeing transfers'
+exclusions:
+  - 'Singapore visa fee, where required'
+  - 'Lunches and dinners'
+  - 'Rides and activities not listed'
+  - 'Personal expenses, tips and travel insurance'
+images:
+  hero:
+    src: '../../assets/photos/singapore-1.jpg'
+    alt: 'Aerial view of the Marina Bay waterfront in Singapore at dusk'
+  gallery:
+    - src: '../../assets/photos/singapore-2.jpg'
+      alt: 'Supertree structures and a skywalk above the gardens in Singapore'
+seo:
+  title: 'Singapore family trip, 6 days'
+  description: 'Six days in Singapore with Gardens by the Bay, Sentosa and the zoo, flights from Delhi included. Day-wise itinerary and an indicative price.'
+featured: false
+demo: true

@@ -1,0 +1,70 @@
+slug: 'ladakh-high-passes'
+title: 'Ladakh high passes'
+summary: 'Leh, Nubra Valley and Pangong Lake, with time to settle in at altitude.'
+type: 'domestic'
+region: 'himalaya'
+destinations:
+  - 'Leh'
+  - 'Nubra Valley'
+  - 'Pangong Lake'
+duration:
+  days: 7
+  nights: 6
+themes:
+  - 'adventure'
+  - 'nature'
+  - 'culture'
+fromPrice: 46500
+priceBasis: 'per person, twin sharing, land arrangements only'
+priceValidUntil: '2027-03-31'
+highlights:
+  - 'Khardung La, the high mountain pass on the road to Nubra Valley'
+  - 'Sand dunes and double-humped camels at Hunder in Nubra Valley'
+  - 'A stay by Pangong Lake'
+  - 'Monasteries and the old palace of Leh'
+  - 'A first day kept free to adjust to the altitude'
+itinerary:
+  - day: 1
+    title: 'Arrive in Leh'
+    description: 'Fly into Leh and transfer to your hotel. Rest for the day, drink plenty of water and let your body adjust to the altitude.'
+  - day: 2
+    title: 'Leh local sightseeing'
+    description: 'Visit Shanti Stupa, Leh Palace and the main bazaar at an easy pace. Return to the hotel in the afternoon to rest.'
+  - day: 3
+    title: 'Leh to Nubra Valley'
+    description: 'Drive over Khardung La into Nubra Valley. Check in at your camp or hotel near Hunder and walk among the sand dunes in the evening.'
+  - day: 4
+    title: 'Nubra Valley'
+    description: 'Visit Diskit Monastery and take a camel ride on the dunes. Return to your camp along the valley road in the afternoon, with time for photographs.'
+  - day: 5
+    title: 'Nubra to Pangong Lake'
+    description: 'Drive to Pangong Lake across Shyok River and rough mountain roads. The lake changes colour through the day; spend the evening on its shore.'
+  - day: 6
+    title: 'Pangong to Leh'
+    description: 'After breakfast, drive back to Leh over the Chang La. Rest in the evening or visit the market for last purchases.'
+  - day: 7
+    title: 'Departure from Leh'
+    description: 'Transfer to Leh airport for your flight. Early morning departures are common, so keep this morning free.'
+inclusions:
+  - 'Six nights of stay in hotels and camps, on twin sharing'
+  - 'Daily breakfast and dinner'
+  - 'Private vehicle with driver for transfers and sightseeing as per the itinerary'
+  - 'Inner line permits for Nubra Valley and Pangong Lake'
+  - 'Oxygen cylinder carried in the vehicle for emergencies'
+exclusions:
+  - 'Flights to and from Leh'
+  - 'Lunches'
+  - 'Monastery and monument entry fees, camel ride charges'
+  - 'Personal expenses, tips and travel insurance'
+images:
+  hero:
+    src: '../../assets/photos/ladakh-1.jpg'
+    alt: 'A turquoise lake ringed by bare mountains under a blue sky'
+  gallery:
+    - src: '../../assets/photos/ladakh-2.jpg'
+      alt: 'A white stupa with red circles standing on a rocky mountain slope'
+seo:
+  title: 'Ladakh high passes, 7 days'
+  description: 'Seven days in Leh, Nubra Valley and Pangong Lake with time to adjust to altitude. Day-wise itinerary and an indicative price. Send an enquiry.'
+featured: false
+demo: true

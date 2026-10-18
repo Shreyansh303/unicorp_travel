@@ -1,0 +1,68 @@
+slug: 'kerala-backwaters-and-hills'
+title: 'Kerala backwaters and hills'
+summary: 'Tea hills, a night on a houseboat and the quiet backwaters of Alleppey.'
+type: 'domestic'
+region: 'south-india'
+destinations:
+  - 'Kochi'
+  - 'Munnar'
+  - 'Thekkady'
+  - 'Alleppey'
+duration:
+  days: 6
+  nights: 5
+themes:
+  - 'family'
+  - 'nature'
+  - 'culture'
+fromPrice: 36500
+priceBasis: 'per person, twin sharing, land arrangements only'
+priceValidUntil: '2027-03-31'
+highlights:
+  - 'Tea gardens and cool hill air at Munnar'
+  - 'A night on a private houseboat in the Alleppey backwaters'
+  - 'A boat ride on Periyar Lake at Thekkady'
+  - 'A walk through the old quarter of Fort Kochi'
+  - 'Kerala meals with fresh coconut, fish and spices'
+itinerary:
+  - day: 1
+    title: 'Arrive in Kochi'
+    description: 'Meet your driver at Kochi airport and transfer to your hotel in Fort Kochi. In the evening, walk along the seafront past the Chinese fishing nets and the old streets.'
+  - day: 2
+    title: 'Kochi to Munnar'
+    description: 'Drive to Munnar through rubber and spice plantations, with a stop at a waterfall on the way. Spend the evening at leisure at your hotel among the tea hills.'
+  - day: 3
+    title: 'Munnar tea hills'
+    description: 'Visit a tea estate and see how the leaf is processed, then drive to a viewpoint above the valley. The afternoon is free for a walk or shopping for tea and spices.'
+  - day: 4
+    title: 'Munnar to Thekkady'
+    description: 'Drive to Thekkady through cardamom and pepper country. Take a boat ride on Periyar Lake in the afternoon, and see a traditional Kerala performance in the evening if you wish.'
+  - day: 5
+    title: 'Thekkady to Alleppey houseboat'
+    description: 'Drive to Alleppey and board your private houseboat around midday. Cruise through the canals and villages, with lunch, dinner and an overnight stay on board.'
+  - day: 6
+    title: 'Departure from Kochi'
+    description: 'After breakfast on the houseboat, disembark and drive to Kochi airport for your onward journey.'
+inclusions:
+  - 'Four nights of stay in standard hotels and one night on a houseboat, on twin sharing'
+  - 'Daily breakfast, and all meals on the houseboat'
+  - 'Private car with driver for all transfers and sightseeing as per the itinerary'
+  - 'Periyar Lake boat ride'
+  - 'All applicable taxes on the above services'
+exclusions:
+  - 'Flights or trains to and from Kochi'
+  - 'Lunches and dinners other than on the houseboat'
+  - 'Entry fees at sights not mentioned in the itinerary'
+  - 'Personal expenses, tips and travel insurance'
+images:
+  hero:
+    src: '../../assets/photos/kerala-backwaters-1.jpg'
+    alt: 'A traditional houseboat gliding along a palm-lined backwater in Kerala'
+  gallery:
+    - src: '../../assets/photos/kerala-backwaters-2.jpg'
+      alt: 'A houseboat on calm backwater beneath tall coconut palms'
+seo:
+  title: 'Kerala backwaters and hills, 6 days'
+  description: 'Six days from Kochi to Munnar, Thekkady and Alleppey, with a houseboat night. Day-wise itinerary and an indicative price. Send an enquiry.'
+featured: true
+demo: true

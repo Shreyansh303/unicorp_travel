@@ -1,0 +1,70 @@
+slug: 'bali-temples-and-terraces'
+title: 'Bali temples and terraces'
+summary: 'Ubud rice terraces, temples and a few easy days by the sea in Seminyak.'
+type: 'international'
+region: 'southeast-asia'
+destinations:
+  - 'Ubud'
+  - 'Seminyak'
+  - 'Uluwatu'
+duration:
+  days: 7
+  nights: 6
+themes:
+  - 'honeymoon'
+  - 'culture'
+  - 'beach'
+fromPrice: 68000
+priceBasis: 'per person, twin sharing, including return flights from Delhi'
+priceValidUntil: '2027-03-31'
+highlights:
+  - 'Tegalalang rice terraces near Ubud'
+  - 'A temple visit and traditional Kecak dance at Uluwatu'
+  - 'Water temple and village visits around Ubud'
+  - 'A relaxed beach stay in Seminyak'
+  - 'Private transfers throughout'
+itinerary:
+  - day: 1
+    title: 'Fly to Bali'
+    description: 'Depart from Delhi on your flight to Denpasar, with a change of flight on the way. Meet your driver on arrival and transfer to Ubud.'
+  - day: 2
+    title: 'Ubud sightseeing'
+    description: 'Visit the Tegalalang rice terraces, a coffee plantation and the Tirta Empul water temple. Enjoy the evening at leisure in Ubud.'
+  - day: 3
+    title: 'Ubud at leisure'
+    description: 'Choose a morning activity such as a cooking class, a swing over the valley or a gentle village walk, and keep the afternoon free.'
+  - day: 4
+    title: 'Ubud to Seminyak'
+    description: 'Transfer to Seminyak and check in. Spend the afternoon on the beach or around the cafes and shops.'
+  - day: 5
+    title: 'Uluwatu temple and Kecak dance'
+    description: 'Visit the clifftop temple at Uluwatu in the late afternoon and watch the Kecak dance at sunset. Dinner at a seafood restaurant in Jimbaran is optional.'
+  - day: 6
+    title: 'Free day in Seminyak'
+    description: 'A day without a plan: beach, spa or shopping. We can add a boat trip to a nearby island if you want it.'
+  - day: 7
+    title: 'Return to Delhi'
+    description: 'Transfer to Denpasar airport for your return flight to Delhi.'
+inclusions:
+  - 'Return economy flights from Delhi, with a change of flight'
+  - 'Six nights of stay in hotels and villas, on twin sharing'
+  - 'Daily breakfast'
+  - 'Private car with driver for all transfers and the sightseeing listed'
+  - 'Uluwatu temple entry and Kecak dance ticket'
+exclusions:
+  - 'Indonesian visa on arrival fee and tourism levy, paid at the airport'
+  - 'Lunches and dinners'
+  - 'Optional activities such as cooking classes and island trips'
+  - 'Personal expenses, tips and travel insurance'
+images:
+  hero:
+    src: '../../assets/photos/bali-1.jpg'
+    alt: 'Green rice terraces among palm trees in Tegalalang, Bali'
+  gallery:
+    - src: '../../assets/photos/bali-2.jpg'
+      alt: 'A Balinese split temple gate framed by red flowers'
+seo:
+  title: 'Bali temples and terraces, 7 days'
+  description: 'Seven days in Ubud and Seminyak with rice terraces, temples and beach time, flights from Delhi included. Day-wise itinerary and an indicative price.'
+featured: true
+demo: true

@@ -1,0 +1,33 @@
+slug: 'leisure'
+title: 'Leisure travel'
+category: 'leisure'
+order: 2
+summary: 'Domestic and international holidays planned around your dates, budget and interests.'
+intro: 'Whether you want a week in the hills or a trip abroad with the family, we plan holidays for couples, families and groups. Pick a holiday package to start from, or tell us what you have in mind and we will build the trip around it.'
+whatWeHandle:
+  - 'Domestic holidays across India, from beaches and backwaters to mountains and forts'
+  - 'International holidays, including flights, stays, transfers and sightseeing'
+  - 'Honeymoons, family trips and group tours'
+  - 'Changes to a standard package, such as a longer stay or an extra city'
+  - 'Help with visas, insurance and forex for your trip through our related services'
+howItWorks:
+  - title: 'Tell us your plan'
+    text: 'Share where you would like to go, when, how many are travelling and a rough budget. Ideas are fine; you do not need a full plan.'
+  - title: 'We propose an itinerary'
+    text: 'We send a day-wise plan with stays, transfers and sightseeing, and a price for your dates.'
+  - title: 'You choose, we adjust'
+    text: 'Ask for changes until the plan suits you. Nothing is booked until you agree.'
+  - title: 'We arrange the trip'
+    text: 'Once you confirm, we book the services and send your documents before you leave.'
+whoItsFor:
+  - 'Couples planning a honeymoon or an anniversary trip'
+  - 'Families who want one plan for all ages'
+  - 'Friends and groups travelling together'
+formType: 'holiday'
+image:
+  src: '../../assets/photos/hero-journey.jpg'
+  alt: 'A winding road snaking through green mountain valleys, seen from above'
+seo:
+  title: 'Domestic and international holidays'
+  description: 'Holiday packages and custom trips across India and abroad, planned around your dates and budget. Send an enquiry to plan yours.'
+demo: false

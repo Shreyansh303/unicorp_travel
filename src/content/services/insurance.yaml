@@ -1,0 +1,32 @@
+slug: 'insurance'
+title: 'Travel insurance'
+category: 'related'
+order: 6
+summary: 'Travel insurance for your trip, with the cover and terms explained before you buy.'
+intro: 'Travel insurance can help with medical costs, trip changes and lost baggage, depending on the policy. We help you compare plans from insurers, explain what each covers and arrange the one you choose.'
+whatWeHandle:
+  - 'Cover for international and domestic trips, for individuals, families and groups'
+  - 'Plain-language explanation of what a policy covers and what it leaves out'
+  - 'Arranging the policy and sending you the documents before you travel'
+  - 'Guidance on how to make a claim with the insurer'
+howItWorks:
+  - title: 'Tell us your trip'
+    text: 'Share your destination, dates, the number and ages of travellers, and any health or activity details that matter.'
+  - title: 'We show the options'
+    text: 'We shortlist plans and explain the cover, limits and exclusions in simple terms.'
+  - title: 'You choose a plan'
+    text: 'Pick the plan that suits you. Read the policy terms before you pay.'
+  - title: 'We arrange the policy'
+    text: 'We complete the application and send you the policy and the insurer contact details.'
+whoItsFor:
+  - 'Anyone travelling abroad, especially where medical costs are high'
+  - 'Families with children or older members'
+  - 'Travellers going on adventure trips or long journeys'
+formType: 'insurance'
+image:
+  src: '../../assets/photos/service-insurance.jpg'
+  alt: 'Travellers with luggage silhouetted against a low sun in a terminal'
+seo:
+  title: 'Travel insurance for your trip'
+  description: 'Travel insurance explained in plain words, with the right plan arranged for your trip. Send an enquiry to our team.'
+demo: false

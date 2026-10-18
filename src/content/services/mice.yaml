@@ -1,0 +1,34 @@
+slug: 'mice'
+title: 'MICE (meetings, incentives, conferences, events)'
+shortTitle: 'MICE'
+category: 'related'
+order: 8
+summary: 'Travel and stays for meetings, incentive trips, conferences and events.'
+intro: 'Group travel for work needs careful planning. We arrange travel, hotels, venues and local transport for meetings, incentive trips, conferences and company events, with one team coordinating the parts.'
+whatWeHandle:
+  - 'Group flights, train tickets and airport transfers for delegates'
+  - 'Hotel room blocks and meeting rooms'
+  - 'Venue options for conferences, offsites and events'
+  - 'Local transport and sightseeing for incentive trips'
+  - 'Coordination on site, with one point of contact before and during the event'
+howItWorks:
+  - title: 'Tell us about the event'
+    text: 'Share the purpose, dates, number of people, location ideas and budget.'
+  - title: 'We propose a plan'
+    text: 'We send venue and hotel options, a travel plan for delegates and an outline of costs.'
+  - title: 'We refine it with you'
+    text: 'We adjust the plan with your team until it fits the programme and the budget.'
+  - title: 'We arrange and coordinate'
+    text: 'We book the services and stay in touch with your team through the event.'
+whoItsFor:
+  - 'Companies planning offsites, conferences or incentive trips'
+  - 'Event and HR teams who need one partner for travel and stays'
+  - 'Associations and groups organising delegate travel'
+formType: 'mice'
+image:
+  src: '../../assets/photos/service-mice.jpg'
+  alt: 'Delegates seated in a dim hall watching a conference session'
+seo:
+  title: 'MICE travel: meetings, incentives, events'
+  description: 'Travel, hotels and local transport for meetings, incentive trips, conferences and events, coordinated by one team. Send an enquiry.'
+demo: false

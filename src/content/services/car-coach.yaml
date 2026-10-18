@@ -1,0 +1,33 @@
+slug: 'car-coach'
+title: 'Car and coach rentals'
+category: 'related'
+order: 9
+summary: 'Cars and coaches with drivers for airport transfers, outstation trips and group travel.'
+intro: 'We arrange cars and coaches with drivers for transfers, day trips and longer journeys. Tell us the route and the number of passengers, and we will suggest a vehicle that fits and confirm the terms with you.'
+whatWeHandle:
+  - 'Airport and railway station transfers'
+  - 'Outstation trips by car, for individuals and families'
+  - 'Coaches for groups, weddings and events'
+  - 'Multi-day hire with a driver for a holiday or business tour'
+  - 'Vehicles for corporate guests and delegates'
+howItWorks:
+  - title: 'Tell us the trip'
+    text: 'Share the pickup point, route, dates and how many passengers and bags.'
+  - title: 'We suggest a vehicle'
+    text: 'We recommend a car or coach that suits your group and send the rate and terms.'
+  - title: 'You confirm'
+    text: 'Check the details, tolls, taxes and driver arrangements, then confirm.'
+  - title: 'We arrange the pickup'
+    text: 'We assign the vehicle and send you the driver details before the journey.'
+whoItsFor:
+  - 'Families and groups who need a vehicle for a trip'
+  - 'Companies moving guests or staff'
+  - 'Wedding and event organisers with guests to transport'
+formType: 'transport'
+image:
+  src: '../../assets/photos/service-car-coach.jpg'
+  alt: 'A car following a truck on a misty winding hill road in the Western Ghats'
+seo:
+  title: 'Car and coach rentals'
+  description: 'Car and coach hire with drivers for transfers, outstation trips and groups. Send an enquiry.'
+demo: false

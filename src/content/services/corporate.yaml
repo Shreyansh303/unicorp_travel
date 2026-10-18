@@ -1,0 +1,33 @@
+slug: 'corporate'
+title: 'Corporate travel'
+category: 'corporate'
+order: 1
+summary: 'Business travel for your team, with policy checks, supplier terms and a dedicated desk.'
+intro: 'We plan and book travel for companies. You tell us who is travelling and what your travel policy allows. We handle the bookings, keep them within policy and keep the paperwork in order.'
+whatWeHandle:
+  - 'Travel management for flights, hotels and ground transport, from one point of contact'
+  - 'Checks against your company travel policy before a booking is confirmed'
+  - 'Supplier negotiations with airlines, hotels and transport providers on your behalf'
+  - 'A dedicated team for your account, and a travel implant (a team member based at your office) where it suits your volume'
+  - '24/7 support for travellers on the road'
+howItWorks:
+  - title: 'Tell us your needs'
+    text: 'Share your travel policy, approvers, usual routes and how many people travel. A short call is enough to start.'
+  - title: 'We propose a setup'
+    text: 'We suggest how bookings, approvals and support would work for your team, and what a dedicated desk or implant would cover.'
+  - title: 'We arrange the trips'
+    text: 'Your team sends requests, we book within policy and send the confirmations and invoices to the people you name.'
+  - title: 'We stay in touch'
+    text: 'If plans change, travellers can reach us and we rework the booking with the supplier.'
+whoItsFor:
+  - 'HR and admin teams who organise travel for staff'
+  - 'Finance teams who want bookings that follow policy and are easy to reconcile'
+  - 'Companies whose people travel often, to the same cities or to many'
+formType: 'corporate'
+image:
+  src: '../../assets/photos/corporate-airport.jpg'
+  alt: 'Rows of empty seats in an airport gate area beneath a curved white glass roof'
+seo:
+  title: 'Corporate travel management'
+  description: 'Corporate travel for companies: policy-aware bookings, supplier negotiations and a dedicated team. Send us an enquiry.'
+demo: true

@@ -1,0 +1,76 @@
+slug: 'rajasthan-forts-and-ranthambore'
+title: 'Rajasthan forts and Ranthambore'
+summary: 'Safaris in Ranthambore, then the palaces and forts of Jaipur, Jodhpur and Udaipur.'
+type: 'domestic'
+region: 'north-india'
+destinations:
+  - 'Ranthambore'
+  - 'Jaipur'
+  - 'Jodhpur'
+  - 'Udaipur'
+duration:
+  days: 8
+  nights: 7
+themes:
+  - 'heritage'
+  - 'wildlife'
+  - 'family'
+fromPrice: 52000
+priceBasis: 'per person, twin sharing, land arrangements only'
+priceValidUntil: '2027-03-31'
+highlights:
+  - 'Amer Fort and the City Palace in Jaipur'
+  - 'Two jungle safaris in Ranthambore National Park'
+  - 'Mehrangarh Fort above the blue lanes of Jodhpur'
+  - 'The lakeside City Palace at Udaipur'
+  - 'A boat ride on Lake Pichola'
+  - 'Local food and bazaars in every city'
+itinerary:
+  - day: 1
+    title: 'Arrive in Ranthambore'
+    description: 'Meet your driver on arrival at Sawai Madhopur and transfer to your hotel near Ranthambore National Park. In the afternoon, join the first jungle safari in a shared vehicle, subject to the park allotting seats.'
+  - day: 2
+    title: 'Ranthambore safari'
+    description: 'Take a morning safari, return for breakfast and rest, then visit Ranthambore Fort if time allows. Sightings of wildlife cannot be promised, but the park is home to many species.'
+  - day: 3
+    title: 'Ranthambore to Jaipur'
+    description: 'Drive to Jaipur, about four hours with a stop for lunch on the way. Check in and spend the evening at leisure or at a local market for block prints and jewellery.'
+  - day: 4
+    title: 'Jaipur sightseeing'
+    description: 'Visit Amer Fort in the morning, then the City Palace, Jantar Mantar and Hawa Mahal. Finish with an evening walk through the old bazaars.'
+  - day: 5
+    title: 'Jaipur to Jodhpur'
+    description: 'Drive to Jodhpur, about five to six hours with a stop for lunch. Settle into your hotel and spend the evening at leisure.'
+  - day: 6
+    title: 'Jodhpur to Udaipur'
+    description: 'Visit Mehrangarh Fort in the morning and walk down to the old city. After lunch, drive to Udaipur, stopping at the Jain temples of Ranakpur on the way.'
+  - day: 7
+    title: 'Udaipur sightseeing'
+    description: 'Visit the City Palace and the Jagdish Temple, then take a boat ride on Lake Pichola at sunset. The evening is free for the lakeside lanes.'
+  - day: 8
+    title: 'Departure from Udaipur'
+    description: 'After breakfast, transfer to Udaipur airport for your onward journey.'
+inclusions:
+  - 'Seven nights of stay in comfortable hotels, on twin sharing'
+  - 'Daily breakfast'
+  - 'Private air-conditioned car with driver for the whole route'
+  - 'Two shared-vehicle safaris in Ranthambore, subject to availability of seats'
+  - 'Boat ride on Lake Pichola'
+  - 'All applicable taxes on the above services'
+exclusions:
+  - 'Flights or trains to Sawai Madhopur (for Ranthambore) and flights from Udaipur'
+  - 'Lunches and dinners'
+  - 'Monument entry fees and camera charges'
+  - 'Personal expenses, tips and travel insurance'
+images:
+  hero:
+    src: '../../assets/photos/rajasthan-1.jpg'
+    alt: 'The City Palace complex in Udaipur rising above the lake under a clear blue sky'
+  gallery:
+    - src: '../../assets/photos/rajasthan-2.jpg'
+      alt: 'A tiger lying in dry grass beside a waterhole at golden hour'
+seo:
+  title: 'Rajasthan forts and Ranthambore, 8 days'
+  description: 'Eight days across Ranthambore, Jaipur, Jodhpur and Udaipur with safaris, forts and palaces. Day-wise itinerary and an indicative price. Send an enquiry.'
+featured: false
+demo: true

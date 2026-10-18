@@ -1,0 +1,67 @@
+slug: 'andaman-islands'
+title: 'Andaman islands'
+summary: 'Quiet beaches, clear water and island time in Port Blair, Havelock and Neil.'
+type: 'domestic'
+region: 'islands'
+destinations:
+  - 'Port Blair'
+  - 'Havelock Island'
+  - 'Neil Island'
+duration:
+  days: 6
+  nights: 5
+themes:
+  - 'honeymoon'
+  - 'beach'
+  - 'nature'
+fromPrice: 38500
+priceBasis: 'per person, twin sharing, land arrangements only'
+priceValidUntil: '2027-03-31'
+highlights:
+  - 'Radhanagar Beach on Havelock Island'
+  - 'Snorkelling or a glass-bottom boat ride over coral'
+  - 'Sunset at Neil Island and its natural rock bridge'
+  - 'Cellular Jail and its evening light and sound show in Port Blair'
+  - 'Ferry rides between the islands'
+itinerary:
+  - day: 1
+    title: 'Arrive in Port Blair'
+    description: "Meet your driver at Port Blair airport and transfer to your hotel. In the afternoon, visit Corbyn's Cove beach and see the light and sound show at Cellular Jail in the evening."
+  - day: 2
+    title: 'Port Blair to Havelock'
+    description: 'Take the morning ferry to Havelock Island and transfer to your resort. Spend the afternoon at Radhanagar Beach for the sunset.'
+  - day: 3
+    title: 'Havelock beaches'
+    description: 'Choose a water activity such as snorkelling or a boat trip to a nearby reef, subject to weather and sea conditions. The rest of the day is free on the beach.'
+  - day: 4
+    title: 'Havelock to Neil Island'
+    description: 'Take a ferry to Neil Island and check in. Visit Bharatpur Beach and the natural rock bridge at Laxmanpur, ideally at sunset.'
+  - day: 5
+    title: 'Neil Island to Port Blair'
+    description: 'Ferry back to Port Blair after a morning on the beach. Spend the evening at leisure or shop for shells and local crafts.'
+  - day: 6
+    title: 'Departure from Port Blair'
+    description: 'Transfer to Port Blair airport for your onward journey.'
+inclusions:
+  - 'Five nights of stay in resorts and hotels, on twin sharing'
+  - 'Daily breakfast'
+  - 'Ferry tickets between Port Blair, Havelock and Neil Island'
+  - 'Private vehicle for transfers and sightseeing as per the itinerary'
+  - 'All applicable taxes on the above services'
+exclusions:
+  - 'Flights to and from Port Blair'
+  - 'Lunches and dinners'
+  - 'Water sports, boat trips and entry fees, unless listed'
+  - 'Personal expenses, tips and travel insurance'
+images:
+  hero:
+    src: '../../assets/photos/andaman-1.jpg'
+    alt: 'Coconut palms leaning over a white sand beach and turquoise water'
+  gallery:
+    - src: '../../assets/photos/andaman-2.jpg'
+      alt: 'A sandy beach and turquoise surf seen from above'
+seo:
+  title: 'Andaman islands, 6 days'
+  description: 'Six days across Port Blair, Havelock and Neil Island with beaches and ferries. Day-wise itinerary and an indicative price. Send an enquiry.'
+featured: true
+demo: true

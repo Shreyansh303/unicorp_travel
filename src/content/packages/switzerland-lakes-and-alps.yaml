@@ -1,0 +1,74 @@
+slug: 'switzerland-lakes-and-alps'
+title: 'Switzerland lakes and Alps'
+summary: 'Lakes, mountain trains and alpine towns, with scenic rail journeys between stays.'
+type: 'international'
+region: 'europe'
+destinations:
+  - 'Zurich'
+  - 'Lucerne'
+  - 'Interlaken'
+  - 'Zermatt'
+duration:
+  days: 8
+  nights: 7
+themes:
+  - 'nature'
+  - 'honeymoon'
+fromPrice: 168000
+priceBasis: 'per person, twin sharing, including return flights from Delhi'
+priceValidUntil: '2027-03-31'
+highlights:
+  - 'A day at the lake and old town of Lucerne'
+  - 'A mountain excursion above Interlaken, weather permitting'
+  - 'A scenic train ride through the Alps'
+  - 'Views of the Matterhorn from Zermatt'
+  - 'A Swiss travel pass for trains, boats and many buses'
+itinerary:
+  - day: 1
+    title: 'Fly to Zurich'
+    description: 'Depart from Delhi and arrive in Zurich. Transfer to your hotel and rest after the journey.'
+  - day: 2
+    title: 'Zurich and Lucerne'
+    description: 'Spend the morning in the old town of Zurich, then take a train to Lucerne. Walk across the Chapel Bridge and along the lake.'
+  - day: 3
+    title: 'Mount Titlis or Rigi'
+    description: 'Take a day trip to a nearby mountain by cable car or cogwheel train, depending on the weather and the season. Return to Lucerne in the evening.'
+  - day: 4
+    title: 'Lucerne to Interlaken'
+    description: 'Take a scenic train to Interlaken, with views of lakes and green valleys. Spend the afternoon by the lakes or the river.'
+  - day: 5
+    title: 'Jungfrau region'
+    description: 'Take a mountain railway to the high viewpoints of the Jungfrau region, with time for snow walks and photographs, if the weather allows. Tickets for this excursion are charged extra.'
+  - day: 6
+    title: 'Interlaken to Zermatt'
+    description: 'Travel by train to Zermatt, a car-free village. Check in and walk through the village, with the Matterhorn in view on clear days.'
+  - day: 7
+    title: 'Zermatt'
+    description: 'Take the Gornergrat railway to a viewpoint above the glaciers. The afternoon is free for a walk or a lazy meal.'
+  - day: 8
+    title: 'Return to Delhi'
+    description: 'Travel by train to Zurich airport for the flight home.'
+inclusions:
+  - 'Return economy flights from Delhi, with a change of flight'
+  - 'Seven nights of stay in hotels, on twin sharing'
+  - 'Daily breakfast'
+  - 'Swiss travel pass for trains, boats and many buses'
+  - 'Excursion tickets for day 3 (Mount Titlis or Rigi) and day 7 (Gornergrat railway)'
+  - 'Airport transfers in Zurich'
+exclusions:
+  - 'Schengen visa fee and service charges'
+  - 'Lunches and dinners'
+  - 'Day 5 Jungfrau excursion tickets, which are charged extra, and other excursions not listed'
+  - 'Personal expenses, tips and travel insurance'
+images:
+  hero:
+    src: '../../assets/photos/switzerland-1.jpg'
+    alt: 'A still alpine lake below snow-capped Swiss peaks'
+  gallery:
+    - src: '../../assets/photos/switzerland-2.jpg'
+      alt: 'A red train crossing a stone viaduct in a snowy mountain gorge'
+seo:
+  title: 'Switzerland lakes and Alps, 8 days'
+  description: 'Eight days across Zurich, Lucerne, Interlaken and Zermatt by scenic rail, flights from Delhi included. Day-wise itinerary and an indicative price.'
+featured: true
+demo: true

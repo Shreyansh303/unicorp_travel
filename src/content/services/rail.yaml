@@ -1,0 +1,33 @@
+slug: 'rail'
+title: 'International rail reservations'
+shortTitle: 'International rail'
+category: 'related'
+order: 10
+summary: 'Train tickets and seat reservations for journeys in other countries.'
+intro: 'Trains are a good way to see many countries. We help you choose the right tickets for your route, reserve seats where they are needed, and fit the journeys into the rest of your trip.'
+whatWeHandle:
+  - 'Train tickets for international routes'
+  - 'Seat reservations where a train requires them'
+  - 'Choosing the right ticket type and timing for your route'
+  - 'Combining train legs with flights and hotel stays'
+howItWorks:
+  - title: 'Tell us your route'
+    text: 'Share the cities, dates and number of travellers, and how flexible your plans are.'
+  - title: 'We compare options'
+    text: 'We show you ticket options that suit the route, with the fare and the conditions.'
+  - title: 'You choose'
+    text: 'Pick the option you prefer. We tell you about change and refund conditions before you book.'
+  - title: 'We reserve and send tickets'
+    text: 'We book the tickets and seats and send them to you before you travel.'
+whoItsFor:
+  - 'Travellers planning a multi-city trip abroad'
+  - 'Families who prefer trains to short flights'
+  - 'Holiday-makers adding a train journey to a trip'
+formType: 'rail'
+image:
+  src: '../../assets/photos/service-rail.jpg'
+  alt: 'A white Japanese bullet train speeding past a mountain'
+seo:
+  title: 'International rail reservations'
+  description: 'Train tickets and seat reservations for journeys abroad, planned with your flights and stays. Send an enquiry to our team.'
+demo: false

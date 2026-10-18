@@ -1,0 +1,33 @@
+slug: 'hotels'
+title: 'Hotel reservations'
+category: 'related'
+order: 4
+summary: 'Hotels and stays booked in India and abroad, for one traveller or a group.'
+intro: 'Tell us the city, dates and the kind of stay you want, and we will suggest hotels that fit. We handle the booking and send the confirmation, for individual travellers, families and groups.'
+whatWeHandle:
+  - 'Hotels in India and abroad, from simple stays to resorts'
+  - 'Room blocks for groups, weddings and company events'
+  - 'Meal plans, room types and special requests passed on to the hotel'
+  - 'Changes and cancellations raised with the hotel on your behalf'
+  - 'Stays that fit into a larger holiday or business trip plan'
+howItWorks:
+  - title: 'Tell us what you need'
+    text: 'Share the city, dates, number of guests and your budget, and anything that matters, such as location or meals.'
+  - title: 'We suggest options'
+    text: 'We send a short list of hotels with room types and rates for your dates.'
+  - title: 'You pick one'
+    text: 'Choose the hotel and room you like. We confirm the terms with you before booking.'
+  - title: 'We book and confirm'
+    text: 'We make the reservation and send you the confirmation to carry with you.'
+whoItsFor:
+  - 'Individual travellers who want a stay arranged for them'
+  - 'Families and groups who need several rooms together'
+  - 'Companies booking stays for staff or guests'
+formType: 'hotel'
+image:
+  src: '../../assets/photos/service-hotel.jpg'
+  alt: 'A bed with white linen and cushions in a softly lit hotel room'
+seo:
+  title: 'Hotel reservations for India and abroad'
+  description: 'Hotel bookings for individuals, families and groups, in India and abroad, arranged by our team. Tell us your dates and send an enquiry.'
+demo: false
