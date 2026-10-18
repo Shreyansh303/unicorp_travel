@@ -20,9 +20,9 @@ All photographs in `src/assets/photos/` were downloaded from Unsplash (not hot-l
 | singapore-2.jpg | Supertrees at Gardens by the Bay | Coleen Rivas | https://unsplash.com/photos/OZ2rS2zCjNo | [Unsplash License](https://unsplash.com/license) | Supertree structures and a skywalk above the gardens in Singapore |
 | switzerland-1.jpg | Alpine lake below snow-capped peaks | Pascal Debrunner | https://unsplash.com/photos/Ap53G_567Dc | [Unsplash License](https://unsplash.com/license) | A still alpine lake below snow-capped Swiss peaks |
 | switzerland-2.jpg | Red mountain train on a stone viaduct | Johannes Hofmann | https://unsplash.com/photos/PM5a_R83-YQ | [Unsplash License](https://unsplash.com/license) | A red train crossing a stone viaduct in a snowy mountain gorge |
-| corporate-airport.jpg | Airport waiting area at sunset | Safwan Mahmud | https://unsplash.com/photos/6xQFm9TFwmk | [Unsplash License](https://unsplash.com/license) | Rows of empty seats in an airport terminal as the sun sets beyond the glass wall |
+| corporate-airport.jpg | Airport gate area with rows of empty seats | Kenjy Minamori | https://unsplash.com/photos/L9oT7Ow3TEo | [Unsplash License](https://unsplash.com/license) | Rows of empty seats in an airport gate area beneath a curved white glass roof |
 | corporate-meeting.jpg | Empty boardroom with glass walls | Benjamin Child | https://unsplash.com/photos/GWe0dlVD9e0 | [Unsplash License](https://unsplash.com/license) | A boardroom with a long table and leather chairs beside floor-to-ceiling windows |
-| corporate-city.jpg | Business district skyline at dusk (Beijing CBD) | Alien eyes | https://unsplash.com/photos/CoW_pR3EF5E | [Unsplash License](https://unsplash.com/license) | A business district skyline glowing in golden evening light |
+| corporate-city.jpg | Mumbai (Worli) skyline at golden hour, cropped to remove a readable sign | Drone Master | https://unsplash.com/photos/qrj4LiT9NRQ | [Unsplash License](https://unsplash.com/license) | Mumbai skyline of high-rise towers in warm evening light |
 | service-visa.jpg | Passport open to stamped pages | Kit (formerly ConvertKit); photo by Henry Thong | https://unsplash.com/photos/htQznS-Rx7w | [Unsplash License](https://unsplash.com/license) | An open passport with several visa and entry stamps |
 | service-hotel.jpg | Hotel-style bedroom | Vojtech Bruzek | https://unsplash.com/photos/Yrxr3bsPdS0 | [Unsplash License](https://unsplash.com/license) | A bed with white linen and cushions in a softly lit hotel room |
 | service-forex.jpg | Indian rupee banknotes | rupixen | https://unsplash.com/photos/5lw6CLBZlCg | [Unsplash License](https://unsplash.com/license) | A close-up of scattered Indian rupee banknotes |
@@ -38,7 +38,7 @@ All photographs in `src/assets/photos/` were downloaded from Unsplash (not hot-l
 
 Notes:
 - `service-visa.jpg`: the photo is posted on the account Kit (formerly ConvertKit); the photo page credits Henry Thong.
-- `corporate-city.jpg` shows Beijing and `hero-journey.jpg` shows a road in South Africa. Use them only as generic business-district and journey imagery, never captioned as an Indian or package location.
+- `hero-journey.jpg` shows a road in South Africa. Use it only as generic journey imagery, never captioned as an Indian or package location.
 - `service-frro.jpg` shows a US passport, which suits FRRO services for foreign nationals. Do not caption it as an Indian document.
 - `service-cruise.jpg` shows a ship whose name on the hull is too small to read at normal size; do not crop in on the hull.
 - `ladakh-2.jpg` is listed on Unsplash under Ladakh searches; the photo page does not state a location, so keep the caption generic.
