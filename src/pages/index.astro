@@ -1,0 +1,15 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { site } from '../config/site';
+
+const { displayName } = site;
+---
+
+<BaseLayout
+  title={displayName}
+  description={`${displayName}: corporate and leisure travel from Noida.`}
+>
+  <main>
+    <h1>{displayName}</h1>
+  </main>
+</BaseLayout>
