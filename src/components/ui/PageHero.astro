@@ -9,6 +9,7 @@ import { Picture } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 import Section, { type Tone } from './Section.astro';
 import Breadcrumbs from './Breadcrumbs.astro';
+import HeroCrossfade from './HeroCrossfade.astro';
 import type { Crumb } from './types';
 
 interface Props {
@@ -19,6 +20,8 @@ interface Props {
   lede?: string;
   crumbs?: Crumb[];
   image?: { src: ImageMetadata; alt: string };
+  /** Two or more photos for a slow crossfade (see HeroCrossfade); shown instead of `image`. */
+  photos?: { src: ImageMetadata; alt: string }[];
   mood?: 'holiday' | 'corporate';
   tone?: Tone;
   /** `display` for the big holiday headline, `page` for long or corporate titles. */
@@ -32,6 +35,7 @@ const {
   lede,
   crumbs = [],
   image,
+  photos,
   mood = 'holiday',
   tone,
   size = 'page',
@@ -45,7 +49,7 @@ const {
   aria-labelledby="page-title"
   class="page-hero"
 >
-  <div class:list={['ph-grid', image && 'ph-with-image']}>
+  <div class:list={['ph-grid', (image || photos) && 'ph-with-image']}>
     <div class="ph-copy">
       {crumbs.length > 0 && <Breadcrumbs items={crumbs} />}
       {eyebrow && <p class="t-eyebrow">{eyebrow}</p>}
@@ -57,18 +61,22 @@ const {
       {lede && <p class="t-lede hero-enter">{lede}</p>}
       <slot />
     </div>
-    {image && (
-      <figure class:list={['ph-photo', mood === 'corporate' ? 'ph-photo-square' : 'arch']}>
-        <Picture
-          src={image.src}
-          alt={image.alt}
-          formats={['avif', 'webp']}
-          widths={[400, 640, 960, 1280]}
-          sizes="(min-width: 1366px) 520px, (min-width: 1024px) 38vw, calc(100vw - 2rem)"
-          loading="eager"
-          fetchpriority="high"
-        />
-      </figure>
+    {photos && photos.length > 1 ? (
+      <HeroCrossfade photos={photos} />
+    ) : (
+      image && (
+        <figure class:list={['ph-photo', mood === 'corporate' ? 'ph-photo-square' : 'arch']}>
+          <Picture
+            src={image.src}
+            alt={image.alt}
+            formats={['avif', 'webp']}
+            widths={[400, 640, 960, 1280]}
+            sizes="(min-width: 1366px) 520px, (min-width: 1024px) 38vw, calc(100vw - 2rem)"
+            loading="eager"
+            fetchpriority="high"
+          />
+        </figure>
+      )
     )}
   </div>
 </Section>

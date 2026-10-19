@@ -2,6 +2,10 @@
 import { getEntry } from 'astro:content';
 import PageLayout from '../../layouts/PageLayout.astro';
 import PageHero from '../../components/ui/PageHero.astro';
+import ladakh from '../../assets/photos/ladakh-1.jpg';
+import kerala from '../../assets/photos/kerala-backwaters-1.jpg';
+import switzerland from '../../assets/photos/switzerland-1.jpg';
+import andaman from '../../assets/photos/andaman-1.jpg';
 import Section from '../../components/ui/Section.astro';
 import Button from '../../components/ui/Button.astro';
 import Link from '../../components/ui/Link.astro';
@@ -26,6 +30,13 @@ const leisure = await getEntry('services', 'leisure');
 if (!leisure) throw new Error('The leisure service entry is missing');
 const packages = await getPackages('featured');
 const hasSample = packages.some((item) => item.data.demo);
+/** Photos for the hero crossfade; the first one is the LCP image. */
+const heroPhotos = [
+  { src: ladakh, alt: 'A turquoise lake ringed by bare mountains under a blue sky' },
+  { src: kerala, alt: 'A traditional houseboat gliding along a palm-lined backwater in Kerala' },
+  { src: switzerland, alt: 'A still alpine lake below snow-capped Swiss peaks' },
+  { src: andaman, alt: 'Coconut palms leaning over a white sand beach and turquoise water' },
+];
 ---
 
 <PageLayout
@@ -41,6 +52,7 @@ const hasSample = packages.some((item) => item.data.demo);
 >
   <PageHero
     title="Holidays, planned"
+    photos={heroPhotos}
     accent="around you."
     lede={leisure.data.intro}
     crumbs={[{ label: 'Home', href: routes.home }, { label: 'Holidays' }]}

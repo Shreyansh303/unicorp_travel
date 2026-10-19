@@ -114,6 +114,7 @@ All scripts are defined in `package.json`.
 - `planner.spec.ts` (F-13): a keyboard-only run through all five steps, the summary and the hand-off; every step blocks Next until valid and focuses the first problem; a refresh restores the step and the answers; Back keeps them; the summary links back to each step; session storage is cleared after sending.
 - `navigation.spec.ts`: after client-side navigation from the home page, focus is on the new page's `h1`, the route announcer reads the new title, the holiday filters narrow the list and write the query string, back restores the unfiltered list and then the home page, and the planner hydrates and moves to step 2.
 - `reduced-motion.spec.ts`: on every route and the 404 page, under `prefers-reduced-motion: reduce`, no animation or transition with a duration is running after load or after scrolling to the bottom, and nothing in `main` is left hidden or offset by a reveal, an undrawn route line or a parallax frame.
+- `hero-crossfade.spec.ts`: on `/holidays`, `/services` and `/plan-my-trip`, exactly one photo is in the HTML and the rest follow after load; the toggle pauses and resumes the crossfade; the pointer inside the hero holds it; there is no second timer after navigating away and back; under reduced motion it never starts and the toggle is hidden.
 
 **Accessibility tests** (`tests/a11y/`):
 
@@ -215,12 +216,13 @@ Link helpers in the same file:
 - Section headings, the enquiry band, "How it works" steps, card grids and itinerary days reveal as they scroll in.
 - Hover and press: buttons lift and tilt, cards and tiles lift and press in (`--press-scale-card`), chips press, arrows nudge, package photos zoom. Colours and shadows change at once; only transforms animate.
 - Planner steps slide and fade, using the `--duration-base` and `--ease-out` tokens.
+- Hero photo crossfade (`HeroCrossfade.astro`, used through `PageHero`'s `photos` prop): four photos in the arch with the route line. Only the first is in the HTML (eager, high priority, the LCP image); the others are inserted by a small script after the page has loaded. It is a slow opacity fade (`--duration-photo-fade`, 1.2 s) with each photo held for `--duration-photo-hold` (6 s). A visible pause and play button controls it, and it also pauses while the tab is hidden and while the pointer or keyboard focus is inside the hero. Under reduced motion, or without JavaScript, the first photo stays and the button is hidden. The timer is cleared before a client-side navigation, so it never doubles up.
 **Motion rules.**
 
 - Animate only `transform` and `opacity`, plus the SVG stroke for the route line.
 - The LCP element is visible in the HTML from the start. Animation decorates it and never delays it.
 - Under `prefers-reduced-motion`, nothing moves: no smooth scroll, no parallax, no reveal, no hero entrance, route lines drawn at once and pages swapped without animation.
-- No auto-advancing carousels.
+- No auto-advancing carousels, with one exception: the hero photo crossfade on `/holidays`, `/services` and `/plan-my-trip` (see below). Any other carousel needs visible controls and a pause button.
 
 **Accessibility baseline.**
 

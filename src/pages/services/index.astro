@@ -2,6 +2,10 @@
 import { Picture } from 'astro:assets';
 import PageLayout from '../../layouts/PageLayout.astro';
 import PageHero from '../../components/ui/PageHero.astro';
+import airport from '../../assets/photos/corporate-airport.jpg';
+import hotel from '../../assets/photos/service-hotel.jpg';
+import city from '../../assets/photos/corporate-city.jpg';
+import visa from '../../assets/photos/service-visa.jpg';
 import Section from '../../components/ui/Section.astro';
 import Button from '../../components/ui/Button.astro';
 import Icon from '../../components/ui/Icon.astro';
@@ -20,6 +24,16 @@ const others = [...grouped.leisure, ...grouped.corporate].map((service) => ({
   href: serviceHref(service),
   demo: service.data.demo,
 }));
+/** Photos for the hero crossfade; the first one is the LCP image. */
+const heroPhotos = [
+  { src: visa, alt: 'An open passport with several visa and entry stamps' },
+  { src: hotel, alt: 'A bed with white linen and cushions in a softly lit hotel room' },
+  { src: city, alt: 'Mumbai skyline of high-rise towers in warm evening light' },
+  {
+    src: airport,
+    alt: 'Rows of empty seats in an airport gate area beneath a curved white glass roof',
+  },
+];
 ---
 
 <PageLayout
@@ -36,6 +50,7 @@ const others = [...grouped.leisure, ...grouped.corporate].map((service) => ({
 >
   <PageHero
     title="Travel services"
+    photos={heroPhotos}
     eyebrow="Around the trip"
     lede="The paperwork and bookings around a trip, for holidays, business travel or a single booking. Pick a service to see what we handle and how it works."
     crumbs={[{ label: 'Home', href: routes.home }, { label: 'Services' }]}

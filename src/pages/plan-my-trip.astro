@@ -1,6 +1,10 @@
 ---
 import PageLayout from '../layouts/PageLayout.astro';
 import PageHero from '../components/ui/PageHero.astro';
+import journey from '../assets/photos/hero-journey.jpg';
+import bali from '../assets/photos/bali-1.jpg';
+import dubai from '../assets/photos/dubai-2.jpg';
+import singapore from '../assets/photos/singapore-1.jpg';
 import Section from '../components/ui/Section.astro';
 import Button from '../components/ui/Button.astro';
 import Link from '../components/ui/Link.astro';
@@ -30,6 +34,16 @@ const waHref = mobile ? whatsappHref(template) : null;
 const regionOptions = regionIds.map((id) => ({ value: id, label: regionLabels[id] }));
 const themeOptions = themeIds.map((id) => ({ value: id, label: themeLabels[id] }));
 const mailHref = emailFor('Plan my trip', template);
+/** Photos for the hero crossfade; the first one is the LCP image. */
+const heroPhotos = [
+  { src: journey, alt: 'A winding road snaking through green mountain valleys, seen from above' },
+  { src: bali, alt: 'Green rice terraces among palm trees in Tegalalang, Bali' },
+  {
+    src: dubai,
+    alt: 'The Dubai skyline in silhouette at sunset with the Burj Khalifa rising above it',
+  },
+  { src: singapore, alt: 'Aerial view of the Marina Bay waterfront in Singapore at dusk' },
+];
 ---
 
 <PageLayout
@@ -46,6 +60,7 @@ const mailHref = emailFor('Plan my trip', template);
 >
   <PageHero
     title="Plan my"
+    photos={heroPhotos}
     accent="trip."
     lede="Answer five quick questions, check them, then send them to us on WhatsApp or by email. We reply with ideas, a day-wise plan and a price to talk through. Nothing is booked until you agree."
     crumbs={[{ label: 'Home', href: routes.home }, { label: 'Plan my trip' }]}

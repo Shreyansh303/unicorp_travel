@@ -1,0 +1,411 @@
+---
+/**
+ * The photo of an inner-page hero as a slow crossfade between a few photos, in the arch shape with
+ * the route line. Only the first photo is in the HTML (eager, high priority: it is the LCP image).
+ * The others are described in `data-slides` and inserted by the script after the page has loaded.
+ *
+ * Opacity only. A visible toggle pauses and resumes (WCAG 2.2.2). The fade also pauses while the
+ * tab is hidden and while the pointer or keyboard focus is inside the hero. Under reduced motion,
+ * and without JavaScript, the first photo simply stays and the toggle stays hidden.
+ */
+import { Picture, getImage } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import RouteLine from '../motion/RouteLine.astro';
+
+interface Props {
+  /** At least two photos; the first is shown at once. */
+  photos: { src: ImageMetadata; alt: string }[];
+}
+
+const { photos } = Astro.props;
+const [first, ...others] = photos;
+if (!first) throw new Error('HeroCrossfade needs photos');
+
+const widths = [400, 640, 960, 1280];
+const sizes = '(min-width: 1366px) 520px, (min-width: 1024px) 38vw, min(82vw, 26rem)';
+
+const slides = await Promise.all(
+  others.map(async (photo) => {
+    const sources = await Promise.all(
+      (['avif', 'webp'] as const).map(async (format) => {
+        const image = await getImage({ src: photo.src, format, widths, sizes });
+        return { type: `image/${format}`, srcset: image.srcSet.attribute };
+      }),
+    );
+    const fallback = await getImage({ src: photo.src, format: 'webp', width: 960 });
+    return { alt: photo.alt, sources, src: fallback.src };
+  }),
+);
+
+/** Same route as the home hero, climbing the arch to a marker at the top right. */
+const route =
+  'M0 470 C80 560 200 560 250 500 C300 440 230 390 200 430 C170 470 260 540 360 500 C440 470 470 380 480 300 C488 230 470 160 440 110';
+---
+
+<div class="hf" data-hero-fade data-slides={JSON.stringify(slides)} data-sizes={sizes}>
+  <figure class="hf-frame arch">
+    <div class="hf-slide is-active" data-slide>
+      <Picture
+        src={first.src}
+        alt={first.alt}
+        formats={['avif', 'webp']}
+        widths={widths}
+        sizes={sizes}
+        loading="eager"
+        fetchpriority="high"
+      />
+    </div>
+  </figure>
+  <RouteLine
+    class="hf-route"
+    d={route}
+    viewBox="0 0 496 580"
+    halo
+    markers={[{ cx: 440, cy: 110, r: 11 }]}
+  />
+  <button
+    type="button"
+    class="hf-toggle"
+    data-fade-toggle
+    aria-label="Pause the photo slideshow"
+    hidden
+  >
+    <svg class="hf-icon hf-icon-pause" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d="M8 5v14M16 5v14"></path>
+    </svg>
+    <svg class="hf-icon hf-icon-play" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d="M8 5.5v13l10-6.5z"></path>
+    </svg>
+  </button>
+</div>
+
+<style>
+  .hf {
+    position: relative;
+    width: min(82%, 26rem);
+    margin-inline: auto;
+    aspect-ratio: 400 / 500;
+  }
+
+  .hf-frame {
+    height: 100%;
+    margin: 0;
+    position: relative;
+    /* Keeps the slides' stacking inside the frame, so the route line draws over the photo. */
+    isolation: isolate;
+    background: var(--sand);
+  }
+
+  .hf :global(.hf-slide) {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity var(--duration-photo-fade) var(--ease-in-out);
+  }
+
+  .hf :global(.hf-slide.is-active) {
+    opacity: 1;
+    z-index: 2;
+  }
+
+  /* The photo being replaced stays fully visible underneath until the new one has faded in. */
+  .hf :global(.hf-slide.is-prev) {
+    opacity: 1;
+    z-index: 1;
+    transition: none;
+  }
+
+  .hf :global(.hf-slide picture),
+  .hf :global(.hf-slide img) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .hf :global(.hf-route) {
+    position: absolute;
+    top: -8%;
+    left: -12%;
+    width: 124%;
+    height: 116%;
+    pointer-events: none;
+  }
+
+  .hf-toggle {
+    position: absolute;
+    right: var(--space-3);
+    bottom: var(--space-3);
+    z-index: 3;
+    display: grid;
+    place-items: center;
+    width: var(--tap);
+    height: var(--tap);
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: var(--white);
+    color: var(--ink);
+    box-shadow: var(--shadow-md);
+    cursor: pointer;
+  }
+
+  .hf-toggle[hidden] {
+    display: none;
+  }
+
+  .hf-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .hf-icon-play {
+    display: none;
+    fill: currentColor;
+  }
+
+  .hf-toggle[data-paused] .hf-icon-pause {
+    display: none;
+  }
+
+  .hf-toggle[data-paused] .hf-icon-play {
+    display: block;
+  }
+
+  /* The toggle never exists under reduced motion, even if the script has shown it. */
+  @media (prefers-reduced-motion: reduce) {
+    .hf-toggle,
+    .hf-toggle[hidden] {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  interface Slide {
+    alt: string;
+    src: string;
+    sources: { type: string; srcset: string }[];
+  }
+
+  interface Controller {
+    destroy: () => void;
+  }
+
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let controllers: Controller[] = [];
+
+  /** A time token such as `1200ms` as a number of milliseconds. */
+  function token(name: string, fallback: number): number {
+    const value = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    const number = parseFloat(value);
+    if (Number.isNaN(number)) return fallback;
+    return value.endsWith('ms') ? number : value.endsWith('s') ? number * 1000 : fallback;
+  }
+
+  function buildSlide(data: Slide, sizes: string): HTMLElement {
+    const slide = document.createElement('div');
+    slide.className = 'hf-slide';
+    slide.dataset['slide'] = '';
+    slide.setAttribute('aria-hidden', 'true');
+    const picture = document.createElement('picture');
+    data.sources.forEach((source) => {
+      const el = document.createElement('source');
+      el.type = source.type;
+      el.srcset = source.srcset;
+      el.sizes = sizes;
+      picture.append(el);
+    });
+    const img = document.createElement('img');
+    img.src = data.src;
+    img.alt = data.alt;
+    img.decoding = 'async';
+    picture.append(img);
+    slide.append(picture);
+    return slide;
+  }
+
+  function start(root: HTMLElement): Controller | null {
+    const frame = root.querySelector<HTMLElement>('.hf-frame');
+    const toggle = root.querySelector<HTMLButtonElement>('[data-fade-toggle]');
+    const hero = root.closest<HTMLElement>('.page-hero') ?? root;
+    if (!frame || !toggle || reduce.matches) return null;
+    const button = toggle;
+
+    let data: Slide[] = [];
+    try {
+      data = JSON.parse(root.dataset['slides'] ?? '[]') as Slide[];
+    } catch {
+      data = [];
+    }
+    if (data.length === 0) return null;
+
+    let timer = 0;
+    let loader = 0;
+    let settle = 0;
+    let destroyed = false;
+    let ready = false;
+    let userPaused = false;
+    let hovering = false;
+    let focusInside = false;
+    // After an explicit Play, hover and focus no longer hold the fade until the visitor leaves.
+    let ignoreEngaged = false;
+    let current = 0;
+    const slides: HTMLElement[] = Array.from(frame.querySelectorAll<HTMLElement>('[data-slide]'));
+
+    const paused = () =>
+      userPaused || document.hidden || (!ignoreEngaged && (hovering || focusInside));
+
+    const show = (next: number) => {
+      const from = slides[current];
+      const to = slides[next];
+      if (!from || !to || from === to) return;
+      window.clearTimeout(settle);
+      slides.forEach((slide) => slide.classList.remove('is-prev'));
+      from.classList.remove('is-active');
+      from.classList.add('is-prev');
+      from.setAttribute('aria-hidden', 'true');
+      to.classList.add('is-active');
+      to.removeAttribute('aria-hidden');
+      current = next;
+      root.dataset['fadeIndex'] = String(next);
+      settle = window.setTimeout(
+        () => from.classList.remove('is-prev'),
+        token('--duration-photo-fade', 1200) + 50,
+      );
+    };
+
+    const schedule = () => {
+      window.clearTimeout(timer);
+      if (destroyed || !ready || paused()) return;
+      timer = window.setTimeout(
+        () => {
+          if (destroyed || !root.isConnected) return;
+          const next = (current + 1) % slides.length;
+          const img = slides[next]?.querySelector('img');
+          // Wait for a photo that has not arrived (or failed) rather than fading to a blank frame.
+          if (img && (!img.complete || img.naturalWidth === 0)) {
+            schedule();
+            return;
+          }
+          show(next);
+          schedule();
+        },
+        token('--duration-photo-hold', 6000),
+      );
+    };
+
+    const sync = () => {
+      root.dataset['fadeState'] = ready ? (paused() ? 'paused' : 'running') : 'idle';
+      schedule();
+    };
+
+    const onToggle = () => {
+      ignoreEngaged = userPaused;
+      userPaused = !userPaused;
+      toggle.toggleAttribute('data-paused', userPaused);
+      toggle.setAttribute(
+        'aria-label',
+        userPaused ? 'Play the photo slideshow' : 'Pause the photo slideshow',
+      );
+      sync();
+    };
+    const onEnter = (event: PointerEvent) => {
+      if (event.pointerType !== 'mouse') return;
+      hovering = true;
+      sync();
+    };
+    const onLeave = (event: PointerEvent) => {
+      if (event.pointerType !== 'mouse') return;
+      hovering = false;
+      if (!focusInside) ignoreEngaged = false;
+      sync();
+    };
+    const onFocusIn = (event: FocusEvent) => {
+      // The page heading is focused by script after a client-side navigation; that is not a visitor
+      // using the hero.
+      if (event.target instanceof HTMLElement && event.target.getAttribute('tabindex') === '-1') {
+        return;
+      }
+      focusInside = true;
+      sync();
+    };
+    const onFocusOut = (event: FocusEvent) => {
+      if (event.relatedTarget instanceof Node && hero.contains(event.relatedTarget)) return;
+      focusInside = false;
+      if (!hovering) ignoreEngaged = false;
+      sync();
+    };
+    const onVisibility = () => sync();
+    const onReduce = () => {
+      if (reduce.matches) destroy();
+    };
+
+    function destroy() {
+      destroyed = true;
+      window.clearTimeout(timer);
+      window.clearTimeout(loader);
+      window.clearTimeout(settle);
+      button.removeEventListener('click', onToggle);
+      hero.removeEventListener('pointerenter', onEnter);
+      hero.removeEventListener('pointerleave', onLeave);
+      hero.removeEventListener('focusin', onFocusIn);
+      hero.removeEventListener('focusout', onFocusOut);
+      document.removeEventListener('visibilitychange', onVisibility);
+      reduce.removeEventListener('change', onReduce);
+      window.removeEventListener('load', afterLoad);
+      if (reduce.matches) button.hidden = true;
+    }
+
+    // The other photos come in after the page has loaded.
+    const load = () => {
+      if (destroyed) return;
+      const sizes = root.dataset['sizes'] ?? '';
+      data.forEach((item) => {
+        const slide = buildSlide(item, sizes);
+        frame.append(slide);
+        slides.push(slide);
+      });
+      ready = true;
+      toggle.hidden = false;
+      sync();
+    };
+    function afterLoad() {
+      loader = window.setTimeout(load, 300);
+    }
+
+    toggle.addEventListener('click', onToggle);
+    hero.addEventListener('pointerenter', onEnter);
+    hero.addEventListener('pointerleave', onLeave);
+    hero.addEventListener('focusin', onFocusIn);
+    hero.addEventListener('focusout', onFocusOut);
+    document.addEventListener('visibilitychange', onVisibility);
+    reduce.addEventListener('change', onReduce);
+
+    if (document.readyState === 'complete') afterLoad();
+    else window.addEventListener('load', afterLoad, { once: true });
+
+    return { destroy };
+  }
+
+  function stop() {
+    controllers.forEach((controller) => controller.destroy());
+    controllers = [];
+  }
+
+  function init() {
+    stop();
+    document.querySelectorAll<HTMLElement>('[data-hero-fade]').forEach((root) => {
+      const controller = start(root);
+      if (controller) controllers.push(controller);
+    });
+  }
+
+  document.addEventListener('astro:page-load', init);
+  document.addEventListener('astro:before-swap', stop);
+</script>
