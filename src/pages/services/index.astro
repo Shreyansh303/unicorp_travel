@@ -77,7 +77,7 @@ const others = [...grouped.leisure, ...grouped.corporate].map((service) => ({
   </Section>
 
   <Section tone="white" mood="corporate" aria-labelledby="also-title">
-    <div class="section-head">
+    <div data-reveal class="section-head">
       <h2 id="also-title" class="t-h2">
         Planning the whole trip?
       </h2>
@@ -138,6 +138,12 @@ const others = [...grouped.leisure, ...grouped.corporate].map((service) => ({
   .svc-tile:hover {
     transform: translateY(var(--lift));
     box-shadow: var(--shadow-lg);
+  }
+
+  .svc-tile:active {
+    transform: scale(var(--press-scale-card));
+    box-shadow: var(--shadow-md);
+    transition-duration: var(--duration-instant);
   }
 
   .svc-tile:focus-visible {

@@ -1,8 +1,12 @@
 ---
 /**
  * Numbered steps of the enquiry-led process (you tell us, we propose, we arrange). The numbers
- * are decorative: an ordered list already gives the order to assistive tech.
+ * are decorative: an ordered list already gives the order to assistive tech. From 1024 px, where
+ * the steps sit in one row, a route line draws across them on scroll; the steps reveal in turn.
  */
+import RouteLine from '../motion/RouteLine.astro';
+import Stagger from '../motion/Stagger.astro';
+
 interface Step {
   title: string;
   text: string;
@@ -18,19 +22,42 @@ const { steps, headingLevel = 3, class: className } = Astro.props;
 const Heading = `h${headingLevel}` as 'h3' | 'h4';
 ---
 
-<ol class:list={['steps', className]}>
-  {steps.map((step, index) => (
-    <li class="step">
-      <span class="step-num" aria-hidden="true">
-        {String(index + 1).padStart(2, '0')}
-      </span>
-      <Heading class="t-h4 step-title">{step.title}</Heading>
-      <p class="step-text">{step.text}</p>
-    </li>
-  ))}
-</ol>
+<div class:list={['steps-wrap', className]}>
+  <RouteLine
+    class="steps-route"
+    d="M0 20 C120 2 230 38 350 20 S580 2 700 20 S930 38 1050 20 S1170 8 1200 14"
+    viewBox="0 0 1200 40"
+    preserveAspectRatio="none"
+    draw="scroll"
+    strokeWidth={3}
+  />
+  <Stagger as="ol" class="steps">
+    {steps.map((step, index) => (
+      <li class="step">
+        <span class="step-num" aria-hidden="true">
+          {String(index + 1).padStart(2, '0')}
+        </span>
+        <Heading class="t-h4 step-title">{step.title}</Heading>
+        <p class="step-text">{step.text}</p>
+      </li>
+    ))}
+  </Stagger>
+</div>
 
 <style>
+  .steps-wrap :global(.steps-route) {
+    display: none;
+  }
+
+  @media (min-width: 1024px) {
+    .steps-wrap :global(.steps-route) {
+      display: block;
+      width: 100%;
+      height: 2.5rem;
+      margin-bottom: var(--space-4);
+    }
+  }
+
   .steps {
     display: grid;
     gap: var(--space-4);

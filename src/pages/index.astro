@@ -99,15 +99,15 @@ const heroRoute =
   <Section tone="paper" spacing="none" aria-labelledby="page-title" class="hero">
     <div class="hero-grid">
       <div class="hero-copy">
-        <p class="hero-tag">Holidays and business travel</p>
+        <p class="hero-tag hero-pop">Holidays and business travel</p>
         <h1 id="page-title" class="t-display">
           Pack light. <span class="t-accent">We’ll plan</span> the rest.
         </h1>
-        <p class="t-lede">
+        <p class="t-lede hero-enter">
           Backwaters, deserts, islands or the Alps: tell us who is travelling and what you love, and
           we plan the holiday day by day. Business travel too, from the same desk.
         </p>
-        <div class="hero-actions">
+        <div class="hero-actions hero-enter" style="--enter-index: 2">
           <Button href={routes.planMyTrip} size="lg" iconEnd="arrow-right">
             Plan my trip
           </Button>
@@ -115,7 +115,7 @@ const heroRoute =
             See holidays
           </Button>
         </div>
-        <p class="hero-corp">
+        <p class="hero-corp hero-enter" style="--enter-index: 3">
           Booking for a company? <Link href={routes.corporate}>See corporate travel</Link>
         </p>
       </div>
@@ -131,7 +131,9 @@ const heroRoute =
             fetchpriority="high"
           />
         </figure>
-        <p class="hero-chip">Udaipur, Rajasthan</p>
+        <p class="hero-chip hero-pop" style="--enter-delay: var(--delay-late)">
+          Udaipur, Rajasthan
+        </p>
         <RouteLine
           class="hero-route"
           d={heroRoute}
@@ -144,7 +146,7 @@ const heroRoute =
   </Section>
 
   <Section tone="sand" rounded aria-labelledby="services-title" id="services">
-    <div class="section-head">
+    <div data-reveal class="section-head">
       <h2 id="services-title" class="t-h2">
         Holidays first. <span class="t-accent">Everything else,</span> sorted.
       </h2>
@@ -170,7 +172,7 @@ const heroRoute =
   </Section>
 
   <Section tone="paper" aria-labelledby="packages-title" id="packages">
-    <div class="section-head">
+    <div data-reveal class="section-head">
       <h2 id="packages-title" class="t-h2">
         Trips to start dreaming about
       </h2>
@@ -216,7 +218,7 @@ const heroRoute =
   </Section>
 
   <Section tone="white" mood="corporate" aria-labelledby="why-title">
-    <div class="section-head">
+    <div data-reveal class="section-head">
       <h2 id="why-title" class="t-h2">
         Why people come to us
       </h2>
@@ -353,6 +355,13 @@ const heroRoute =
     .hero-art {
       width: 78%;
       max-width: none;
+    }
+  }
+
+  /* The two-column hero is narrow up to 1280px: a smaller headline keeps it to three lines. */
+  @media (min-width: 1024px) and (max-width: 1279px) {
+    .hero-copy h1 {
+      font-size: clamp(3.25rem, 6.5vw, 7.5rem);
     }
   }
 

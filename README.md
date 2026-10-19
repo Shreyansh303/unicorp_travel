@@ -16,7 +16,7 @@ This repository is private.
 | M3 Content model and sample content | Zod-validated collections for services, packages and FAQs; sample content; demo-content build check | Done |
 | M4 Pages (static) | Every public route, from home to legal pages and 404 | Done |
 | M5 Interactive features | Enquiry forms, package filters, "Plan my trip" planner, FAQ accordions, form notices | Done |
-| M6 Motion and polish | Hero sequence, route-line storytelling, page transitions, visual QA at five widths | Not started |
+| M6 Motion and polish | Hero sequence, route-line storytelling, page transitions, visual QA at five widths | Done |
 | M7 Quality gates | Performance, accessibility, SEO basics, links and browser checks on every page | Not started |
 | M8 Demo deploy and handoff | Preview deploy on Vercel, presenter walkthrough, launch checklist | Not started |
 
@@ -31,8 +31,8 @@ The full plan, with acceptance criteria for each milestone, is in [`docs/demo-ro
 | Styling | Tailwind CSS and `@tailwindcss/vite` | 4.3.3 | Fast iteration, with design tokens as CSS variables. |
 | Component motion | Motion (`motion`) | 14.3.0 | Planner step transitions, through the small `motion/mini` animate function. |
 | Scroll storytelling | GSAP with ScrollTrigger | 3.15.0 | Scroll-linked sequences. Loaded lazily, only where needed. |
-| Smooth scroll | Lenis (`lenis`) | 1.3.27 | Works with ScrollTrigger; off under reduced motion. Installed; not yet imported. |
-| Page transitions | Astro view transitions (`ClientRouter`) | Part of Astro | Cross-page transitions without a single-page-app router. |
+| Smooth scroll | Lenis (`lenis`) | 1.3.27 | Not used: smooth scrolling hurts responsiveness and keyboard scrolling. Due for removal. |
+| Page transitions | Astro view transitions (`ClientRouter`) | Part of Astro | Cross-fade between pages; islands re-initialise on `astro:page-load`. |
 | Content | Astro content collections, validated with Zod | Part of Astro | Typed data files; a bad entry fails the build. Zod is imported from `astro/zod`. |
 | Fonts | `@fontsource-variable` Bricolage Grotesque and Figtree | 5.3.0 each | Self-hosted, Latin subset. |
 | Hosting | Vercel through `@astrojs/vercel` | 11.0.15 | Static output with preview URLs and control over response headers. |
@@ -112,6 +112,8 @@ All scripts are defined in `package.json`.
 - `forms.spec.ts` (F-01, F-02, F-14): table-driven phone (valid and invalid Indian formats), email and GSTIN rules; on every form page, visible labels, an unticked opt-in and a purpose notice tied to the submit button; each service page uses its service's form type. Submitting empty shows each error (`aria-invalid`, `aria-describedby`) and focuses the summary; invalid phone and email are rejected in the browser and valid formats accepted; the corporate GSTIN is checked only when filled; dates may not be in the past. A keyboard-only run fills and submits the visa form and checks that the decoded wa.me and mailto links hold the answers and the page; the package form carries the package name and reference; no network request is made and nothing is stored on submit. The callback form is run by keyboard on a service page and a package page. FAQ accordions on pages with forms work by keyboard. Without JavaScript the forms are hidden and the direct routes remain.
 - `filters.spec.ts` (F-04): every chip narrows the list to the packages the content files say match; choices combine (any within a group, all across groups); the query string follows the filters; a shared link, a reload, and back and forward restore them without reloading the page; the live region counts the results; the empty state links to Plan my trip; chips work by keyboard; the phone toggle; without JavaScript every package is listed.
 - `planner.spec.ts` (F-13): a keyboard-only run through all five steps, the summary and the hand-off; every step blocks Next until valid and focuses the first problem; a refresh restores the step and the answers; Back keeps them; the summary links back to each step; session storage is cleared after sending.
+- `navigation.spec.ts`: after client-side navigation from the home page, focus is on the new page's `h1`, the route announcer reads the new title, the holiday filters narrow the list and write the query string, back restores the unfiltered list and then the home page, and the planner hydrates and moves to step 2.
+- `reduced-motion.spec.ts`: on every route and the 404 page, under `prefers-reduced-motion: reduce`, no animation or transition with a duration is running after load or after scrolling to the bottom, and nothing in `main` is left hidden or offset by a reveal, an undrawn route line or a parallax frame.
 
 **Accessibility tests** (`tests/a11y/`):
 
@@ -201,17 +203,23 @@ Link helpers in the same file:
 
 **Motion primitives** in `src/components/motion/`:
 
-- `Reveal` and `Stagger` fade and rise content as it scrolls into view.
-- `RouteLine` draws an SVG path by animating its stroke. It is the route-line motif.
+- `Reveal` and `Stagger` fade and rise content as it scrolls into view, once. Only elements that start below the fold are armed, so nothing on the first screen is hidden. Any element with `data-reveal` works the same way; section headings use it.
+- `RouteLine` draws an SVG path by animating its stroke. It is the route-line motif: it draws on load in the home hero, and on scroll under the home page's trips, down a package's day-by-day itinerary and across the "How it works" steps (from 1024 px).
 - `Parallax` drifts an image against the scroll. It never runs on the LCP image.
-- `PageTransitions` uses Astro's view transitions for a short cross-fade.
+- `PageTransitions` uses Astro's view transitions for a short cross-fade with a small rise; the header and the floating contact bar hold still. After a client-side navigation focus moves to the new page's `h1` and Astro's route announcer reads the title. Scripts start on `astro:page-load`, so forms, filters and the planner work after navigation.
 - `gsap-fallback.ts` loads GSAP and ScrollTrigger lazily, after first paint. It does this only where the browser lacks CSS scroll-driven animation, the visitor has not asked for reduced motion, and the page has something to animate.
 
+**Where motion is used.**
+
+- Hero entrance (`.hero-enter`, `.hero-pop` in `global.css`): the lede, actions and price rise into place; the home tag and photo chip pop in. The `h1` and the hero photo are never animated, and text pieces move without fading.
+- Section headings, the enquiry band, "How it works" steps, card grids and itinerary days reveal as they scroll in.
+- Hover and press: buttons lift and tilt, cards and tiles lift and press in (`--press-scale-card`), chips press, arrows nudge, package photos zoom. Colours and shadows change at once; only transforms animate.
+- Planner steps slide and fade, using the `--duration-base` and `--ease-out` tokens.
 **Motion rules.**
 
 - Animate only `transform` and `opacity`, plus the SVG stroke for the route line.
 - The LCP element is visible in the HTML from the start. Animation decorates it and never delays it.
-- Under `prefers-reduced-motion`, nothing moves: no smooth scroll, no parallax and no reveal.
+- Under `prefers-reduced-motion`, nothing moves: no smooth scroll, no parallax, no reveal, no hero entrance, route lines drawn at once and pages swapped without animation.
 - No auto-advancing carousels.
 
 **Accessibility baseline.**

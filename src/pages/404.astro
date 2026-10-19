@@ -104,6 +104,12 @@ const links = [
     box-shadow: var(--shadow-lg);
   }
 
+  .link-tile:active {
+    transform: scale(var(--press-scale-card));
+    box-shadow: var(--shadow-md);
+    transition-duration: var(--duration-instant);
+  }
+
   .link-tile:focus-visible {
     outline: 3px solid var(--ink);
     outline-offset: 4px;

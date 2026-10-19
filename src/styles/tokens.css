@@ -134,11 +134,14 @@
   --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
   --ease-route: cubic-bezier(0.45, 0, 0.2, 1);
   --stagger: 80ms;
+  /* Late entrance for hero decoration, after the headline has settled. */
+  --delay-late: 900ms;
   --reveal-distance: 1.5rem;
   --lift: -3px; /* hover lift on buttons and cards */
   --tilt: -1deg; /* playful tilt on primary buttons */
   --parallax-shift: 8%;
   --press-scale: 0.97; /* buttons and chips while pressed */
+  --press-scale-card: 0.985; /* cards and tiles while pressed */
   --hover-scale: 1.04; /* round floating buttons, package photos */
   --turn: 180deg; /* chevrons on open submenus and accordions */
 }
@@ -162,6 +165,7 @@
     --tilt: 0deg;
     --parallax-shift: 0%;
     --press-scale: 1;
+    --press-scale-card: 1;
     --hover-scale: 1;
     --turn: 0deg; /* open state is shown by colour instead */
   }

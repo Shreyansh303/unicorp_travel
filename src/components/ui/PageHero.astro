@@ -54,7 +54,7 @@ const {
         {accent && ' '}
         {accent && <span class="t-accent">{accent}</span>}
       </h1>
-      {lede && <p class="t-lede">{lede}</p>}
+      {lede && <p class="t-lede hero-enter">{lede}</p>}
       <slot />
     </div>
     {image && (
@@ -96,6 +96,13 @@ const {
     line-height: var(--leading-tight);
     text-wrap: balance;
     overflow-wrap: break-word;
+  }
+
+  /* Hero entrance (global.css): the lede rises, then whatever the page puts in the slot. */
+  @media (prefers-reduced-motion: no-preference) {
+    .ph-copy > :global(:not(h1, nav, .t-eyebrow, .t-lede)) {
+      animation: hero-rise var(--duration-reveal) var(--ease-out) calc(2 * var(--stagger)) both;
+    }
   }
 
   .ph-photo {

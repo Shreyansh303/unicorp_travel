@@ -10,6 +10,7 @@ import SampleLabel from '../../components/ui/SampleLabel.astro';
 import TickList from '../../components/ui/TickList.astro';
 import RouteLine from '../../components/motion/RouteLine.astro';
 import Stagger from '../../components/motion/Stagger.astro';
+import Reveal from '../../components/motion/Reveal.astro';
 import Parallax from '../../components/motion/Parallax.astro';
 import EnquirySection from '../../components/forms/EnquirySection.astro';
 import { getPackages, type PackageEntry } from '../../lib/content';
@@ -72,8 +73,8 @@ const itineraryPath = Array.from({ length: days }, (_, index) => {
         <h1 id="page-title" class="t-display pk-title">
           {data.title}
         </h1>
-        <p class="t-lede">{data.summary}</p>
-        <ul class="pk-chips">
+        <p class="t-lede hero-enter">{data.summary}</p>
+        <ul class="pk-chips hero-enter">
           <li class="pk-chip-red">
             {data.duration.days} days, {data.duration.nights} nights
           </li>
@@ -84,7 +85,7 @@ const itineraryPath = Array.from({ length: days }, (_, index) => {
             <li class="pk-chip-line">{themeLabels[theme]}</li>
           ))}
         </ul>
-        <div class="pk-price">
+        <div class="pk-price hero-enter" style="--enter-index: 2">
           <p>
             from <strong>{formatINR(data.fromPrice)}</strong>
           </p>
@@ -94,7 +95,7 @@ const itineraryPath = Array.from({ length: days }, (_, index) => {
             <time datetime={isoDate(data.priceValidUntil)}>{validUntil}</time>
           </p>
         </div>
-        <div class="pk-actions">
+        <div class="pk-actions hero-enter" style="--enter-index: 3">
           {mobile && (
             <Button href={whatsappFor(topic)} size="lg" iconStart="whatsapp" external>
               Ask about this trip
@@ -125,7 +126,7 @@ const itineraryPath = Array.from({ length: days }, (_, index) => {
   </Section>
 
   <Section tone="sand" rounded aria-labelledby="highlights-title">
-    <div class="section-head">
+    <div data-reveal class="section-head">
       <h2 id="highlights-title" class="t-h2">
         The good <span class="t-accent">bits</span>
       </h2>
@@ -178,14 +179,14 @@ const itineraryPath = Array.from({ length: days }, (_, index) => {
         />
         <ol>
           {data.itinerary.map((stop) => (
-            <li class="day">
+            <Reveal as="li" class="day">
               <span class="day-num" aria-hidden="true">
                 {stop.day}
               </span>
               <p class="t-eyebrow">Day {stop.day}</p>
               <h3 class="t-h3">{stop.title}</h3>
               <p class="day-text">{stop.description}</p>
-            </li>
+            </Reveal>
           ))}
         </ol>
       </div>
@@ -193,7 +194,7 @@ const itineraryPath = Array.from({ length: days }, (_, index) => {
   </Section>
 
   <Section tone="white" aria-labelledby="included-title">
-    <div class="section-head">
+    <div data-reveal class="section-head">
       <h2 id="included-title" class="t-h2">
         What the price covers
       </h2>

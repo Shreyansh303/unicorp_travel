@@ -93,10 +93,16 @@ export default function PlanMyTrip({ regions, themes, budgets, privacyHref }: Pr
     const panel = panelRef.current;
     if (panel && matchMedia('(prefers-reduced-motion: no-preference)').matches) {
       const offset = direction === 'forward' ? 24 : -24;
+      // Duration and easing come from the motion tokens in tokens.css.
+      const tokens = getComputedStyle(document.documentElement);
+      const duration = parseFloat(tokens.getPropertyValue('--duration-base')) / 1000 || 0.24;
+      const [x1 = 0.22, y1 = 1, x2 = 0.36, y2 = 1] = (
+        tokens.getPropertyValue('--ease-out').match(/-?[\d.]+/g) ?? []
+      ).map(Number);
       animate(
         panel,
         { opacity: [0, 1], transform: [`translateX(${offset}px)`, 'translateX(0px)'] },
-        { duration: 0.28, ease: [0.22, 1, 0.36, 1] },
+        { duration, ease: [x1, y1, x2, y2] },
       );
     }
   }, [step, sent]);

@@ -18,11 +18,8 @@
   text-align: center;
   text-decoration: none;
   cursor: pointer;
-  transition:
-    transform var(--duration-base) var(--ease-bounce),
-    background-color var(--duration-fast) var(--ease-out),
-    color var(--duration-fast) var(--ease-out),
-    box-shadow var(--duration-fast) var(--ease-out);
+  /* Only transform animates; colours and shadows change at once. */
+  transition: transform var(--duration-base) var(--ease-bounce);
 }
 
 .btn-sm {

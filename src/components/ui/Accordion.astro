@@ -114,21 +114,13 @@ const Heading = `h${headingLevel}` as 'h2' | 'h3' | 'h4';
     height: 2.25rem;
     border-radius: 50%;
     background: var(--surface-sunken);
-    transition:
-      transform var(--duration-base) var(--ease-out),
-      background-color var(--duration-fast) var(--ease-out);
+    transition: transform var(--duration-base) var(--ease-out);
   }
 
   .acc-button[aria-expanded='true'] .acc-icon {
     background: var(--accent);
     color: var(--on-accent);
     transform: rotate(var(--turn));
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .acc-icon {
-      transition: background-color var(--duration-fast) var(--ease-out);
-    }
   }
 
   .acc-panel:not([hidden]) {

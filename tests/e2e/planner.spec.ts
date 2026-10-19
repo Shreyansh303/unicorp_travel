@@ -31,6 +31,7 @@ function draft(page: Page) {
 }
 
 test('keyboard only: all five steps, the summary and the hand-off', async ({ page }) => {
+  test.setTimeout(120_000);
   await open(page);
   await expect(heading(page)).toContainText('Step 1 of 5');
   await expect(page.locator('.plan-stepper [aria-current="step"]')).toContainText('Trip type');
@@ -170,6 +171,7 @@ test('the planner does not animate a step change under reduced motion', async ({
 });
 
 test('each step blocks Next until it is valid and focuses the first problem', async ({ page }) => {
+  test.setTimeout(120_000);
   await open(page);
 
   await next(page).click();

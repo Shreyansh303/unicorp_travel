@@ -212,6 +212,7 @@ test.describe('enquiry form', () => {
   test('rejects invalid phone numbers and accepts Indian formats in the browser', async ({
     page,
   }) => {
+    test.setTimeout(120_000);
     // Each invalid value starts from a freshly loaded form, so a submit-time error cannot be
     // left over from the value before it.
     for (const value of ['4201591', '98916 7732', '+1 415 555 0100', '1234567890']) {
@@ -291,6 +292,7 @@ test.describe('enquiry form', () => {
   test('keyboard only: fill, submit and reach the WhatsApp and email hand-off', async ({
     page,
   }) => {
+    test.setTimeout(120_000);
     await open(page, '/services/visa-passport');
     await tabTo(page, '#enquiry-name');
     await page.keyboard.type('Asha Verma');
@@ -437,6 +439,7 @@ test.describe('enquiry form', () => {
 test.describe('callback form', () => {
   for (const path of ['/services/forex', `/holidays/${packageFacts[1]?.slug ?? ''}`]) {
     test(`${path}: errors, keyboard-only request and the call-back message`, async ({ page }) => {
+      test.setTimeout(120_000);
       await open(page, path);
       const form = page.locator('#callback');
       const topic = (await form.locator('[name="topic"]').inputValue()).trim();

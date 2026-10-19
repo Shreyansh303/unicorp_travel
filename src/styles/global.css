@@ -257,6 +257,35 @@
   transition-delay: calc(var(--reveal-index, 0) * var(--stagger) + var(--reveal-delay, 0ms));
 }
 
+/* ---------- Hero entrance ----------
+ * Secondary pieces only (tag, lede, actions, photo chip). The H1 and the hero photo are the LCP
+ * candidates and are never animated. Text pieces move but never fade, so they paint at once;
+ * only small decoration (.hero-pop) fades in. Under reduced motion nothing runs.
+ */
+@keyframes hero-rise {
+  from {
+    transform: translateY(var(--reveal-distance));
+  }
+}
+
+@keyframes hero-pop {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem) scale(0.9);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero-enter {
+    animation: hero-rise var(--duration-reveal) var(--ease-out)
+      calc(var(--enter-index, 1) * var(--stagger)) both;
+  }
+
+  .hero-pop {
+    animation: hero-pop var(--duration-slow) var(--ease-bounce) var(--enter-delay, 0ms) both;
+  }
+}
+
 /* ---------- Page transitions (Astro view transitions) ---------- */
 @keyframes page-out {
   to {
@@ -279,9 +308,30 @@
   animation: page-in var(--duration-slow) var(--ease-out) both;
 }
 
+/* The header and the floating contact bar are the same on every page, so they hold still. */
+header.site-header {
+  view-transition-name: site-header;
+}
+
+.floating-fixed {
+  view-transition-name: floating-contact;
+}
+
+::view-transition-group(site-header),
+::view-transition-group(floating-contact) {
+  animation: none;
+}
+
+/* Focus moved to the H1 after a client-side navigation (PageTransitions) needs no ring. */
+h1[tabindex='-1']:focus:not(:focus-visible) {
+  outline: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-old(root),
-  ::view-transition-new(root) {
+  ::view-transition-new(root),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
     animation: none;
   }
 }

@@ -75,9 +75,8 @@ const Heading = `h${headingLevel}` as 'h2' | 'h3' | 'h4';
     border-radius: var(--radius-lg);
     background: var(--bg);
     color: var(--text);
-    transition:
-      transform var(--duration-base) var(--ease-bounce),
-      box-shadow var(--duration-base) var(--ease-out);
+    /* Only transform animates; the shadow changes at once. */
+    transition: transform var(--duration-base) var(--ease-bounce);
   }
 
   .svc-card.tone-white {
@@ -132,6 +131,12 @@ const Heading = `h${headingLevel}` as 'h2' | 'h3' | 'h4';
   .svc-card-link:where(:hover, .is-hover) {
     transform: translateY(var(--lift));
     box-shadow: var(--shadow-lg);
+  }
+
+  .svc-card-link:where(:active, .is-active) {
+    transform: scale(var(--press-scale-card));
+    box-shadow: var(--shadow-md);
+    transition-duration: var(--duration-instant);
   }
 
   .svc-card-link:where(:hover, .is-hover) :global(.svc-arrow) {

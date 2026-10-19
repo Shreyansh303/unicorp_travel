@@ -7,6 +7,9 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env['CI'],
   retries: process.env['CI'] ? 1 : 0,
+  // At the default (one worker per core) the browsers starve each other on a laptop and tests
+  // time out at random; four stays reliable without slowing the run much.
+  workers: 4,
   reporter: [['list']],
   use: {
     baseURL: `http://127.0.0.1:${port}`,

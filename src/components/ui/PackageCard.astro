@@ -65,7 +65,10 @@ const Heading = `h${headingLevel}` as 'h2' | 'h3' | 'h4';
   </div>
   <div class="pkg-body">
     <p class="pkg-meta">
-      {region} · {days} days, {nights} nights
+      {region} ·{' '}
+      <span class="pkg-nowrap">
+        {days} days, {nights} nights
+      </span>
     </p>
     <Heading class="pkg-name">{href ? <a href={href}>{name}</a> : name}</Heading>
     <p class="pkg-price">
@@ -83,6 +86,16 @@ const Heading = `h${headingLevel}` as 'h2' | 'h3' | 'h4';
     display: grid;
     align-content: start;
     border-radius: var(--radius-lg);
+    transition: transform var(--duration-fast) var(--ease-out);
+  }
+
+  .pkg-card-link:where(:active, .is-active) {
+    transform: scale(var(--press-scale-card));
+    transition-duration: var(--duration-instant);
+  }
+
+  .pkg-nowrap {
+    white-space: nowrap;
   }
 
   .pkg-photo {
