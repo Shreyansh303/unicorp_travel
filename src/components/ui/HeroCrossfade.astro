@@ -4,7 +4,7 @@
  * the route line. Only the first photo is in the HTML (eager, high priority: it is the LCP image).
  * The others are described in `data-slides` and inserted by the script after the page has loaded.
  *
- * Opacity only, about 7 s per photo. No pause button (user decision, 2026-10-19); the fade pauses
+ * Opacity only, about 5 s per photo. No pause button (user decision, 2026-10-19); the fade pauses
  * while the tab is hidden and while keyboard focus is inside the hero. Under reduced motion, and
  * without JavaScript, the first photo simply stays.
  */
@@ -222,7 +222,7 @@ const route =
           show(next);
           schedule();
         },
-        token('--duration-photo-hold', 5800),
+        token('--duration-photo-hold', 3800),
       );
     };
 
