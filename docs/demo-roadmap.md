@@ -17,7 +17,7 @@ Confirmed with the user on 2026-10-18 (M0).
 | Display name | "Unicorp Travel", everywhere. The legal name appears only in the facts block (F-09) and the footer. |
 | Creative direction | "The journey" route-line direction from section 6. M2 mocks 2 or 3 variations of it for the user to pick from. |
 | Visual direction (M2) | Mock C "Monsoon" (warm, expressive, holiday-first; Bricolage Grotesque and Figtree; route line looping through arched photos), recoloured to Unicorp's brand colours: mainly red, black and white. The reference red is `#ED0000`, the dominant colour on the old site. Chosen by the user on 2026-10-18. |
-| Hero photos (after M6) | /holidays, /services and /plan-my-trip get a slow crossfade of photos in the hero, with a pause button. This is the only exception to the no-carousel rule in section 6. Requested by the user on 2026-10-19. |
+| Hero photos (after M6) | /holidays, /services and /plan-my-trip get a slow crossfade of photos in the hero, about 7 s per photo, without a pause button (the user removed it on 2026-10-19, accepting that this falls short of WCAG 2.2.2). This is the only exception to the no-carousel rule in section 6. Requested by the user on 2026-10-19. |
 | Preview hosting | Vercel. `X-Robots-Tag` set in `vercel.json`, driven by the `DEMO` flag. The user signs in to the Vercel CLI; deploys happen only with the user's approval. |
 
 ---
@@ -148,7 +148,7 @@ Services, as listed on the old site (rewrite all copy; P-04, P-07):
 - Animate only `transform` and `opacity` (plus SVG stroke for the route line). No layout-shifting animation; CLS under 0.1.
 - The LCP element (hero heading or image) is visible immediately in HTML; animation decorates it and never delays it (the old site hid hero text until the slider script ran: P-28).
 - Respect `prefers-reduced-motion`: replace movement with fades or no animation, and turn off smooth scroll and parallax.
-- No auto-advancing carousel or slider, with one exception: the hero photo crossfade on /holidays, /services and /plan-my-trip (user decision, 2026-10-19). It is a slow opacity crossfade between a few photos, with a visible pause button (WCAG 2.2.2). The first photo is in the HTML and is the LCP image, and the other photos load after first paint. Under reduced motion the crossfade never starts and the first photo stays. It pauses while the tab is hidden. On phones the offer and the call to action come before the photos. Any other carousel still needs visible controls and a pause button (P-24).
+- No auto-advancing carousel or slider, with one exception: the hero photo crossfade on /holidays, /services and /plan-my-trip (user decision, 2026-10-19). It is a slow opacity crossfade between a few photos, about 7 s per photo. At the user's request it has no pause button, which falls short of WCAG 2.2.2 (pause, stop, hide); reduced motion and keyboard focus inside the hero stop it. The first photo is in the HTML and is the LCP image, and the other photos load after first paint. Under reduced motion the crossfade never starts and the first photo stays. It pauses while the tab is hidden and while keyboard focus is inside the hero. On phones the offer and the call to action come before the photos. Any other carousel still needs visible controls and a pause button (P-24).
 - Load GSAP and ScrollTrigger only on pages that use them, and only after first paint.
 - Interactions respond within 100 ms; INP under 200 ms.
 

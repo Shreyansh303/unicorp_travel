@@ -1,7 +1,7 @@
 /**
  * The hero photo crossfade on /holidays, /services and /plan-my-trip: one photo in the HTML, the
- * rest after load, a pause toggle, no movement under reduced motion, and no duplicate timer after
- * a client-side navigation.
+ * rest after load, no pause button, the pointer does not hold it, no movement under reduced
+ * motion, and no duplicate timer after a client-side navigation.
  */
 import { expect, test, type Page } from '@playwright/test';
 
@@ -55,9 +55,6 @@ for (const route of pages) {
       expect(figure.match(/<img /g) ?? []).toHaveLength(1);
       expect(figure).toContain('fetchpriority="high"');
       expect(figure).toContain('loading="eager"');
-      expect(hero.slice(0, hero.indexOf('</div>', hero.indexOf('data-fade-toggle')))).toMatch(
-        /data-fade-toggle[^>]*hidden/,
-      );
 
       await page.goto(route, { waitUntil: 'load' });
       await expect(page.locator('[data-hero-fade] [data-slide]')).toHaveCount(4);
@@ -69,44 +66,27 @@ for (const route of pages) {
         }),
       );
       expect(new Set(boxes).size).toBe(1);
-      await expect(page.getByRole('button', { name: /photo slideshow/ })).toBeVisible();
-      const box = await page.getByRole('button', { name: /photo slideshow/ }).boundingBox();
-      expect(box?.width).toBeGreaterThanOrEqual(24);
-      expect(box?.height).toBeGreaterThanOrEqual(24);
+      // No pause button (user decision).
+      await expect(page.locator('[data-hero-fade] button')).toHaveCount(0);
     });
 
-    test('the toggle pauses and resumes the crossfade', async ({ page }) => {
-      await speedUp(page);
-      await page.goto(route, { waitUntil: 'load' });
-      const toggle = page.getByRole('button', { name: /photo slideshow/ });
-      await expect(toggle).toBeVisible();
-      await expect.poll(() => index(page), { timeout: 5000 }).not.toBe('0');
-
-      await toggle.click();
-      await expect(toggle).toHaveAccessibleName('Play the photo slideshow');
-      await page.waitForTimeout(600);
-      const held = await index(page);
-      await page.waitForTimeout(3000);
-      expect(await index(page)).toBe(held);
-
-      await toggle.click();
-      await expect(toggle).toHaveAccessibleName('Pause the photo slideshow');
-      await expect.poll(() => index(page), { timeout: 3000 }).not.toBe(held);
-    });
-
-    test('the pointer inside the hero holds the crossfade', async ({ page }) => {
+    test('keeps changing with the pointer over the hero', async ({ page }) => {
       await speedUp(page);
       await page.goto(route, { waitUntil: 'load' });
       await expect.poll(() => index(page), { timeout: 5000 }).not.toBe('0');
       const box = await page.locator('[data-hero-fade]').boundingBox();
       if (!box) throw new Error('no hero photo');
       await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+      expect(await countChanges(page, 2000)).toBeGreaterThan(0);
+    });
+
+    test('keyboard focus inside the hero holds the crossfade', async ({ page }) => {
+      await speedUp(page);
+      await page.goto(route, { waitUntil: 'load' });
+      await expect.poll(() => index(page), { timeout: 5000 }).not.toBe('0');
+      await page.locator('.page-hero a, .page-hero button').first().focus();
       await page.waitForTimeout(600);
-      const held = await index(page);
-      await page.waitForTimeout(2000);
-      expect(await index(page)).toBe(held);
-      await page.mouse.move(5, 5);
-      await expect.poll(() => index(page), { timeout: 3000 }).not.toBe(held);
+      expect(await countChanges(page, 2000)).toBe(0);
     });
 
     test('no second timer after navigating away and back', async ({ page }) => {
@@ -121,8 +101,6 @@ for (const route of pages) {
       await page.goBack();
       await expect(page).toHaveURL(new RegExp(`${route}/?$`));
       await expect(page.locator('[data-hero-fade] [data-slide]')).toHaveCount(4);
-      // The pointer may be resting where the hero now is, which holds the fade; move it away.
-      await page.mouse.move(5, 5);
       await expect.poll(() => index(page), { timeout: 5000 }).not.toBe('0');
       // One timer changes the photo at most once per 400 ms hold (plus the 100 ms fade).
       const changes = await countChanges(page, 2600);
@@ -142,7 +120,6 @@ test.describe('hero crossfade under reduced motion', () => {
       await page.waitForTimeout(1500);
       await expect(page.locator('[data-hero-fade] [data-slide]')).toHaveCount(1);
       await expect(page.locator('[data-hero-fade] img')).toHaveCount(1);
-      await expect(page.getByRole('button', { name: /photo slideshow/ })).toBeHidden();
       expect(await index(page)).toBe('0');
     });
   }

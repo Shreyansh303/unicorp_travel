@@ -15,7 +15,12 @@ interface Marker {
   cx: number;
   cy: number;
   r?: number;
+  /** "pin" draws a map pin whose tip sits on (cx, cy): the destination at the end of a route. */
+  shape?: 'dot' | 'pin';
 }
+
+/** Map pin on a 24-unit grid, tip at (12, 22), hole centred at (12, 10). */
+const pinPath = 'M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z';
 
 interface Props {
   d: string;
@@ -75,15 +80,31 @@ const {
     stroke-width={strokeWidth}
     stroke-linecap="round"
   />
-  {markers.map((marker) => (
-    <circle
-      class="route-marker"
-      cx={marker.cx}
-      cy={marker.cy}
-      r={marker.r ?? strokeWidth * 2.2}
-      stroke-width={strokeWidth * 0.8}
-    />
-  ))}
+  {markers.map((marker) => {
+    const r = marker.r ?? strokeWidth * 2.2;
+    if (marker.shape === 'pin') {
+      // A pin about five times the dot's radius tall, scaled from the 24-unit grid.
+      const scale = (r * 5) / 22;
+      return (
+        <g
+          class="route-marker route-pin"
+          transform={`translate(${marker.cx - 12 * scale} ${marker.cy - 22 * scale}) scale(${scale})`}
+        >
+          <path d={pinPath} stroke-width={(strokeWidth * 0.8) / scale} stroke-linejoin="round" />
+          <circle class="route-pin-hole" cx="12" cy="10" r="2.6" />
+        </g>
+      );
+    }
+    return (
+      <circle
+        class="route-marker"
+        cx={marker.cx}
+        cy={marker.cy}
+        r={r}
+        stroke-width={strokeWidth * 0.8}
+      />
+    );
+  })}
 </svg>
 
 <style is:global>
@@ -113,6 +134,11 @@ const {
   .route-marker {
     fill: var(--route);
     stroke: var(--route-halo);
+  }
+
+  .route-pin-hole {
+    fill: var(--route-halo);
+    stroke: none;
   }
 
   @media (prefers-reduced-motion: no-preference) {

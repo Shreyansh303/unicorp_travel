@@ -4,9 +4,9 @@
  * the route line. Only the first photo is in the HTML (eager, high priority: it is the LCP image).
  * The others are described in `data-slides` and inserted by the script after the page has loaded.
  *
- * Opacity only. A visible toggle pauses and resumes (WCAG 2.2.2). The fade also pauses while the
- * tab is hidden and while the pointer or keyboard focus is inside the hero. Under reduced motion,
- * and without JavaScript, the first photo simply stays and the toggle stays hidden.
+ * Opacity only, about 7 s per photo. No pause button (user decision, 2026-10-19); the fade pauses
+ * while the tab is hidden and while keyboard focus is inside the hero. Under reduced motion, and
+ * without JavaScript, the first photo simply stays.
  */
 import { Picture, getImage } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
@@ -61,22 +61,8 @@ const route =
     d={route}
     viewBox="0 0 496 580"
     halo
-    markers={[{ cx: 440, cy: 110, r: 11 }]}
+    markers={[{ cx: 440, cy: 110, r: 11, shape: 'pin' }]}
   />
-  <button
-    type="button"
-    class="hf-toggle"
-    data-fade-toggle
-    aria-label="Pause the photo slideshow"
-    hidden
-  >
-    <svg class="hf-icon hf-icon-pause" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <path d="M8 5v14M16 5v14"></path>
-    </svg>
-    <svg class="hf-icon hf-icon-play" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <path d="M8 5.5v13l10-6.5z"></path>
-    </svg>
-  </button>
 </div>
 
 <style>
@@ -131,59 +117,6 @@ const route =
     height: 116%;
     pointer-events: none;
   }
-
-  .hf-toggle {
-    position: absolute;
-    right: var(--space-3);
-    bottom: var(--space-3);
-    z-index: 3;
-    display: grid;
-    place-items: center;
-    width: var(--tap);
-    height: var(--tap);
-    padding: 0;
-    border: 0;
-    border-radius: 50%;
-    background: var(--white);
-    color: var(--ink);
-    box-shadow: var(--shadow-md);
-    cursor: pointer;
-  }
-
-  .hf-toggle[hidden] {
-    display: none;
-  }
-
-  .hf-icon {
-    width: 1.25rem;
-    height: 1.25rem;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 2.5;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-  }
-
-  .hf-icon-play {
-    display: none;
-    fill: currentColor;
-  }
-
-  .hf-toggle[data-paused] .hf-icon-pause {
-    display: none;
-  }
-
-  .hf-toggle[data-paused] .hf-icon-play {
-    display: block;
-  }
-
-  /* The toggle never exists under reduced motion, even if the script has shown it. */
-  @media (prefers-reduced-motion: reduce) {
-    .hf-toggle,
-    .hf-toggle[hidden] {
-      display: none;
-    }
-  }
 </style>
 
 <script>
@@ -232,10 +165,8 @@ const route =
 
   function start(root: HTMLElement): Controller | null {
     const frame = root.querySelector<HTMLElement>('.hf-frame');
-    const toggle = root.querySelector<HTMLButtonElement>('[data-fade-toggle]');
     const hero = root.closest<HTMLElement>('.page-hero') ?? root;
-    if (!frame || !toggle || reduce.matches) return null;
-    const button = toggle;
+    if (!frame || reduce.matches) return null;
 
     let data: Slide[] = [];
     try {
@@ -250,16 +181,11 @@ const route =
     let settle = 0;
     let destroyed = false;
     let ready = false;
-    let userPaused = false;
-    let hovering = false;
     let focusInside = false;
-    // After an explicit Play, hover and focus no longer hold the fade until the visitor leaves.
-    let ignoreEngaged = false;
     let current = 0;
     const slides: HTMLElement[] = Array.from(frame.querySelectorAll<HTMLElement>('[data-slide]'));
 
-    const paused = () =>
-      userPaused || document.hidden || (!ignoreEngaged && (hovering || focusInside));
+    const paused = () => document.hidden || focusInside;
 
     const show = (next: number) => {
       const from = slides[current];
@@ -296,7 +222,7 @@ const route =
           show(next);
           schedule();
         },
-        token('--duration-photo-hold', 6000),
+        token('--duration-photo-hold', 5800),
       );
     };
 
@@ -305,27 +231,6 @@ const route =
       schedule();
     };
 
-    const onToggle = () => {
-      ignoreEngaged = userPaused;
-      userPaused = !userPaused;
-      toggle.toggleAttribute('data-paused', userPaused);
-      toggle.setAttribute(
-        'aria-label',
-        userPaused ? 'Play the photo slideshow' : 'Pause the photo slideshow',
-      );
-      sync();
-    };
-    const onEnter = (event: PointerEvent) => {
-      if (event.pointerType !== 'mouse') return;
-      hovering = true;
-      sync();
-    };
-    const onLeave = (event: PointerEvent) => {
-      if (event.pointerType !== 'mouse') return;
-      hovering = false;
-      if (!focusInside) ignoreEngaged = false;
-      sync();
-    };
     const onFocusIn = (event: FocusEvent) => {
       // The page heading is focused by script after a client-side navigation; that is not a visitor
       // using the hero.
@@ -338,7 +243,6 @@ const route =
     const onFocusOut = (event: FocusEvent) => {
       if (event.relatedTarget instanceof Node && hero.contains(event.relatedTarget)) return;
       focusInside = false;
-      if (!hovering) ignoreEngaged = false;
       sync();
     };
     const onVisibility = () => sync();
@@ -351,15 +255,11 @@ const route =
       window.clearTimeout(timer);
       window.clearTimeout(loader);
       window.clearTimeout(settle);
-      button.removeEventListener('click', onToggle);
-      hero.removeEventListener('pointerenter', onEnter);
-      hero.removeEventListener('pointerleave', onLeave);
       hero.removeEventListener('focusin', onFocusIn);
       hero.removeEventListener('focusout', onFocusOut);
       document.removeEventListener('visibilitychange', onVisibility);
       reduce.removeEventListener('change', onReduce);
       window.removeEventListener('load', afterLoad);
-      if (reduce.matches) button.hidden = true;
     }
 
     // The other photos come in after the page has loaded.
@@ -372,16 +272,12 @@ const route =
         slides.push(slide);
       });
       ready = true;
-      toggle.hidden = false;
       sync();
     };
     function afterLoad() {
       loader = window.setTimeout(load, 300);
     }
 
-    toggle.addEventListener('click', onToggle);
-    hero.addEventListener('pointerenter', onEnter);
-    hero.addEventListener('pointerleave', onLeave);
     hero.addEventListener('focusin', onFocusIn);
     hero.addEventListener('focusout', onFocusOut);
     document.addEventListener('visibilitychange', onVisibility);

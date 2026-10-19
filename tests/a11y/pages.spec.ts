@@ -71,7 +71,6 @@ for (const width of widths) {
       await page.emulateMedia({ reducedMotion: 'no-preference' });
       await page.goto(path);
       await expect(page.locator('[data-hero-fade] [data-slide]')).toHaveCount(4);
-      await expect(page.getByRole('button', { name: /photo slideshow/ })).toBeVisible();
       const results = await new AxeBuilder({ page }).withTags(tags).analyze();
       expect(summarise(results.violations)).toEqual([]);
     });

@@ -64,9 +64,8 @@ for (const route of [...allRoutes, '/no-such-page']) {
     await page.goto(route, { waitUntil: 'load' });
     await page.waitForTimeout(300);
     expect(await moving(page), 'running animations after load').toEqual([]);
-    // The hero photo crossfade never starts: one photo, no toggle.
+    // The hero photo crossfade never starts: one photo.
     expect(await page.locator('[data-hero-fade] [data-slide]').count()).toBeLessThanOrEqual(1);
-    expect(await page.locator('[data-fade-toggle]:visible').count()).toBe(0);
     expect(await hidden(page), 'hidden or offset after load').toEqual([]);
     // Reveals stay unarmed under reduced motion; check they were found, so the test is not vacuous.
     if (route === '/') {
