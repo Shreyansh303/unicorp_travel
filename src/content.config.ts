@@ -16,23 +16,8 @@ import { z } from 'astro/zod';
 import { DEMO } from './config/env';
 import { site } from './config/site';
 import { containsBrand, maxContentTitleLength } from './lib/seo';
+import { formTypes } from './lib/forms';
 import { packageTypes, regionIds, regions, themeIds } from './lib/packages';
-
-/** The F-01 field sets a service page's enquiry form can use. */
-export const formTypes = [
-  'general',
-  'corporate',
-  'visa',
-  'hotel',
-  'forex',
-  'insurance',
-  'cruise',
-  'mice',
-  'transport',
-  'rail',
-  'frro',
-  'holiday',
-] as const;
 
 export const serviceCategories = ['corporate', 'leisure', 'related'] as const;
 

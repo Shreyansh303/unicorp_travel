@@ -1,0 +1,74 @@
+---
+/**
+ * One field from a FieldSpec (src/lib/forms.ts), rendered with the design-system field
+ * components. The data attributes tell the form controller how to check the value and how to
+ * label it in the summary.
+ */
+import Input from '../ui/form/Input.astro';
+import Select from '../ui/form/Select.astro';
+import Textarea from '../ui/form/Textarea.astro';
+import type { FieldSpec } from '../../lib/forms';
+
+interface Props {
+  /** Id prefix of the form, e.g. "enquiry". */
+  formId: string;
+  spec: FieldSpec;
+  value?: string | undefined;
+}
+
+const { formId, spec, value } = Astro.props;
+const id = `${formId}-${spec.name}`;
+const optional = !spec.required;
+const data = {
+  'data-label': spec.label,
+  'data-required-message': spec.requiredMessage ?? `Enter the ${spec.label.toLowerCase()}`,
+  'data-check': spec.check,
+  'data-upper': spec.upper ? 'true' : undefined,
+};
+const hint = spec.hint;
+const className = spec.half ? 'field-half' : undefined;
+---
+
+{spec.kind === 'select' ? (
+  <Select
+    id={id}
+    name={spec.name}
+    label={spec.label}
+    options={spec.options ?? []}
+    optional={optional}
+    class={className}
+    {...(spec.prompt ? { prompt: spec.prompt } : {})}
+    {...(hint ? { hint } : {})}
+    {...(value ? { value } : {})}
+    {...data}
+  />
+) : spec.kind === 'textarea' ? (
+  <Textarea
+    id={id}
+    name={spec.name}
+    label={spec.label}
+    optional={optional}
+    rows={4}
+    maxlength={1500}
+    {...(hint ? { hint } : {})}
+    {...(value ? { value } : {})}
+    {...data}
+  />
+) : (
+  <Input
+    id={id}
+    name={spec.name}
+    label={spec.label}
+    optional={optional}
+    class={className}
+    type={spec.kind === 'date' ? 'date' : 'text'}
+    inputmode={spec.kind === 'number' ? 'numeric' : undefined}
+    autocomplete={spec.autocomplete ?? 'off'}
+    data-min={spec.kind === 'number' ? spec.min : undefined}
+    data-max={spec.kind === 'number' ? spec.max : undefined}
+    maxlength={spec.kind === 'text' ? 120 : undefined}
+    value={value}
+    {...(hint ? { hint } : {})}
+    {...data}
+  />
+)}

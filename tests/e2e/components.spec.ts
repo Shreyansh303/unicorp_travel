@@ -224,7 +224,17 @@ test.describe('mobile', () => {
     await expect(button).toBeFocused();
   });
 
-  for (const path of ['/', '/holidays/kerala-backwaters-and-hills', '/styleguide']) {
+  for (const path of [
+    '/',
+    '/holidays/kerala-backwaters-and-hills',
+    '/styleguide',
+    // Pages with the M5 forms, filters and planner.
+    '/services/visa-passport',
+    '/corporate-travel',
+    '/contact',
+    '/holidays',
+    '/plan-my-trip',
+  ]) {
     test(`keyboard focus is never hidden under the floating bar on ${path}`, async ({ page }) => {
       test.setTimeout(120_000);
       await page.goto(path);
@@ -246,6 +256,39 @@ test.describe('mobile', () => {
       expect(barTop).toBeGreaterThan(0);
       expect(contentBottom).toBeLessThanOrEqual(barTop + 1);
       expect(scrollWidth).toBeLessThanOrEqual(375);
+    });
+  }
+
+  for (const path of ['/services/visa-passport', '/holidays/kerala-backwaters-and-hills']) {
+    test(`the floating bar covers no form control in the error state on ${path}`, async ({
+      page,
+    }) => {
+      test.setTimeout(120_000);
+      await page.goto(path);
+      await page.locator('form[data-bound]').first().waitFor({ state: 'attached' });
+      for (const id of ['enquiry', 'callback']) {
+        await page.locator(`#${id} button[type="submit"]`).click();
+        await expect(page.locator(`#${id} [data-error-summary]`)).toBeFocused();
+      }
+      // From the focused summary, Tab through the rest of the page with errors showing.
+      expect(await focusCoveredByBar(page)).toEqual([]);
+      // Every control of both forms can sit fully above the bar.
+      const hidden = await page.evaluate(() => {
+        const bar = document.querySelector('.floating-fixed');
+        const barTop = bar?.getBoundingClientRect().top ?? innerHeight;
+        const out: string[] = [];
+        for (const el of Array.from(
+          document.querySelectorAll<HTMLElement>(
+            'form[data-enquiry-form] :is(input:not([type="hidden"]), select, textarea, button)',
+          ),
+        )) {
+          el.focus();
+          const rect = el.getBoundingClientRect();
+          if (rect.bottom > barTop + 0.5) out.push(el.id || el.textContent?.trim() || el.tagName);
+        }
+        return out;
+      });
+      expect(hidden).toEqual([]);
     });
   }
 });

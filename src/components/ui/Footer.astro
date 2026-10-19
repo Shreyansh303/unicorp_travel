@@ -86,6 +86,7 @@ const columns = (phones.length > 0 || email ? 1 : 0) + (office ? 1 : 0) + groups
             <li>
               <a href={entry.href} target="_blank" rel="noopener noreferrer">
                 {entry.key === 'facebook' && <Icon name="facebook" size={18} />}
+                {entry.key === 'instagram' && <Icon name="instagram" size={18} />}
                 {entry.label}
                 <span class="sr-only"> (opens in a new tab)</span>
               </a>

@@ -1,0 +1,70 @@
+/* Filter chip look, shared by FilterChips.astro and the Plan my trip island. */
+.chips {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.chips-label {
+  font-weight: var(--weight-bold);
+}
+
+.chips-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: var(--tap);
+  padding: var(--space-2) var(--space-4);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: inset 0 0 0 1.5px var(--border-strong);
+  font: inherit;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+  cursor: pointer;
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-bounce);
+}
+
+.chip .chip-tick {
+  display: none;
+}
+
+.chip:where(:hover, .is-hover):not(:disabled) {
+  box-shadow: inset 0 0 0 2px var(--text);
+}
+
+.chip:active:not(:disabled) {
+  transform: scale(var(--press-scale));
+}
+
+.chip.is-focus {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+
+.chip[aria-pressed='true'] {
+  background: var(--text);
+  color: var(--bg);
+  box-shadow: none;
+}
+
+.chip[aria-pressed='true'] .chip-tick {
+  display: block;
+}
+
+.chip:disabled {
+  background: var(--sand-100);
+  color: var(--stone-600);
+  box-shadow: inset 0 0 0 1.5px var(--sand-200);
+  cursor: not-allowed;
+}

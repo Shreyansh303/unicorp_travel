@@ -43,3 +43,12 @@ Notes:
 - `service-cruise.jpg` shows a ship whose name on the hull is too small to read at normal size; do not crop in on the hull.
 - `ladakh-2.jpg` is listed on Unsplash under Ladakh searches; the photo page does not state a location, so keep the caption generic.
 - Portrait files (`andaman-2`, `dubai-2`, `ladakh-2`, `singapore-2`, `switzerland-2`) are detail shots; do not use them as wide heroes.
+
+## Brand assets
+
+Supplied by the client (2026-10-19), not licensed from a third party.
+
+| File | Use |
+|---|---|
+| src/assets/brand/logo.png | Header logo (transparent margins trimmed; Astro generates the delivered sizes) |
+| public/favicon-32x32.png, public/apple-touch-icon.png | Favicon and home-screen icon, resized from the supplied favicon |

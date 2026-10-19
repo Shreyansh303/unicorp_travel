@@ -15,7 +15,7 @@ This repository is private.
 | M2 Design system and art direction | Tokens, components, motion primitives, `/styleguide` | Done |
 | M3 Content model and sample content | Zod-validated collections for services, packages and FAQs; sample content; demo-content build check | Done |
 | M4 Pages (static) | Every public route, from home to legal pages and 404 | Done |
-| M5 Interactive features | Enquiry forms, package filters, "Plan my trip" planner, FAQ accordions, form notices | Not started |
+| M5 Interactive features | Enquiry forms, package filters, "Plan my trip" planner, FAQ accordions, form notices | Done |
 | M6 Motion and polish | Hero sequence, route-line storytelling, page transitions, visual QA at five widths | Not started |
 | M7 Quality gates | Performance, accessibility, SEO basics, links and browser checks on every page | Not started |
 | M8 Demo deploy and handoff | Preview deploy on Vercel, presenter walkthrough, launch checklist | Not started |
@@ -27,9 +27,9 @@ The full plan, with acceptance criteria for each milestone, is in [`docs/demo-ro
 | Layer | Tool | Version | Why |
 |---|---|---|---|
 | Framework | Astro (static output) | 7.4.0 | Ships no JavaScript by default. Interactive parts hydrate only where used. |
-| Interactive islands | React and `@astrojs/react` | 19.3.1, 7.1.0 | Filters and the multi-step form only. No island exists yet. |
+| Interactive islands | React and `@astrojs/react` | 19.3.1, 7.1.0 | The "Plan my trip" planner is the one island (`client:visible`). Forms and filters are plain Astro markup with small scripts. |
 | Styling | Tailwind CSS and `@tailwindcss/vite` | 4.3.3 | Fast iteration, with design tokens as CSS variables. |
-| Component motion | Motion (`motion`) | 14.3.0 | Declarative React animation for islands. Installed; not yet imported. |
+| Component motion | Motion (`motion`) | 14.3.0 | Planner step transitions, through the small `motion/mini` animate function. |
 | Scroll storytelling | GSAP with ScrollTrigger | 3.15.0 | Scroll-linked sequences. Loaded lazily, only where needed. |
 | Smooth scroll | Lenis (`lenis`) | 1.3.27 | Works with ScrollTrigger; off under reduced motion. Installed; not yet imported. |
 | Page transitions | Astro view transitions (`ClientRouter`) | Part of Astro | Cross-page transitions without a single-page-app router. |
@@ -73,12 +73,12 @@ The dev server prints its local address (Astro's default is `http://localhost:43
 | `/holidays`, `/holidays/<slug>` | Sample holiday listing and one page per package |
 | `/corporate-travel` | Corporate travel offer, with FAQs |
 | `/services`, `/services/<slug>` | Travel-related services and one page per service, with FAQs |
-| `/plan-my-trip` | The guided trip request (direct routes until the M5 planner) |
+| `/plan-my-trip` | The five-step guided trip request, plus the direct routes |
 | `/about`, `/contact`, `/faqs` | Company, contact details with a map link, all FAQs |
 | `/privacy`, `/terms` | Legal drafts, pending legal review |
 | `/styleguide` | Every design token and component, in every state (internal, not linked) |
 
-Every page ends with an enquiry band (WhatsApp, call and a link to Plan my trip or Contact) and has the floating WhatsApp and call buttons with a page-specific message. Unknown paths show the 404 page.
+Every page ends with an enquiry band (WhatsApp, call and a link to Plan my trip or Contact) and has the floating WhatsApp and call buttons with a page-specific message. Service, package, corporate and contact pages also carry an enquiry form and a call-back request, and `/holidays` has filters. Unknown paths show the 404 page.
 
 Stop the dev server before running the test suites. Playwright reuses a server that is already running on port 4321 when it is not in CI, so the tests would run against the dev server instead of the build.
 
@@ -108,13 +108,17 @@ All scripts are defined in `package.json`.
 
 - `smoke.spec.ts`: the home page has one `h1`, `lang="en-IN"`, and a robots meta tag that follows the `DEMO` flag.
 - `pages.spec.ts`: every route (the list is derived from the content collections in `tests/routes.ts`) returns 200 and has one `h1`, a title ending in the brand, a description, Open Graph tags, breadcrumbs on inner pages, an enquiry band with working WhatsApp and call links as the last thing in `main`, the "Sample content" label where sample content appears, and footer address and phones equal to `site.ts` (F-15). Titles and descriptions are unique across all routes. An unknown path returns the 404 page. Canonical, `og:url` and `og:image` are checked when `SITE_URL` is set and must be absent when it is not.
-- `components.spec.ts`: a keyboard pass over the styleguide, with a visible focus ring on every interactive component. It also covers the navigation submenu (Enter, Space and Escape), the dialog (focus trap, Escape, focus returned to the trigger), accordions, filter chips and the mobile drawer. It checks that the floating contact buttons never cover focus or content on the checked pages. Under reduced motion it checks that nothing moves on each page, and that hover and press states do not move. It also checks that every header link is reachable on a phone without JavaScript. These checks run on `/`, a package page and `/styleguide`.
+- `components.spec.ts`: a keyboard pass over the styleguide, with a visible focus ring on every interactive component. It also covers the navigation submenu (Enter, Space and Escape), the dialog (focus trap, Escape, focus returned to the trigger), accordions, filter chips and the mobile drawer. At 375 px it checks that the floating contact buttons never cover focus or content on `/`, a package page, `/styleguide`, a service page, `/corporate-travel`, `/contact`, `/holidays` and `/plan-my-trip`, and never cover a form control while errors show. Under reduced motion it checks that nothing moves on `/`, a package page and `/styleguide`, and that hover and press states do not move. It also checks that every header link is reachable on a phone without JavaScript.
+- `forms.spec.ts` (F-01, F-02, F-14): table-driven phone (valid and invalid Indian formats), email and GSTIN rules; on every form page, visible labels, an unticked opt-in and a purpose notice tied to the submit button; each service page uses its service's form type. Submitting empty shows each error (`aria-invalid`, `aria-describedby`) and focuses the summary; invalid phone and email are rejected in the browser and valid formats accepted; the corporate GSTIN is checked only when filled; dates may not be in the past. A keyboard-only run fills and submits the visa form and checks that the decoded wa.me and mailto links hold the answers and the page; the package form carries the package name and reference; no network request is made and nothing is stored on submit. The callback form is run by keyboard on a service page and a package page. FAQ accordions on pages with forms work by keyboard. Without JavaScript the forms are hidden and the direct routes remain.
+- `filters.spec.ts` (F-04): every chip narrows the list to the packages the content files say match; choices combine (any within a group, all across groups); the query string follows the filters; a shared link, a reload, and back and forward restore them without reloading the page; the live region counts the results; the empty state links to Plan my trip; chips work by keyboard; the phone toggle; without JavaScript every package is listed.
+- `planner.spec.ts` (F-13): a keyboard-only run through all five steps, the summary and the hand-off; every step blocks Next until valid and focuses the first problem; a refresh restores the step and the answers; Back keeps them; the summary links back to each step; session storage is cleared after sending.
 
 **Accessibility tests** (`tests/a11y/`):
 
 - `home.spec.ts`: axe finds no violations on the home page.
 - `pages.spec.ts`: axe finds no violations on every route and the 404 page, at 375 px and 1366 px, and on `/faqs` with an accordion open.
 - `styleguide.spec.ts`: axe finds no violations on `/styleguide` at 375 px and 1366 px, with the submenu and dialog open, and with the mobile drawer open on the home page.
+- `forms.spec.ts`: axe finds no violations, at 375 px and 1366 px, on a service page, a package page, `/corporate-travel` and `/contact` with both forms in the error state and on their success screens; on `/holidays` with filters applied and in the empty state; and on every planner step (with and without errors), the summary and the success screen.
 
 All axe scans use the WCAG 2.0 A and AA, 2.1 A and AA, and 2.2 AA rule sets.
 
@@ -127,7 +131,7 @@ All axe scans use the WCAG 2.0 A and AA, 2.1 A and AA, and 2.2 AA rule sets.
 | Cumulative Layout Shift | below 0.1 (set to 0.0999) |
 | Total Blocking Time | at most 200 ms |
 
-The config serves `dist/` and lists its URLs explicitly: home, `/holidays`, one package page, one service page and `/contact`. Reports go to `.lighthouseci/`, which Git ignores.
+The config serves `dist/` and lists its URLs explicitly: home, `/holidays`, one package page, one service page, `/contact` and `/plan-my-trip`. Reports go to `.lighthouseci/`, which Git ignores.
 
 Lighthouse needs a Chrome binary. The script uses `CHROME_PATH` if you set it. Otherwise it uses a Chrome installed on the machine. If there is none, it falls back to Playwright's Chromium, which `npx playwright install chromium` installs.
 
@@ -193,7 +197,7 @@ Link helpers in the same file:
 - Actions and feedback: `Button`, `Dialog`, `Toast` (with `toast.ts`), `Stepper`, `Accordion`, `FilterChips`.
 - Content: `ServiceCard`, `PackageCard`, `FactsBlock`, `SampleLabel` (the visible "Sample content" label), `Icon`. Icons are inline line icons based on the Lucide set (ISC licence).
 - Page building blocks: `PageHero` (breadcrumbs, the H1, lede and optional photo), `EnquiryBand` (the closing enquiry option on every page, marked `data-enquiry`), `HowItWorks` (numbered steps), `TickList` (inclusions and what we handle) and `MapPanel` (an illustrated office panel with an "Open in Google Maps" link; no map loads on the page).
-- Forms in `src/components/ui/form/`: `Input`, `Textarea`, `Select`, `Checkbox`, `RadioGroup`, `FieldMessage`. Each field has a visible label, a hint and an error message, wired with `aria-describedby`.
+- Forms in `src/components/ui/form/`: `Input`, `Textarea`, `Select`, `Checkbox`, `RadioGroup`, `FieldMessage`. Each field has a visible label, a hint and an error message, wired with `aria-describedby`. Their look is in `field.css`; buttons, chips and the stepper also keep their look in plain CSS files (`button.css`, `chips.css`, `stepper.css`), so the React planner shares it.
 
 **Motion primitives** in `src/components/motion/`:
 
@@ -218,6 +222,23 @@ Link helpers in the same file:
 
 The styleguide at `/styleguide` shows the full system.
 
+## Enquiries, filters and the planner
+
+**One submission point.** Every form builds an `EnquiryData` and calls `submitEnquiry()` in `src/lib/submit-enquiry.ts`. The demo implementation checks the contact details, stores nothing, makes no network request, and resolves with a summary plus a wa.me link and a mailto link built with the `site.ts` helpers. The success screen offers "Send on WhatsApp" and "Email instead", so the visitor sends the request themselves. To connect a real endpoint at launch, write another `EnquirySubmitter` and assign it to `activeSubmitter` in that file; the forms do not change.
+
+**Forms** in `src/components/forms/`:
+
+- `EnquiryForm` (F-01): one component configured by a form type. The field sets per type (general, corporate, visa, hotel, forex, insurance, cruise, MICE, transport, rail, FRRO, holiday) are in `src/lib/forms.ts`; services pick theirs with `formType`. Corporate forms check the 15-character GSTIN format when it is filled. On package pages the form is pre-filled with the package name and sends a hidden package reference.
+- `CallbackForm` (F-02): name, phone, a preferred time (no clock times while the office hours are not shown in `site.ts`) and a topic set by the page.
+- `EnquirySection` places both on `/corporate-travel`, each service page, each package page and `/contact`; `/holidays` has the callback form.
+- `form-controller.ts` checks the answers in the browser (Indian phone formats from `src/lib/validation.ts`: a 10-digit mobile starting 6 to 9, or a landline with its STD code, with or without +91 or 0), shows errors under the fields and in a summary that receives focus, and moves focus to the success screen.
+- Every form has the purpose notice beside its button and a separate, unticked marketing opt-in whose answer goes into the message (F-14). The copy is in `src/lib/form-copy.ts`.
+- Without JavaScript the forms, filters and planner are hidden (`data-needs-js`) and the direct routes that end every page remain.
+
+**Holiday filters** (F-04, `src/components/holidays/`): type, region, length, budget band and theme chips (`aria-pressed`) on top of the server-rendered list. Filters live in the query string, so links can be shared and reload, back and forward restore them. A polite live region reads "Showing 3 of 8 holidays"; a "Clear filters" control and an empty state with a Plan my trip link complete it. Options come from `src/lib/packages.ts`.
+
+**Plan my trip** (F-13, `src/components/planner/`): a React island with five steps (trip type, destinations, dates, travellers with budget and interests, contact and consent), then a summary with a Change button per step. Each step is checked before Next moves on; focus goes to the first problem or to the new step heading. The draft is kept in session storage so a refresh restores it, and is cleared after sending. Step changes slide and fade (transform and opacity only), and not at all under reduced motion.
+
 ## Project structure
 
 ```
@@ -239,7 +260,10 @@ unicorp_travel/
 ├── src/
 │   ├── assets/photos/          Licensed photos, optimised at build time
 │   ├── components/
+│   │   ├── forms/              Enquiry and callback forms, notice, success screen, controller
+│   │   ├── holidays/           Holiday filters (F-04)
 │   │   ├── motion/             Reveal, Stagger, RouteLine, Parallax, page transitions
+│   │   ├── planner/            Plan my trip island (F-13)
 │   │   └── ui/                 UI components; form/ holds the form fields
 │   ├── config/
 │   │   ├── site.ts             Every business fact and the link helpers
@@ -256,6 +280,10 @@ unicorp_travel/
 │   │   ├── packages.ts         Package regions, themes and budget bands
 │   │   ├── content.ts          Typed access to content collections
 │   │   ├── enquiry.ts          Pre-filled WhatsApp and email messages
+│   │   ├── forms.ts            Enquiry field sets per form type and callback times
+│   │   ├── form-copy.ts        Purpose notice, opt-in and success copy
+│   │   ├── submit-enquiry.ts   submitEnquiry(): the one submission point
+│   │   ├── validation.ts       Phone, email, GSTIN and date checks
 │   │   ├── nav.ts              Header and footer navigation
 │   │   ├── routes.ts           Route paths and service and package links
 │   │   └── seo.ts              Page titles with the brand suffix from site.ts
@@ -264,9 +292,10 @@ unicorp_travel/
 │       ├── tokens.css          Design tokens, including motion
 │       └── global.css          Base styles, focus, reduced-motion rules
 └── tests/
-    ├── routes.ts               Route list derived from the content collections
-    ├── e2e/                    smoke, components and pages specs
-    └── a11y/                   home, styleguide and pages specs
+    ├── routes.ts               Route list and package facts derived from the content collections
+    ├── keyboard.ts             Keyboard and hand-off link helpers
+    ├── e2e/                    smoke, components, pages, forms, filters and planner specs
+    └── a11y/                   home, styleguide, pages and forms specs
 ```
 
 ## Content rules

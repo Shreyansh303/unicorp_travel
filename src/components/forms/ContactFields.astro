@@ -1,0 +1,50 @@
+---
+/** Name, phone and (optionally) email: the contact details every request needs. */
+import Input from '../ui/form/Input.astro';
+import { messages } from '../../lib/validation';
+
+interface Props {
+  formId: string;
+  email?: boolean;
+}
+
+const { formId, email = true } = Astro.props;
+---
+
+<Input
+  id={`${formId}-name`}
+  name="name"
+  label="Your name"
+  autocomplete="name"
+  maxlength={80}
+  data-label="Name"
+  data-check="name"
+  data-required-message={messages.name.required}
+/>
+<Input
+  id={`${formId}-phone`}
+  name="phone"
+  label="Phone number"
+  type="tel"
+  autocomplete="tel"
+  inputmode="tel"
+  maxlength={20}
+  hint="A 10-digit mobile, or a landline with its STD code."
+  data-label="Phone"
+  data-check="phone"
+  data-required-message={messages.phone.required}
+/>
+{email && (
+  <Input
+    id={`${formId}-email`}
+    name="email"
+    label="Email"
+    type="email"
+    autocomplete="email"
+    maxlength={120}
+    optional
+    hint="So we can send the details in writing."
+    data-label="Email"
+    data-check="email"
+  />
+)}

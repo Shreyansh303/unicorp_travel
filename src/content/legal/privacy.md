@@ -11,7 +11,13 @@ This notice explains how we handle personal information on this website and when
 
 ## What this website collects
 
-This website does not ask you to create an account and does not store anything you type into it. When a form on the site is used, it prepares your message on your own device. The website does not send the form anywhere and keeps no copy of it.
+This website does not ask you to create an account, and it does not collect or keep what you type into it.
+
+The site has three kinds of form: an enquiry form on service, holiday and contact pages, a call-back request, and the "Plan my trip" guided request. They ask for your name and phone number, and, depending on the form, your email address, travel dates, number of travellers, budget, destination ideas, company name or GSTIN, and a message. Each form says beside its button what the details are for.
+
+When you press the button, your browser checks the answers and prepares a message on your own device. The website does not send that message anywhere and keeps no copy of it. The next screen offers two ways to send it to us yourself: "Send on WhatsApp", which opens WhatsApp with the message filled in, and "Email instead", which opens your email app with it. Nothing reaches us unless you send it.
+
+While you fill in "Plan my trip", your answers are kept in your browser's session storage, so they are not lost if you refresh the page. They stay on your device, are cleared as soon as you have prepared the request, and are removed by your browser when you close the tab.
 
 The website sets no advertising, analytics or other non-essential cookies, and it loads no tracking scripts. Fonts and photos are served from the website itself.
 
@@ -21,13 +27,17 @@ Like most websites, the hosting service may keep short technical logs of request
 
 You choose how to reach us: by WhatsApp, by email or by phone. A message only reaches us when you send it yourself from your WhatsApp or email app, or when you call.
 
-When you contact us, we receive what you choose to share, such as your name, phone number, email address, travel dates, the number of travellers and your plans. WhatsApp and your email provider handle the message under their own privacy terms.
+When you contact us, we receive what you choose to share, such as the details listed above. WhatsApp and your email provider handle the message under their own privacy terms.
+
+## Offers and travel ideas
+
+Every form has a separate box, unticked unless you tick it, that asks whether you would like occasional travel ideas and offers. Your choice is written into the message you send ("Travel ideas and offers: Yes, please" or "No"). We send offers only if you said yes, and you can ask us to stop at any time.
 
 ## How we use your details
 
 We use your details to reply to your enquiry, plan and quote for your trip, and make the bookings you ask for. For a booking, we share the details a supplier needs, such as an airline, a hotel or a visa centre, and only for that booking.
 
-We do not sell your details. We send you offers only if you have asked us to, and you can ask us to stop at any time.
+We do not sell your details. We send you offers only if you have asked us to.
 
 ## How long we keep them
 

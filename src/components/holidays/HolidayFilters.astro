@@ -1,0 +1,244 @@
+---
+/**
+ * F-04 package filters for /holidays: destination type, region, length, budget band and theme,
+ * as toggle chips (aria-pressed). The list itself is rendered on the server, so without
+ * JavaScript every package stays listed and this panel is hidden. With JavaScript the filters
+ * narrow the list in the browser, sync to the query string (shareable; reload, back and forward
+ * restore them) and announce the result count in a polite live region.
+ *
+ * Options come from src/lib/packages.ts, limited to values at least one package has, so no
+ * chip leads to an empty list on its own.
+ */
+import FilterChips from '../ui/FilterChips.astro';
+import {
+  budgetBandFor,
+  budgetBands,
+  durationBandFor,
+  durationBands,
+  packageTypeLabels,
+  packageTypes,
+  regionIds,
+  regionLabels,
+  themeIds,
+  themeLabels,
+} from '../../lib/packages';
+import type { PackageEntry } from '../../lib/content';
+
+interface Props {
+  packages: PackageEntry[];
+}
+
+const { packages } = Astro.props;
+const total = packages.length;
+const used = {
+  type: new Set(packages.map((pkg) => pkg.data.type)),
+  region: new Set(packages.map((pkg) => pkg.data.region)),
+  duration: new Set(packages.map((pkg) => durationBandFor(pkg.data.duration.days).id)),
+  budget: new Set(packages.map((pkg) => budgetBandFor(pkg.data.fromPrice).id)),
+  theme: new Set(packages.flatMap((pkg) => pkg.data.themes)),
+};
+
+const groups = [
+  {
+    name: 'type',
+    label: 'Destination',
+    chips: packageTypes
+      .filter((id) => used.type.has(id))
+      .map((id) => ({ value: id, label: packageTypeLabels[id] })),
+  },
+  {
+    name: 'region',
+    label: 'Region',
+    chips: regionIds
+      .filter((id) => used.region.has(id))
+      .map((id) => ({ value: id, label: regionLabels[id] })),
+  },
+  {
+    name: 'duration',
+    label: 'Length',
+    chips: durationBands
+      .filter((band) => used.duration.has(band.id))
+      .map((band) => ({ value: band.id, label: band.label })),
+  },
+  {
+    name: 'budget',
+    label: 'Price per person, from',
+    chips: budgetBands
+      .filter((band) => used.budget.has(band.id))
+      .map((band) => ({ value: band.id, label: band.label })),
+  },
+  {
+    name: 'theme',
+    label: 'Theme',
+    chips: themeIds
+      .filter((id) => used.theme.has(id))
+      .map((id) => ({ value: id, label: themeLabels[id] })),
+  },
+];
+---
+
+<div class="hf" data-holiday-filters data-needs-js data-total={total}>
+  <h3 class="sr-only">Filter the holidays</h3>
+  <button
+    type="button"
+    class="hf-toggle"
+    aria-expanded="false"
+    aria-controls="hf-panel"
+    data-filters-toggle
+  >
+    <span>Filter holidays</span>
+    <span class="hf-toggle-count" data-active-count></span>
+    <svg
+      class="hf-toggle-icon"
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path d="m6 9 6 6 6-6"></path>
+    </svg>
+  </button>
+  <div class="hf-panel" id="hf-panel" data-filters-panel>
+    {groups.map((group) => (
+      <FilterChips label={group.label} name={group.name} chips={group.chips} />
+    ))}
+    <p class="hf-help">
+      Pick as many as you like. Holidays must match one choice in every group you use.
+    </p>
+  </div>
+  <div class="hf-bar">
+    <p class="hf-count" role="status" data-filter-count>
+      Showing {total} of {total} holidays
+    </p>
+    <button type="button" class="hf-clear" data-filters-clear hidden>
+      Clear filters
+    </button>
+  </div>
+</div>
+
+<style>
+  .hf {
+    display: grid;
+    gap: var(--space-5);
+    margin-bottom: var(--space-10);
+    padding: var(--space-5);
+    border-radius: var(--radius-lg);
+    background: var(--white);
+    box-shadow: inset 0 0 0 1px var(--sand-200);
+  }
+
+  .hf-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    width: 100%;
+    min-height: var(--tap);
+    padding: var(--space-2) var(--space-4);
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: var(--ink);
+    color: var(--white);
+    font: inherit;
+    font-weight: var(--weight-black);
+    cursor: pointer;
+  }
+
+  .hf-toggle:focus-visible {
+    outline: 3px solid var(--focus);
+    outline-offset: 3px;
+  }
+
+  .hf-toggle-count {
+    margin-right: auto;
+    font-weight: var(--weight-medium);
+  }
+
+  .hf-toggle[aria-expanded='true'] .hf-toggle-icon {
+    rotate: var(--turn, 180deg);
+  }
+
+  .hf-panel {
+    display: none;
+    gap: var(--space-5);
+    align-items: start;
+  }
+
+  .hf-panel.is-open {
+    display: grid;
+  }
+
+  .hf-help {
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+  }
+
+  .hf-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--sand-200);
+  }
+
+  .hf-count {
+    font-weight: var(--weight-bold);
+  }
+
+  .hf-clear {
+    min-height: var(--tap);
+    padding: var(--space-2) var(--space-4);
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: transparent;
+    color: var(--ink);
+    box-shadow: inset 0 0 0 1.5px var(--ink);
+    font: inherit;
+    font-weight: var(--weight-bold);
+    cursor: pointer;
+  }
+
+  .hf-clear:hover {
+    background: var(--ink);
+    color: var(--white);
+  }
+
+  .hf-clear:focus-visible {
+    outline: 3px solid var(--focus);
+    outline-offset: 3px;
+  }
+
+  @media (min-width: 1024px) {
+    .hf {
+      padding: var(--space-6) var(--space-8);
+    }
+
+    .hf-toggle {
+      display: none;
+    }
+
+    .hf-panel {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-6) var(--space-8);
+    }
+
+    .hf-panel > :global(.chips:nth-child(2)),
+    .hf-panel > :global(.chips:nth-child(5)),
+    .hf-help {
+      grid-column: 1 / -1;
+    }
+  }
+</style>
+
+<script>
+  import './holiday-filters';
+</script>

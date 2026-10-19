@@ -1,0 +1,24 @@
+---
+/**
+ * Error summary at the top of a form. Hidden until a submit fails; the form controller then
+ * lists each problem as a link to its field and moves focus here.
+ */
+interface Props {
+  id: string;
+}
+
+const { id } = Astro.props;
+---
+
+<div
+  class="form-errors"
+  id={id}
+  role="group"
+  tabindex="-1"
+  aria-labelledby={`${id}-title`}
+  data-error-summary
+  hidden
+>
+  <p class="form-errors-title" id={`${id}-title`} data-error-title></p>
+  <ul class="form-errors-list" data-error-list></ul>
+</div>

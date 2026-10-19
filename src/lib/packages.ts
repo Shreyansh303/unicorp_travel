@@ -112,8 +112,8 @@ export interface DurationBand {
 
 export const durationBands: readonly DurationBand[] = [
   { id: 'short', label: 'Up to 5 days', minDays: 1, maxDays: 5 },
-  { id: 'week', label: '6 to 8 days', minDays: 6, maxDays: 8 },
-  { id: 'long', label: '9 days or more', minDays: 9, maxDays: null },
+  { id: 'week', label: '6 to 7 days', minDays: 6, maxDays: 7 },
+  { id: 'long', label: '8 days or more', minDays: 8, maxDays: null },
 ];
 
 export function durationBandFor(days: number): DurationBand {

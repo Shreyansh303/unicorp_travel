@@ -1,0 +1,92 @@
+---
+/**
+ * The page section that holds a page's forms: the F-01 enquiry form for the page's form type
+ * and the F-02 callback request beside it (stacked on phones, enquiry first).
+ */
+import Section, { type Mood, type Tone } from '../ui/Section.astro';
+import EnquiryForm from './EnquiryForm.astro';
+import CallbackForm from './CallbackForm.astro';
+import type { FormType } from '../../lib/forms';
+
+interface Props {
+  title: string;
+  accent?: string;
+  intro: string;
+  /** What the request is about, mid-sentence. */
+  topic: string;
+  /** Omit for a callback-only section. */
+  formType?: FormType;
+  formTitle?: string;
+  prefill?: Record<string, string>;
+  packageRef?: string;
+  callback?: boolean;
+  tone?: Tone;
+  mood?: Mood;
+  rounded?: boolean;
+}
+
+const {
+  title,
+  accent,
+  intro,
+  topic,
+  formType,
+  formTitle = 'Send us the details',
+  prefill,
+  packageRef,
+  callback = true,
+  tone = 'sand',
+  mood = 'holiday',
+  rounded,
+} = Astro.props;
+---
+
+<Section
+  tone={tone}
+  mood={mood}
+  id="enquire"
+  aria-labelledby="enquire-title"
+  data-forms
+  {...(rounded === undefined ? {} : { rounded })}
+>
+  <div class="section-head">
+    <h2 id="enquire-title" class="t-h2">
+      {title}
+      {accent && ' '}
+      {accent && <span class="t-accent">{accent}</span>}
+    </h2>
+    <p>{intro}</p>
+  </div>
+  <div class:list={['forms-grid', !formType && 'forms-grid-single']}>
+    {formType && (
+      <EnquiryForm
+        id="enquiry"
+        formType={formType}
+        topic={topic}
+        title={formTitle}
+        {...(prefill ? { prefill } : {})}
+        {...(packageRef ? { packageRef } : {})}
+      />
+    )}
+    {callback && <CallbackForm topic={topic} />}
+  </div>
+</Section>
+
+<style>
+  .forms-grid {
+    display: grid;
+    gap: var(--space-6);
+    align-items: start;
+  }
+
+  .forms-grid-single {
+    max-width: 36rem;
+  }
+
+  @media (min-width: 1024px) {
+    .forms-grid:not(.forms-grid-single) {
+      grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
+      gap: var(--space-8);
+    }
+  }
+</style>

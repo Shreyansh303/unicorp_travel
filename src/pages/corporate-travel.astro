@@ -10,6 +10,7 @@ import TickList from '../components/ui/TickList.astro';
 import HowItWorks from '../components/ui/HowItWorks.astro';
 import Accordion from '../components/ui/Accordion.astro';
 import Reveal from '../components/motion/Reveal.astro';
+import EnquirySection from '../components/forms/EnquirySection.astro';
 import { getServiceWithFaqs } from '../lib/content';
 import { callHref, emailFor, mobile, whatsappFor } from '../lib/enquiry';
 import { routes } from '../lib/routes';
@@ -60,7 +61,8 @@ const sampleFaqs = faqs.some((faq) => faq.data.demo);
     </div>
     {mailHref && (
       <p class="hero-mail">
-        Prefer email? <Link href={mailHref}>Send us a note</Link>
+        Prefer email? <Link href={mailHref}>Send us a note</Link>, or{' '}
+        <Link href="#enquire">use the company enquiry form</Link>.
       </p>
     )}
   </PageHero>
@@ -133,6 +135,16 @@ const sampleFaqs = faqs.some((faq) => faq.data.demo);
       />
     </Section>
   )}
+
+  <EnquirySection
+    title="Set up a"
+    accent="corporate account."
+    intro="Tell us about your company and how your people travel, then send it to us on WhatsApp or by email. Or ask the corporate desk to call you."
+    topic={topic}
+    formType="corporate"
+    formTitle="Company details"
+    mood="corporate"
+  />
 </PageLayout>
 
 <style>

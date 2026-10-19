@@ -195,8 +195,23 @@ const mobile = shown(site.phones.mobile);
   /*
    * Backup for scroll-padding: text fields scroll only their caret into view, so a tall field
    * can end up partly under the bar. After focus moves, lift the element clear of the bar.
+   * Not when focus comes from a click or tap: scrolling between press and release would move
+   * the button away from the pointer and the click would be lost.
    */
+  let pointerFocus = false;
+  document.addEventListener(
+    'pointerdown',
+    () => {
+      pointerFocus = true;
+      window.setTimeout(() => {
+        pointerFocus = false;
+      }, 0);
+    },
+    { capture: true },
+  );
+
   document.addEventListener('focusin', (event) => {
+    if (pointerFocus) return;
     const bar = document.querySelector<HTMLElement>('.floating-fixed');
     const target = event.target as HTMLElement | null;
     if (!bar || !target || bar.contains(target) || getComputedStyle(bar).position !== 'fixed') {

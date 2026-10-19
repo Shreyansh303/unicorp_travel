@@ -3,6 +3,7 @@
 import type { HTMLAttributes } from 'astro/types';
 import FieldMessage from './FieldMessage.astro';
 import { fieldAria } from './field';
+import './field.css';
 
 interface Props extends Omit<HTMLAttributes<'input'>, 'id' | 'name' | 'type'> {
   id: string;
@@ -37,68 +38,3 @@ const aria = fieldAria(id, hint, error);
     <FieldMessage id={aria.errorId} kind="error" text={error} />
   </div>
 </div>
-
-<style>
-  .check {
-    display: grid;
-    gap: var(--space-1);
-  }
-
-  .check-row {
-    display: flex;
-    align-items: flex-start;
-    gap: var(--space-3);
-    min-height: var(--tap);
-    padding-top: var(--space-2);
-  }
-
-  .check-input {
-    flex: none;
-    width: 1.5rem;
-    height: 1.5rem;
-    margin: 0;
-    accent-color: var(--red-700);
-    cursor: pointer;
-  }
-
-  .check-input:focus-visible,
-  .check-input.is-focus {
-    outline: 3px solid var(--focus);
-    outline-offset: 3px;
-  }
-
-  .check-input.is-hover {
-    outline: 2px solid var(--stone-400);
-    outline-offset: 2px;
-  }
-
-  .check-input[aria-invalid='true'] {
-    outline: 2px solid var(--error-700);
-    outline-offset: 2px;
-  }
-
-  .check-input[aria-invalid='true']:focus-visible {
-    outline: 3px solid var(--focus);
-    outline-offset: 3px;
-  }
-
-  .check-input:disabled,
-  .check-input:disabled + .check-label {
-    cursor: not-allowed;
-    color: var(--stone-600);
-  }
-
-  .check-label {
-    cursor: pointer;
-  }
-
-  .check-msgs {
-    display: grid;
-    gap: var(--space-1);
-    padding-left: calc(1.5rem + var(--space-3));
-  }
-
-  .check-msgs:empty {
-    display: none;
-  }
-</style>

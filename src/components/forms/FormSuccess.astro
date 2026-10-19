@@ -1,0 +1,48 @@
+---
+/**
+ * The success screen of the enquiry and callback forms (roadmap section 4, "Form submission in
+ * the demo"). Hidden until the form controller fills it from submitEnquiry's result: the summary,
+ * "Send on WhatsApp" (wa.me) and "Email instead" (mailto). The links start with the page's own
+ * message, so they work even before the summary is filled in.
+ */
+import Button from '../ui/Button.astro';
+import { formCopy } from '../../lib/form-copy';
+import { emailFor, mobile, whatsappFor } from '../../lib/enquiry';
+
+interface Props {
+  id: string;
+  topic: string;
+  title?: string;
+  headingLevel?: 2 | 3;
+}
+
+const { id, topic, title = formCopy.successTitle, headingLevel = 3 } = Astro.props;
+const Heading = `h${headingLevel}` as 'h2' | 'h3';
+const mailHref = emailFor(`Enquiry: ${topic}`);
+---
+
+<div class="form-success" id={id} data-success hidden>
+  <Heading class="t-h3 form-success-title" tabindex="-1" data-success-title>
+    {title}
+  </Heading>
+  <p class="form-success-text">{formCopy.successText}</p>
+  <div class="form-success-actions">
+    {mobile && (
+      <Button href={whatsappFor(topic)} iconStart="whatsapp" external data-handoff="whatsapp">
+        {formCopy.whatsappLabel}
+      </Button>
+    )}
+    {mailHref && (
+      <Button href={mailHref} variant="secondary" iconStart="mail" data-handoff="email">
+        {formCopy.emailLabel}
+      </Button>
+    )}
+  </div>
+  <div class="form-summary">
+    <p class="form-summary-title">Your request</p>
+    <dl class="form-summary-list" data-summary></dl>
+  </div>
+  <button type="button" class="form-edit" data-edit>
+    {formCopy.editLabel}
+  </button>
+</div>

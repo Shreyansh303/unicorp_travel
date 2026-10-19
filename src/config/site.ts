@@ -144,7 +144,7 @@ export const site = {
   /** A profile that is not supplied has `value: null`; render no icon for it. */
   social: {
     facebook: { status: 'confirm', value: 'https://facebook.com/unicorptravel' },
-    instagram: { status: 'clientToSupply', value: null },
+    instagram: { status: 'verified', value: 'https://www.instagram.com/unicorptravel/' },
     linkedin: { status: 'clientToSupply', value: null },
     x: { status: 'clientToSupply', value: null },
     youtube: { status: 'clientToSupply', value: null },
@@ -242,6 +242,10 @@ export function mailtoHref(
 ): string {
   const params: string[] = [];
   if (options.subject) params.push(`subject=${encodeURIComponent(options.subject)}`);
-  if (options.body) params.push(`body=${encodeURIComponent(options.body)}`);
+  // CRLF line breaks, as mail clients on Windows collapse bare line feeds.
+  if (options.body) {
+    const body = options.body.replace(/\r?\n/g, '\r\n');
+    params.push(`body=${encodeURIComponent(body)}`);
+  }
   return params.length > 0 ? `mailto:${email}?${params.join('&')}` : `mailto:${email}`;
 }

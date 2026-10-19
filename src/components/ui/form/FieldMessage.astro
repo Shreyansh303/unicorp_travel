@@ -1,6 +1,7 @@
 ---
 /** Hint or error line under a field. Errors carry an icon and the word "Error" for screen readers. */
 import Icon from '../Icon.astro';
+import './field.css';
 
 interface Props {
   id: string | undefined;
@@ -20,26 +21,3 @@ const { id, kind, text } = Astro.props;
     </span>
   </p>
 )}
-
-<style>
-  .field-msg {
-    display: flex;
-    align-items: flex-start;
-    gap: var(--space-2);
-    font-size: var(--text-sm);
-    line-height: 1.45;
-  }
-
-  .field-hint {
-    color: var(--text-muted);
-  }
-
-  .field-error {
-    color: var(--error-700);
-    font-weight: var(--weight-bold);
-  }
-
-  .field-error :global(.icon) {
-    margin-top: 0.05em;
-  }
-</style>

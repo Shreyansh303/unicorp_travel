@@ -9,6 +9,7 @@ import SampleLabel from '../../components/ui/SampleLabel.astro';
 import TickList from '../../components/ui/TickList.astro';
 import HowItWorks from '../../components/ui/HowItWorks.astro';
 import Accordion from '../../components/ui/Accordion.astro';
+import EnquirySection from '../../components/forms/EnquirySection.astro';
 import {
   getFaqsForService,
   getServicesByCategory,
@@ -79,6 +80,9 @@ const otherServices = all.filter((item) => item.id !== service.id);
         </Button>
       )}
     </div>
+    <Link href="#enquire" variant="standalone">
+      Or send the details with the form
+    </Link>
   </PageHero>
 
   <Section tone="sand" mood="corporate" aria-labelledby="handle-title">
@@ -130,6 +134,15 @@ const otherServices = all.filter((item) => item.id !== service.id);
       />
     </Section>
   )}
+
+  <EnquirySection
+    title="Tell us what"
+    accent="you need."
+    intro="Fill in what you know and send it to us on WhatsApp or by email. Or ask for a call back and we will ring you."
+    topic={topic}
+    formType={data.formType}
+    mood="corporate"
+  />
 
   <Section tone="white" mood="corporate" spacing="tight" aria-labelledby="more-title">
     <h2 id="more-title" class="t-h4 more-title">

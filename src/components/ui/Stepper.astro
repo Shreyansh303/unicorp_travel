@@ -5,6 +5,7 @@
  * aria-current="step"; finished steps say "completed" to screen readers.
  */
 import Icon from './Icon.astro';
+import './stepper.css';
 
 interface Props {
   steps: string[];
@@ -42,106 +43,3 @@ const currentLabel = steps[current] ?? '';
     })}
   </ol>
 </nav>
-
-<style>
-  .stepper {
-    display: grid;
-    gap: var(--space-4);
-  }
-
-  .stepper-summary {
-    font-size: var(--text-sm);
-    color: var(--text-muted);
-  }
-
-  .stepper-summary strong {
-    color: var(--text);
-  }
-
-  .stepper-list {
-    display: flex;
-  }
-
-  .step {
-    position: relative;
-    display: grid;
-    flex: 1;
-    justify-items: center;
-    gap: var(--space-2);
-    text-align: center;
-  }
-
-  /* The connector to the next step. */
-  .step:not(:last-child)::after {
-    content: '';
-    position: absolute;
-    top: 1.125rem;
-    left: calc(50% + 1.5rem);
-    right: calc(-50% + 1.5rem);
-    height: 0;
-    border-top: 3px dotted var(--stone-400);
-  }
-
-  .step-done:not(:last-child)::after {
-    border-top-style: solid;
-    border-top-color: var(--accent);
-  }
-
-  .step-marker {
-    display: grid;
-    place-items: center;
-    width: 2.25rem;
-    height: 2.25rem;
-    border-radius: 50%;
-    background: var(--surface);
-    color: var(--text);
-    box-shadow: inset 0 0 0 2px var(--stone-400);
-    font-family: var(--font-display);
-    font-weight: var(--weight-black);
-  }
-
-  .step-done .step-marker {
-    background: var(--accent);
-    color: var(--on-accent);
-    box-shadow: none;
-  }
-
-  .step-current .step-marker {
-    background: var(--text);
-    color: var(--bg);
-    box-shadow: 0 0 0 4px var(--red-100);
-  }
-
-  /* Below 768px the labels are visually hidden (the summary line shows the current one). */
-  .step-label {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
-    font-size: var(--text-sm);
-    font-weight: var(--weight-medium);
-    color: var(--text-muted);
-  }
-
-  .step-current .step-label {
-    color: var(--text);
-    font-weight: var(--weight-black);
-  }
-
-  @media (min-width: 768px) {
-    .stepper-summary {
-      display: none;
-    }
-
-    .step-label {
-      position: static;
-      width: auto;
-      height: auto;
-      overflow: visible;
-      clip-path: none;
-      white-space: normal;
-    }
-  }
-</style>

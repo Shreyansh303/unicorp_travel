@@ -1,0 +1,101 @@
+---
+/**
+ * F-02 callback request: name, phone, a preferred time and the topic (pre-set by the page).
+ * Same flow as the enquiry form: checked in the browser, handed to submitEnquiry, then sent by
+ * the visitor on WhatsApp or by email, with a message that asks for a call back.
+ */
+import Button from '../ui/Button.astro';
+import Checkbox from '../ui/form/Checkbox.astro';
+import Input from '../ui/form/Input.astro';
+import Select from '../ui/form/Select.astro';
+import ContactFields from './ContactFields.astro';
+import ErrorSummary from './ErrorSummary.astro';
+import FormNotice from './FormNotice.astro';
+import FormSuccess from './FormSuccess.astro';
+import { formCopy } from '../../lib/form-copy';
+import { callbackTimes } from '../../lib/forms';
+import './forms.css';
+
+interface Props {
+  id?: string;
+  /** What the call is about, mid-sentence; pre-fills the topic field. */
+  topic: string;
+  title?: string;
+  intro?: string;
+}
+
+const {
+  id = 'callback',
+  topic,
+  title = 'Request a call back',
+  intro = 'Leave your number and we will call you during office hours.',
+} = Astro.props;
+---
+
+<div class="form-root form-root-callback" data-form-root>
+  <form
+    id={id}
+    class="form form-callback"
+    novalidate
+    onsubmit="return false"
+    aria-labelledby={`${id}-title`}
+    data-enquiry-form
+    data-kind="callback"
+    data-topic={topic}
+    data-needs-js
+  >
+    <h3 id={`${id}-title`} class="t-h3 form-title">
+      {title}
+    </h3>
+    <p class="form-intro">{intro}</p>
+    <ErrorSummary id={`${id}-errors`} />
+    <div class="form-grid form-grid-single">
+      <ContactFields formId={id} email={false} />
+      <Select
+        id={`${id}-time`}
+        name="time"
+        label="Best time to call"
+        prompt="Choose a time"
+        options={callbackTimes()}
+        data-label="Best time to call"
+        data-required-message="Choose a time for the call"
+      />
+      <Input
+        id={`${id}-topic`}
+        name="topic"
+        label="What is it about?"
+        value={topic}
+        maxlength={120}
+        autocomplete="off"
+        data-label="About"
+        data-topic-field
+        data-required-message="Tell us what the call is about"
+      />
+    </div>
+    <Checkbox
+      id={`${id}-marketing`}
+      name="marketing"
+      label={formCopy.optInLabel}
+      hint={formCopy.optInHint}
+      class="form-optin"
+      data-optin
+    />
+    <div class="form-actions">
+      <Button type="submit" size="lg" iconStart="phone" aria-describedby={`${id}-notice`}>
+        Request a call back
+      </Button>
+      <FormNotice id={`${id}-notice`} />
+    </div>
+  </form>
+  <noscript>
+    <p class="form-nojs">
+      The call-back form needs JavaScript. You can call or message us directly using the links at
+      the end of this page.
+    </p>
+  </noscript>
+  <FormSuccess id={`${id}-success`} topic={topic} title="Your call-back request is ready to send" />
+</div>
+
+<script>
+  import './form-controller';
+</script>

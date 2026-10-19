@@ -1,0 +1,102 @@
+---
+/**
+ * F-01 enquiry form: one component, configured by `formType` (src/lib/forms.ts). Contact
+ * details, the fields for that type, a message, the optional marketing opt-in and the purpose
+ * notice. The form controller checks it in the browser and hands it to submitEnquiry; the
+ * success screen then offers WhatsApp or email. Without JavaScript the form is hidden and the
+ * note below points to the direct routes, which every page also ends with. The inline
+ * `onsubmit` stops a native submit, which would put the answers in the URL, even before the
+ * controller has loaded.
+ */
+import Button from '../ui/Button.astro';
+import Checkbox from '../ui/form/Checkbox.astro';
+import ContactFields from './ContactFields.astro';
+import ErrorSummary from './ErrorSummary.astro';
+import FormField from './FormField.astro';
+import FormNotice from './FormNotice.astro';
+import FormSuccess from './FormSuccess.astro';
+import { formCopy } from '../../lib/form-copy';
+import { formFields, messageField, type FormType } from '../../lib/forms';
+import './forms.css';
+
+interface Props {
+  /** Unique on the page; prefixes every field id. */
+  id: string;
+  formType: FormType;
+  /** What the request is about, mid-sentence: "visa and passport assistance". */
+  topic: string;
+  title: string;
+  intro?: string;
+  /** Starting values by field name, e.g. the package name on a holiday page. */
+  prefill?: Record<string, string>;
+  /** Package slug, sent as a hidden reference from package pages. */
+  packageRef?: string;
+  submitLabel?: string;
+}
+
+const {
+  id,
+  formType,
+  topic,
+  title,
+  intro,
+  prefill = {},
+  packageRef,
+  submitLabel = 'Continue',
+} = Astro.props;
+const fields = [...formFields[formType], messageField(formType)];
+---
+
+<div class="form-root" data-form-root>
+  <form
+    id={id}
+    class="form"
+    novalidate
+    onsubmit="return false"
+    aria-labelledby={`${id}-title`}
+    data-enquiry-form
+    data-kind="enquiry"
+    data-form-type={formType}
+    data-topic={topic}
+    data-needs-js
+  >
+    <h3 id={`${id}-title`} class="t-h3 form-title">
+      {title}
+    </h3>
+    {intro && <p class="form-intro">{intro}</p>}
+    <p class="form-required-note">Every field is needed unless it says optional.</p>
+    <ErrorSummary id={`${id}-errors`} />
+    <div class="form-grid">
+      <ContactFields formId={id} />
+      {fields.map((spec) => (
+        <FormField formId={id} spec={spec} value={prefill[spec.name]} />
+      ))}
+    </div>
+    {packageRef && <input type="hidden" name="packageRef" value={packageRef} />}
+    <Checkbox
+      id={`${id}-marketing`}
+      name="marketing"
+      label={formCopy.optInLabel}
+      hint={formCopy.optInHint}
+      class="form-optin"
+      data-optin
+    />
+    <div class="form-actions">
+      <Button type="submit" size="lg" iconEnd="arrow-right" aria-describedby={`${id}-notice`}>
+        {submitLabel}
+      </Button>
+      <FormNotice id={`${id}-notice`} />
+    </div>
+  </form>
+  <noscript>
+    <p class="form-nojs">
+      This form needs JavaScript. You can still reach us directly by WhatsApp, phone or email using
+      the links at the end of this page.
+    </p>
+  </noscript>
+  <FormSuccess id={`${id}-success`} topic={topic} />
+</div>
+
+<script>
+  import './form-controller';
+</script>

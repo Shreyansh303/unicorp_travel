@@ -5,6 +5,7 @@ import Section from '../components/ui/Section.astro';
 import Icon from '../components/ui/Icon.astro';
 import FactsBlock from '../components/ui/FactsBlock.astro';
 import MapPanel from '../components/ui/MapPanel.astro';
+import EnquirySection from '../components/forms/EnquirySection.astro';
 import { shown, site, telHref, weekdays, whatsappHref, type Weekday } from '../config/site';
 import { emailFor, greeting, mobile } from '../lib/enquiry';
 import { routes } from '../lib/routes';
@@ -140,6 +141,17 @@ const hourRows = hours
       )}
     </div>
   </Section>
+
+  <EnquirySection
+    title="Or write to us"
+    accent="here."
+    intro="Send a question about a holiday, business travel or any travel service, then choose WhatsApp or email to send it. Or ask us to call you."
+    topic="a trip"
+    formType="general"
+    formTitle="Your question"
+    tone="paper"
+    mood="corporate"
+  />
 
   <Section tone="white" mood="corporate" aria-labelledby="facts-title">
     <div class="facts-grid">

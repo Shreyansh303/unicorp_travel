@@ -1,0 +1,19 @@
+---
+/**
+ * The purpose notice beside every submit button (F-14): what is collected, why, that the site
+ * stores nothing, that the visitor sends the request themselves, and a link to the privacy notice.
+ */
+import { formCopy } from '../../lib/form-copy';
+import { routes } from '../../lib/routes';
+
+interface Props {
+  id: string;
+}
+
+const { id } = Astro.props;
+---
+
+<p class="form-notice" id={id}>
+  <strong>{formCopy.noticeTitle}.</strong> {formCopy.notice}{' '}
+  <a href={routes.privacy}>{formCopy.privacyLinkText}</a>.
+</p>

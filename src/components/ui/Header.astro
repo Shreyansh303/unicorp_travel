@@ -7,6 +7,8 @@
  * Escape closes it and returns focus to the button, and it closes when focus or a click
  * leaves it. Facts (name, phone) come from site.ts.
  */
+import { Image } from 'astro:assets';
+import logo from '../../assets/brand/logo.png';
 import Button from './Button.astro';
 import Dialog from './Dialog.astro';
 import Icon from './Icon.astro';
@@ -55,8 +57,14 @@ const waHref = mobile
 <Tag class="site-header tone-paper">
   <div class="wrap header-row">
     <a class="wordmark" href={homeHref}>
-      {site.displayName}
-      <span class="wordmark-dot" aria-hidden="true"></span>
+      <Image
+        class="wordmark-logo"
+        src={logo}
+        alt={site.displayName}
+        height={40}
+        densities={[1, 2]}
+        loading="eager"
+      />
     </a>
 
     <nav class="nav-desktop" aria-label={navLabel}>
@@ -202,26 +210,17 @@ const waHref = mobile
 
   .wordmark {
     display: inline-flex;
-    align-items: baseline;
-    gap: 0.125rem;
+    align-items: center;
+    flex-shrink: 0;
     min-height: var(--tap);
-    align-content: center;
-    padding-block: var(--space-2);
-    color: var(--text);
-    font-family: var(--font-display);
-    font-size: 1.5rem;
-    font-weight: var(--weight-black);
-    letter-spacing: -0.04em;
-    line-height: 1.2;
-    text-decoration: none;
-    white-space: nowrap;
+    padding-block: 0;
   }
 
-  .wordmark-dot {
-    width: 0.5rem;
-    height: 0.5rem;
-    border-radius: 50%;
-    background: var(--accent);
+  /* The client's logo (dark text on transparent), so the header stays on a light surface. */
+  .wordmark-logo {
+    display: block;
+    width: auto;
+    height: 2.5rem;
   }
 
   .nav-desktop {

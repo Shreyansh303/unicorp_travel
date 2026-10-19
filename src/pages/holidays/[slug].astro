@@ -11,6 +11,7 @@ import TickList from '../../components/ui/TickList.astro';
 import RouteLine from '../../components/motion/RouteLine.astro';
 import Stagger from '../../components/motion/Stagger.astro';
 import Parallax from '../../components/motion/Parallax.astro';
+import EnquirySection from '../../components/forms/EnquirySection.astro';
 import { getPackages, type PackageEntry } from '../../lib/content';
 import { callHref, mobile, whatsappFor } from '../../lib/enquiry';
 import { formatDate, formatINR, isoDate } from '../../lib/format';
@@ -105,6 +106,9 @@ const itineraryPath = Array.from({ length: days }, (_, index) => {
             </Button>
           )}
         </div>
+        <Link href="#enquire" variant="standalone">
+          Or send your dates with the form
+        </Link>
       </div>
       <figure class="arch pk-arch">
         <Picture
@@ -214,6 +218,18 @@ const itineraryPath = Array.from({ length: days }, (_, index) => {
       </Link>
     </p>
   </Section>
+
+  <EnquirySection
+    title="Ask about"
+    accent="this trip."
+    intro={`Tell us your dates and who is travelling, and send it to us on WhatsApp or by email. Or ask for a call back about ${data.title}.`}
+    topic={`the ${data.title} holiday`}
+    formType="holiday"
+    formTitle="Your trip details"
+    prefill={{ holiday: data.title }}
+    packageRef={pkg.id}
+    rounded
+  />
 </PageLayout>
 
 <style>

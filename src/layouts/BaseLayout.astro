@@ -61,6 +61,8 @@ const shareImageUrl = origin && shareImage ? new URL(shareImage.src, origin).hre
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     {DEMO && <meta name="robots" content="noindex, nofollow" />}
     {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
     <meta property="og:type" content={ogType} />
@@ -93,6 +95,15 @@ const shareImageUrl = origin && shareImage ? new URL(shareImage.src, origin).hre
         document.documentElement.classList.add('gsap-scroll');
       }
     </script>
+    {/* Forms, filters and the trip planner need JavaScript; without it they are hidden and the
+        direct routes (WhatsApp, call, email) that end every page remain. */}
+    <noscript>
+      <style is:inline>
+        [data-needs-js] {
+          display: none !important;
+        }
+      </style>
+    </noscript>
     <PageTransitions />
   </head>
   <body class={bodyClass}>

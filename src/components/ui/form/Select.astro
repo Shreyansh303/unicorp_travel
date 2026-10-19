@@ -69,24 +69,3 @@ const aria = fieldAria(id, hint, error);
   </div>
   <FieldMessage id={aria.errorId} kind="error" text={error} />
 </div>
-
-<style>
-  .select-wrap {
-    position: relative;
-  }
-
-  .field-select {
-    appearance: none;
-    padding-right: var(--space-12);
-    cursor: pointer;
-  }
-
-  .select-wrap :global(.select-chevron) {
-    position: absolute;
-    top: 50%;
-    right: var(--space-4);
-    translate: 0 -50%;
-    color: var(--ink);
-    pointer-events: none;
-  }
-</style>

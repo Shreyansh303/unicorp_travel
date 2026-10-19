@@ -4,47 +4,31 @@ import PageHero from '../components/ui/PageHero.astro';
 import Section from '../components/ui/Section.astro';
 import Button from '../components/ui/Button.astro';
 import Link from '../components/ui/Link.astro';
-import RouteLine from '../components/motion/RouteLine.astro';
+import PlanMyTrip from '../components/planner/PlanMyTrip';
 import { site, whatsappHref } from '../config/site';
 import { callHref, emailFor, greeting, mobile } from '../lib/enquiry';
 import { routes } from '../lib/routes';
+import { tripBudgetOptions } from '../lib/forms';
+import { regionIds, regionLabels, themeIds, themeLabels } from '../lib/packages';
 
-/** The questions the guided request asks, in order (F-13). */
-const questions = [
-  {
-    title: 'Trip type',
-    text: 'A holiday, a honeymoon, a family or group trip, or travel for work.',
-    prompt: 'Trip type:',
-  },
-  {
-    title: 'Destination ideas',
-    text: 'Places you have in mind, or simply “beaches” or “somewhere cool in May”.',
-    prompt: 'Destination ideas:',
-  },
-  {
-    title: 'Dates',
-    text: 'When you would like to go and for how long, and whether the dates can move.',
-    prompt: 'Dates and flexibility:',
-  },
-  {
-    title: 'Travellers',
-    text: 'How many adults and children, and the ages of the children.',
-    prompt: 'Travellers:',
-  },
-  {
-    title: 'Budget and interests',
-    text: 'A rough budget per person and what you enjoy: food, adventure, slow days, sights.',
-    prompt: 'Budget per person and interests:',
-  },
+/** The WhatsApp and email template for visitors who would rather not use the planner. */
+const prompts = [
+  'Trip type:',
+  'Destination ideas:',
+  'Dates and flexibility:',
+  'Travellers:',
+  'Budget per person and interests:',
 ];
 
 const template = [
   `Hello ${site.displayName}, I would like to plan a trip.`,
   '',
-  ...questions.map((question) => `${question.prompt} `),
+  ...prompts.map((prompt) => `${prompt} `),
 ].join('\n');
 
 const waHref = mobile ? whatsappHref(template) : null;
+const regionOptions = regionIds.map((id) => ({ value: id, label: regionLabels[id] }));
+const themeOptions = themeIds.map((id) => ({ value: id, label: themeLabels[id] }));
 const mailHref = emailFor('Plan my trip', template);
 ---
 
@@ -63,7 +47,7 @@ const mailHref = emailFor('Plan my trip', template);
   <PageHero
     title="Plan my"
     accent="trip."
-    lede="Answer five quick questions and send them to us. We reply with ideas, a day-wise plan and a price to talk through. Nothing is booked until you agree."
+    lede="Answer five quick questions, check them, then send them to us on WhatsApp or by email. We reply with ideas, a day-wise plan and a price to talk through. Nothing is booked until you agree."
     crumbs={[{ label: 'Home', href: routes.home }, { label: 'Plan my trip' }]}
     size="display"
   >
@@ -82,36 +66,19 @@ const mailHref = emailFor('Plan my trip', template);
     <p class="hero-note">
       The WhatsApp message opens with the five questions ready for your answers.
     </p>
+    <Link href="#planner" variant="standalone" data-needs-js>
+      Or answer them step by step here
+    </Link>
   </PageHero>
 
-  <Section tone="sand" rounded aria-labelledby="questions-title">
-    <div class="section-head">
-      <h2 id="questions-title" class="t-h2">
-        Five things <span class="t-accent">to tell us</span>
-      </h2>
-      <p>Rough answers are fine. We will ask about anything we need to know.</p>
-    </div>
-    <div class="q-wrap">
-      <RouteLine
-        class="q-line"
-        d="M20 0 C36 100 4 200 20 300 S36 500 20 600 S4 800 20 1000"
-        viewBox="0 0 40 1000"
-        preserveAspectRatio="none"
-        draw="scroll"
-        strokeWidth={4}
-      />
-      <ol class="q-list">
-        {questions.map((question, index) => (
-          <li class="q">
-            <span class="q-num" aria-hidden="true">
-              {index + 1}
-            </span>
-            <h3 class="t-h3">{question.title}</h3>
-            <p class="t-muted">{question.text}</p>
-          </li>
-        ))}
-      </ol>
-    </div>
+  <Section tone="sand" rounded aria-labelledby="plan-step-title" id="planner" data-needs-js>
+    <PlanMyTrip
+      client:visible
+      regions={regionOptions}
+      themes={themeOptions}
+      budgets={tripBudgetOptions}
+      privacyHref={routes.privacy}
+    />
   </Section>
 
   <Section tone="paper" aria-labelledby="send-title">
@@ -175,48 +142,6 @@ const mailHref = emailFor('Plan my trip', template);
   .hero-note {
     font-size: var(--text-sm);
     color: var(--text-muted);
-  }
-
-  .q-wrap {
-    position: relative;
-    padding-left: var(--space-16);
-  }
-
-  .q-wrap :global(.q-line) {
-    position: absolute;
-    top: 1.25rem;
-    left: 0.25rem;
-    width: 40px;
-    height: calc(100% - 2.5rem);
-  }
-
-  .q-list {
-    display: grid;
-    gap: var(--space-10);
-    max-width: 44rem;
-  }
-
-  .q {
-    position: relative;
-    display: grid;
-    gap: var(--space-2);
-  }
-
-  .q-num {
-    position: absolute;
-    top: 0;
-    left: calc(var(--space-16) * -1);
-    display: grid;
-    place-items: center;
-    width: 2.75rem;
-    height: 2.75rem;
-    border-radius: 50%;
-    background: var(--red-600);
-    color: var(--white);
-    font-family: var(--font-display);
-    font-size: 1.25rem;
-    font-weight: var(--weight-black);
-    box-shadow: 0 0 0 5px var(--sand-100);
   }
 
   .send-grid {

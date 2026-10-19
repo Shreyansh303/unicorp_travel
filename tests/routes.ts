@@ -129,3 +129,40 @@ function samplePages(): string[] {
 
 export const sampleRoutes = samplePages();
 export const demoLegalRoutes = legal.filter(isDemo).map((entry) => `/${entry.id}`);
+
+/** Facts the holiday filters (F-04) work on, read from each package file. */
+export interface PackageFacts {
+  slug: string;
+  title: string;
+  type: string;
+  region: string;
+  days: number;
+  fromPrice: number;
+  themes: string[];
+}
+
+export const packageFacts: PackageFacts[] = packages.map((entry) => ({
+  slug: slugOf(entry),
+  title: field(entry, 'title') ?? entry.id,
+  type: field(entry, 'type') ?? '',
+  region: field(entry, 'region') ?? '',
+  days: Number(/^\s+days:\s*(\d+)/m.exec(entry.text)?.[1] ?? 0),
+  fromPrice: Number(field(entry, 'fromPrice') ?? 0),
+  themes: listField(entry, 'themes'),
+}));
+
+/** Pages with an enquiry form, and the form type each uses. */
+export const enquiryFormPages: { path: string; formType: string }[] = [
+  { path: '/corporate-travel', formType: 'corporate' },
+  { path: '/contact', formType: 'general' },
+  ...services
+    .filter((entry) => field(entry, 'category') === 'related')
+    .map((entry) => ({
+      path: `/services/${slugOf(entry)}`,
+      formType: field(entry, 'formType') ?? '',
+    })),
+  ...packageRoutes.map((path) => ({ path, formType: 'holiday' })),
+];
+
+/** Pages with a callback form: every service and package page, and the contact page. */
+export const callbackPages = [...enquiryFormPages.map((page) => page.path), '/holidays'];

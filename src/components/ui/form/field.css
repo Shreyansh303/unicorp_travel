@@ -1,4 +1,8 @@
-/* Shared look of text-like controls (Input, Select, Textarea). Imported by each component. */
+/*
+ * Shared look of every form field: text-like controls (Input, Select, Textarea), checkboxes,
+ * radio groups and hint and error lines. Global, so error lines added by the form controller
+ * and the fields of the React trip planner look the same. Imported by each field component.
+ */
 .field {
   display: grid;
   gap: var(--space-2);
@@ -49,4 +53,185 @@
   color: var(--stone-600);
   box-shadow: inset 0 0 0 1.5px var(--sand-200);
   cursor: not-allowed;
+}
+
+/* FieldMessage */
+.field-msg {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  line-height: 1.45;
+}
+
+.field-hint {
+  color: var(--text-muted);
+}
+
+.field-error {
+  color: var(--error-700);
+  font-weight: var(--weight-bold);
+}
+
+.field-error .icon {
+  margin-top: 0.05em;
+}
+
+/* Checkbox */
+.check {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.check-row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  min-height: var(--tap);
+  padding-top: var(--space-2);
+}
+
+.check-input {
+  flex: none;
+  width: 1.5rem;
+  height: 1.5rem;
+  margin: 0;
+  accent-color: var(--red-700);
+  cursor: pointer;
+}
+
+.check-input:focus-visible,
+.check-input.is-focus {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+
+.check-input.is-hover {
+  outline: 2px solid var(--stone-400);
+  outline-offset: 2px;
+}
+
+.check-input[aria-invalid='true'] {
+  outline: 2px solid var(--error-700);
+  outline-offset: 2px;
+}
+
+.check-input[aria-invalid='true']:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+
+.check-input:disabled,
+.check-input:disabled + .check-label {
+  cursor: not-allowed;
+  color: var(--stone-600);
+}
+
+.check-label {
+  cursor: pointer;
+}
+
+.check-msgs {
+  display: grid;
+  gap: var(--space-1);
+  padding-left: calc(1.5rem + var(--space-3));
+}
+
+.check-msgs:empty {
+  display: none;
+}
+
+/* RadioGroup */
+.radios {
+  display: grid;
+  gap: var(--space-2);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.radios-legend {
+  padding: 0;
+  margin-bottom: var(--space-1);
+  font-weight: var(--weight-bold);
+}
+
+.radios-optional {
+  font-weight: var(--weight-regular);
+  color: var(--text-muted);
+}
+
+.radios-options {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.radios-inline .radios-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-6);
+}
+
+.radio-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--tap);
+}
+
+.radio-input {
+  flex: none;
+  width: 1.5rem;
+  height: 1.5rem;
+  margin: 0;
+  accent-color: var(--red-700);
+  cursor: pointer;
+}
+
+.radio-input:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+
+.radios[aria-invalid='true'] .radio-input:not(:focus-visible) {
+  outline: 2px solid var(--error-700);
+  outline-offset: 2px;
+}
+
+.radio-input:disabled,
+.radio-input:disabled + .radio-label {
+  cursor: not-allowed;
+  color: var(--stone-600);
+}
+
+.radio-label {
+  cursor: pointer;
+}
+
+/* Select */
+.select-wrap {
+  position: relative;
+}
+
+.field-select {
+  appearance: none;
+  padding-right: var(--space-12);
+  cursor: pointer;
+}
+
+.select-wrap .select-chevron {
+  position: absolute;
+  top: 50%;
+  right: var(--space-4);
+  translate: 0 -50%;
+  color: var(--ink);
+  pointer-events: none;
+}
+
+/* Textarea */
+.field-textarea {
+  min-height: 8rem;
+  resize: vertical;
+  line-height: var(--leading-body);
 }
