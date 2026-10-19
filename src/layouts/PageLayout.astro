@@ -1,0 +1,101 @@
+---
+/**
+ * Shell for every public page: SEO head (BaseLayout), skip link, header with the real
+ * navigation, the page content, the closing enquiry band, footer and floating contact buttons.
+ * The WhatsApp message in the drawer, the enquiry band and the floating button is built from
+ * the page's `topic`, so each page asks about itself (F-02).
+ */
+import BaseLayout, { type ShareImage } from './BaseLayout.astro';
+import Header from '../components/ui/Header.astro';
+import Footer from '../components/ui/Footer.astro';
+import FloatingContact from '../components/ui/FloatingContact.astro';
+import EnquiryBand from '../components/ui/EnquiryBand.astro';
+import { getFooterGroups, getMainNav } from '../lib/nav';
+import { enquiryMessage } from '../lib/enquiry';
+import { pageTitle } from '../lib/seo';
+import { routes } from '../lib/routes';
+
+interface Enquiry {
+  title?: string;
+  accent?: string;
+  text?: string;
+  next?: 'plan' | 'contact';
+}
+
+interface Props {
+  /** Page title without the brand; pageTitle() adds it. */
+  title: string;
+  description: string;
+  /** What the page is about, for pre-filled WhatsApp and email messages. */
+  topic?: string;
+  /** The full WhatsApp message, when "I would like to know more about <topic>" reads badly. */
+  message?: string;
+  mood?: 'holiday' | 'corporate';
+  enquiry?: Enquiry;
+  image?: ShareImage;
+  ogType?: 'website' | 'article';
+  canonical?: boolean;
+}
+
+const {
+  title,
+  description,
+  topic,
+  message: customMessage,
+  mood = 'holiday',
+  enquiry = {},
+  image,
+  ogType,
+  canonical,
+} = Astro.props;
+
+const nav = await getMainNav();
+const footerGroups = getFooterGroups();
+const currentPath = Astro.url.pathname.replace(/\/+$/, '') || '/';
+const message = customMessage ?? enquiryMessage(topic);
+---
+
+<BaseLayout
+  title={pageTitle(title)}
+  description={description}
+  {...(image ? { image } : {})}
+  {...(ogType ? { ogType } : {})}
+  {...(canonical === undefined ? {} : { canonical })}
+>
+  <a class="skip-link" href="#main">
+    Skip to content
+  </a>
+  <Header items={nav} homeHref={routes.home} currentPath={currentPath} whatsappMessage={message} />
+  <main id="main" tabindex="-1">
+    <slot />
+    <EnquiryBand {...enquiry} mood={mood} message={message} {...(topic ? { topic } : {})} />
+  </main>
+  <Footer homeHref={routes.home} groups={footerGroups} />
+  <FloatingContact message={message} />
+</BaseLayout>
+
+<style>
+  .skip-link {
+    position: absolute;
+    top: var(--space-2);
+    left: var(--space-2);
+    z-index: var(--z-overlay);
+    padding: var(--space-3) var(--space-5);
+    border-radius: var(--radius-pill);
+    background: var(--ink);
+    color: var(--white);
+    font-weight: var(--weight-black);
+    text-decoration: none;
+    transform: translateY(-200%);
+  }
+
+  .skip-link:focus-visible {
+    transform: none;
+    outline-color: var(--ink);
+    box-shadow: 0 0 0 3px var(--white);
+  }
+
+  main:focus {
+    outline: none;
+  }
+</style>

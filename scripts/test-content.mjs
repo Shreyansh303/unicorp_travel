@@ -21,7 +21,7 @@ const stripAnsi = (text) => text.replace(/\u001b\[[0-9;]*m/g, '');
 /** Every entry whose file sets a top-level `demo: true`, as "collection/id". */
 function expectedDemoEntries() {
   const found = [];
-  for (const collection of ['services', 'packages', 'faqs']) {
+  for (const collection of ['services', 'packages', 'faqs', 'legal']) {
     const dir = join(root, 'src', 'content', collection);
     for (const file of readdirSync(dir).sort()) {
       if (/^demo:\s*true\s*(#.*)?$/m.test(readFileSync(join(dir, file), 'utf8'))) {

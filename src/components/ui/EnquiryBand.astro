@@ -1,0 +1,179 @@
+---
+/**
+ * The enquiry band that ends every page (roadmap section 9: every page ends with an enquiry
+ * option). WhatsApp with a page-specific message, a call link and a link to Plan my trip or
+ * Contact; email and the office address beside them. Every fact comes from site.ts.
+ * `data-enquiry` marks it for the page tests.
+ */
+import Section from './Section.astro';
+import Button from './Button.astro';
+import Link from './Link.astro';
+import { shown, site, whatsappHref } from '../../config/site';
+import { callHref, emailFor, enquiryMessage, mobile } from '../../lib/enquiry';
+import { routes } from '../../lib/routes';
+
+interface Props {
+  /** What the visitor is asking about, used in the WhatsApp message and email subject. */
+  topic?: string;
+  /** The full pre-filled WhatsApp message, when it should not be built from the topic. */
+  message?: string;
+  title?: string;
+  /** Second, accented part of the heading. */
+  accent?: string;
+  text?: string;
+  /** Red for holiday pages, ink for corporate and company pages. */
+  mood?: 'holiday' | 'corporate';
+  /** The third route: the guided trip request or the contact page. */
+  next?: 'plan' | 'contact';
+}
+
+const {
+  topic,
+  message,
+  title = 'Where to',
+  accent = 'next?',
+  text = 'Tell us who is travelling, roughly when, and what you have in mind. We will reply with ideas and a plan to talk through.',
+  mood = 'holiday',
+  next = 'plan',
+} = Astro.props;
+
+const office = shown(site.offices.operating);
+const mailHref = emailFor(topic ? `Enquiry: ${topic}` : 'Travel enquiry');
+const email = shown(site.email);
+const nextLink =
+  next === 'plan'
+    ? { href: routes.planMyTrip, label: 'Plan my trip step by step' }
+    : { href: routes.contact, label: 'All contact details' };
+---
+
+<Section
+  tone={mood === 'holiday' ? 'red' : 'ink'}
+  mood={mood}
+  rounded={mood === 'holiday'}
+  aria-labelledby="enquiry-title"
+  class="enquiry"
+  data-enquiry
+>
+  <div class="enquiry-grid">
+    <div class="enquiry-copy">
+      <h2 id="enquiry-title" class="t-h2">
+        {title} <span class="t-accent">{accent}</span>
+      </h2>
+      <p class="enquiry-lede">{text}</p>
+      <div class="enquiry-actions">
+        {mobile && (
+          <Button
+            href={whatsappHref(message ?? enquiryMessage(topic))}
+            iconStart="whatsapp"
+            size="lg"
+            external
+          >
+            Chat on WhatsApp
+          </Button>
+        )}
+        {callHref && mobile && (
+          <Button href={callHref} variant="secondary" iconStart="phone" size="lg">
+            Call {mobile.display}
+          </Button>
+        )}
+      </div>
+      <Link href={nextLink.href} variant="standalone" class="enquiry-next">
+        {nextLink.label}
+      </Link>
+    </div>
+    {(mailHref || office) && (
+      <dl class="enquiry-card">
+        {email && mailHref && (
+          <div>
+            <dt>Email</dt>
+            <dd>
+              <a href={mailHref}>{email}</a>
+            </dd>
+          </div>
+        )}
+        {office && (
+          <div>
+            <dt>Visit us</dt>
+            <dd>
+              <address>
+                {office.lines.map((line) => (
+                  <span>{line}</span>
+                ))}
+              </address>
+            </dd>
+          </div>
+        )}
+      </dl>
+    )}
+  </div>
+</Section>
+
+<style>
+  .enquiry-grid {
+    display: grid;
+    gap: var(--space-10);
+  }
+
+  @media (min-width: 1024px) {
+    .enquiry-grid {
+      grid-template-columns: 1.4fr 1fr;
+      align-items: end;
+    }
+  }
+
+  .enquiry-copy {
+    display: grid;
+    gap: var(--space-6);
+    justify-items: start;
+  }
+
+  .enquiry-lede {
+    max-width: 32rem;
+    font-size: var(--text-lg);
+  }
+
+  .enquiry-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+
+  .enquiry :global(.enquiry-next) {
+    color: var(--text);
+    font-weight: var(--weight-bold);
+  }
+
+  .enquiry-card {
+    display: grid;
+    gap: var(--space-5);
+    padding: var(--space-6);
+    border-radius: var(--radius-lg);
+    background: var(--surface-sunken);
+  }
+
+  .mood-corporate .enquiry-card {
+    border-radius: var(--radius-sm);
+  }
+
+  .enquiry-card dt {
+    font-size: var(--text-xs);
+    font-weight: var(--weight-black);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+  }
+
+  /* At least 24px tall (WCAG 2.5.8). */
+  .enquiry-card a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 1.5rem;
+    color: var(--text);
+    font-weight: var(--weight-bold);
+    text-underline-offset: 0.2em;
+    overflow-wrap: anywhere;
+  }
+
+  .enquiry-card address span {
+    display: block;
+  }
+</style>

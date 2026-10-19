@@ -1,0 +1,112 @@
+---
+/**
+ * A static, illustrated map panel for the office (no map iframe or third-party script on load,
+ * roadmap section 5). The streets are an abstract drawing, not a real plan; the address and the
+ * "Open in Google Maps" link come from the verified address in site.ts.
+ */
+import Button from './Button.astro';
+import { mapsHref, type PostalAddress } from '../../config/site';
+
+interface Props {
+  address: PostalAddress;
+  class?: string;
+}
+
+const { address, class: className } = Astro.props;
+---
+
+<div class:list={['map-panel', 'tone-ink', className]}>
+  <svg class="map-art" viewBox="0 0 600 360" fill="none" aria-hidden="true" focusable="false">
+    <g class="map-roads">
+      <path d="M-20 250 C120 230 220 260 330 210 S520 120 640 140" />
+      <path d="M90 -20 C110 90 150 180 140 380" />
+      <path d="M420 -20 C400 80 430 200 470 380" />
+      <path d="M-20 90 C150 110 300 70 640 60" />
+    </g>
+    <g class="map-lanes">
+      <path d="M-20 170 C180 160 360 190 640 170" />
+      <path d="M250 -20 C270 120 240 250 280 380" />
+      <path d="M-20 320 C200 300 420 330 640 300" />
+      <path d="M540 -20 C520 120 560 260 540 380" />
+    </g>
+    <path class="map-route" d="M40 330 C140 300 200 250 260 230 S320 190 330 178" />
+    <circle class="map-dot" cx="330" cy="176" r="10"></circle>
+  </svg>
+  <div class="map-copy">
+    <p class="map-place">{address.locality}</p>
+    <address class="map-address">
+      {address.lines.map((line) => (
+        <span>{line}</span>
+      ))}
+    </address>
+    <Button href={mapsHref(address)} iconStart="map-pin" external>
+      Open in Google Maps
+    </Button>
+  </div>
+</div>
+
+<style>
+  .map-panel {
+    position: relative;
+    display: grid;
+    overflow: hidden;
+    border-radius: var(--radius-sm);
+    background: var(--bg);
+    color: var(--text);
+  }
+
+  .map-art {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 600 / 360;
+  }
+
+  .map-roads path {
+    stroke: var(--stone-800);
+    stroke-width: 18;
+    stroke-linecap: round;
+  }
+
+  .map-lanes path {
+    stroke: var(--stone-800);
+    stroke-width: 6;
+    stroke-linecap: round;
+  }
+
+  .map-route {
+    stroke: var(--red-600);
+    stroke-width: 5;
+    stroke-linecap: round;
+    stroke-dasharray: 2 12;
+  }
+
+  .map-dot {
+    fill: var(--red-600);
+    stroke: var(--white);
+    stroke-width: 4;
+  }
+
+  .map-copy {
+    display: grid;
+    gap: var(--space-3);
+    justify-items: start;
+    padding: var(--space-6);
+  }
+
+  .map-place {
+    font-family: var(--font-display);
+    font-size: var(--text-2xl);
+    font-weight: var(--weight-black);
+    letter-spacing: var(--tracking-heading);
+    line-height: 1;
+  }
+
+  .map-address {
+    color: var(--text-muted);
+  }
+
+  .map-address span {
+    display: block;
+  }
+</style>

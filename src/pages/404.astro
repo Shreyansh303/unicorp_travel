@@ -1,0 +1,130 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import PageHero from '../components/ui/PageHero.astro';
+import Section from '../components/ui/Section.astro';
+import Icon from '../components/ui/Icon.astro';
+import { greeting } from '../lib/enquiry';
+import { routes } from '../lib/routes';
+
+const links = [
+  { href: routes.holidays, title: 'Holidays', text: 'Sample trips in India and abroad.' },
+  {
+    href: routes.services,
+    title: 'Travel services',
+    text: 'Visas, forex, insurance, hotels and more.',
+  },
+  {
+    href: routes.corporate,
+    title: 'Corporate travel',
+    text: 'Business travel for companies.',
+  },
+  {
+    href: routes.planMyTrip,
+    title: 'Plan my trip',
+    text: 'Tell us about your trip in five questions.',
+  },
+  { href: routes.contact, title: 'Contact', text: 'Phone, WhatsApp, email and the office.' },
+  { href: routes.home, title: 'Home page', text: 'Start again from the beginning.' },
+];
+---
+
+<PageLayout
+  title="Page not found"
+  description="This page does not exist. Find holidays, travel services, corporate travel or our contact details from here."
+  message={greeting('I could not find a page on your website. Can you help?')}
+  canonical={false}
+>
+  <PageHero
+    title="This page took"
+    accent="a wrong turn."
+    lede="The address may be mistyped, or the page may have moved. These links will get you back on the road."
+    size="display"
+  />
+  <Section tone="sand" rounded aria-labelledby="links-title">
+    <h2 id="links-title" class="t-h3 links-title">
+      Where would you like to go?
+    </h2>
+    <ul class="links">
+      {links.map((link) => (
+        <li>
+          <a class="link-tile" href={link.href}>
+            <span class="link-title">
+              {link.title}
+              <Icon name="arrow-right" size={22} class="tile-arrow" />
+            </span>
+            <span class="link-text">{link.text}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </Section>
+</PageLayout>
+
+<style>
+  .links-title {
+    margin-bottom: var(--space-6);
+  }
+
+  .links {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  @media (min-width: 768px) {
+    .links {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .links {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .links li {
+    display: grid;
+  }
+
+  .link-tile {
+    display: grid;
+    gap: var(--space-2);
+    padding: var(--space-6);
+    border-radius: var(--radius-lg);
+    background: var(--white);
+    color: var(--ink);
+    text-decoration: none;
+    box-shadow: inset 0 0 0 1px var(--sand-200);
+    /* Only transform animates; the shadow changes at once. */
+    transition: transform var(--duration-base) var(--ease-bounce);
+  }
+
+  .link-tile:hover {
+    transform: translateY(var(--lift));
+    box-shadow: var(--shadow-lg);
+  }
+
+  .link-tile:focus-visible {
+    outline: 3px solid var(--ink);
+    outline-offset: 4px;
+    box-shadow: 0 0 0 7px var(--white);
+  }
+
+  .link-title {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    font-weight: var(--weight-black);
+    letter-spacing: var(--tracking-heading);
+  }
+
+  .link-tile :global(.tile-arrow) {
+    color: var(--red-700);
+  }
+
+  .link-text {
+    color: var(--stone-600);
+  }
+</style>

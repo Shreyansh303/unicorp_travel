@@ -1,9 +1,9 @@
 ---
 /**
- * Floating WhatsApp and call buttons (F-02). Below 1360px they form a bar fixed to the bottom of
+ * Floating WhatsApp and call buttons (F-02). Below 1440px they form a bar fixed to the bottom of
  * the screen, and the page reserves the bar's height at its end, so the bar never covers content
- * (at 375px or anywhere else). From 1360px the page has a side margin wide enough to hold two
- * round buttons in the bottom-right corner, clear of the 80rem content column.
+ * (at 375px or anywhere else). From 1440px the side margin beside the 75rem content column is at
+ * least 120px, so two round buttons in the bottom-right corner keep a clear gap from content.
  * Numbers and links come from site.ts helpers; nothing renders without a number.
  */
 import Icon from './Icon.astro';
@@ -142,7 +142,7 @@ const mobile = shown(site.phones.mobile);
     }
   }
 
-  @media (min-width: 1360px) {
+  @media (min-width: 1440px) {
     :global(html:has(.floating-fixed)) {
       scroll-padding-bottom: 0;
     }
@@ -164,7 +164,16 @@ const mobile = shown(site.phones.mobile);
       width: 3.5rem;
       height: 3.5rem;
       padding: 0;
-      box-shadow: var(--shadow-lg);
+      /* A white ring keeps the round buttons visible over ink and red sections. */
+      box-shadow:
+        0 0 0 2px var(--white),
+        var(--shadow-lg);
+    }
+
+    .floating-fixed .floating-btn:focus-visible {
+      box-shadow:
+        0 0 0 6px var(--white),
+        var(--shadow-lg);
     }
 
     .floating-fixed .floating-btn:hover {

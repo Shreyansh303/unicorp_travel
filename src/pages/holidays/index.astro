@@ -1,0 +1,129 @@
+---
+import { getEntry } from 'astro:content';
+import PageLayout from '../../layouts/PageLayout.astro';
+import PageHero from '../../components/ui/PageHero.astro';
+import Section from '../../components/ui/Section.astro';
+import Button from '../../components/ui/Button.astro';
+import Link from '../../components/ui/Link.astro';
+import PackageCard from '../../components/ui/PackageCard.astro';
+import SampleLabel from '../../components/ui/SampleLabel.astro';
+import HowItWorks from '../../components/ui/HowItWorks.astro';
+import Stagger from '../../components/motion/Stagger.astro';
+import { getPackages } from '../../lib/content';
+import { formatDate } from '../../lib/format';
+import { packageTypeLabels, regionLabels } from '../../lib/packages';
+import { packageHref, routes } from '../../lib/routes';
+import { greeting, whatsappFor } from '../../lib/enquiry';
+
+const leisure = await getEntry('services', 'leisure');
+if (!leisure) throw new Error('The leisure service entry is missing');
+const packages = await getPackages('featured');
+const hasSample = packages.some((item) => item.data.demo);
+---
+
+<PageLayout
+  title={leisure.data.seo.title}
+  description={leisure.data.seo.description}
+  topic="a holiday"
+  message={greeting('I would like help planning a holiday.')}
+  enquiry={{
+    title: 'Not quite',
+    accent: 'it?',
+    text: 'Every trip here can change: more days, another city, a different hotel. Or tell us your own idea and we will plan it from scratch.',
+  }}
+>
+  <PageHero
+    title="Holidays, planned"
+    accent="around you."
+    lede={leisure.data.intro}
+    crumbs={[{ label: 'Home', href: routes.home }, { label: 'Holidays' }]}
+    size="display"
+  >
+    <div class="hero-actions">
+      <Button href={routes.planMyTrip} size="lg" iconEnd="arrow-right">
+        Plan my trip
+      </Button>
+      <Button
+        href={whatsappFor('a holiday')}
+        variant="secondary"
+        size="lg"
+        iconStart="whatsapp"
+        external
+      >
+        Ask on WhatsApp
+      </Button>
+    </div>
+  </PageHero>
+
+  <Section tone="sand" rounded aria-labelledby="list-title" id="packages">
+    <div class="section-head">
+      <h2 id="list-title" class="t-h2">
+        Sample <span class="t-accent">holidays</span>
+      </h2>
+      <p>
+        Trips in India and abroad to start from. Prices are indicative, per person, and valid until
+        the date shown on each trip. {hasSample && <SampleLabel />}
+      </p>
+    </div>
+    <Stagger as="ul" class="list-grid">
+      {packages.map((item) => (
+        <li>
+          <PackageCard
+            name={item.data.title}
+            region={`${packageTypeLabels[item.data.type]} · ${regionLabels[item.data.region]}`}
+            days={item.data.duration.days}
+            nights={item.data.duration.nights}
+            fromPrice={item.data.fromPrice}
+            priceBasis={item.data.priceBasis}
+            validTo={formatDate(item.data.priceValidUntil)}
+            image={item.data.images.hero.src}
+            alt={item.data.images.hero.alt}
+            href={packageHref(item)}
+            demo={item.data.demo}
+            headingLevel={3}
+            sizes="(min-width: 1366px) 300px, (min-width: 1024px) 22vw, (min-width: 768px) 45vw, calc(100vw - 2rem)"
+          />
+        </li>
+      ))}
+    </Stagger>
+  </Section>
+
+  <Section tone="paper" aria-labelledby="how-title">
+    <div class="section-head">
+      <h2 id="how-title" class="t-h2">
+        How a holiday comes together
+      </h2>
+      <p>
+        You do not need a full plan to start.{' '}
+        <Link href={routes.faqs + '#faq-leisure'}>Read the holiday FAQs</Link>.
+      </p>
+    </div>
+    <HowItWorks steps={leisure.data.howItWorks} />
+  </Section>
+</PageLayout>
+
+<style>
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+
+  .list-grid {
+    display: grid;
+    gap: var(--space-10);
+  }
+
+  @media (min-width: 768px) {
+    .list-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-12) var(--space-6);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .list-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+</style>

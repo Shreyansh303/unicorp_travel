@@ -1,0 +1,220 @@
+---
+import { Picture } from 'astro:assets';
+import PageLayout from '../layouts/PageLayout.astro';
+import PageHero from '../components/ui/PageHero.astro';
+import Section from '../components/ui/Section.astro';
+import Button from '../components/ui/Button.astro';
+import Link from '../components/ui/Link.astro';
+import SampleLabel from '../components/ui/SampleLabel.astro';
+import TickList from '../components/ui/TickList.astro';
+import HowItWorks from '../components/ui/HowItWorks.astro';
+import Accordion from '../components/ui/Accordion.astro';
+import Reveal from '../components/motion/Reveal.astro';
+import { getServiceWithFaqs } from '../lib/content';
+import { callHref, emailFor, mobile, whatsappFor } from '../lib/enquiry';
+import { routes } from '../lib/routes';
+import meeting from '../assets/photos/corporate-meeting.jpg';
+
+const entry = await getServiceWithFaqs('corporate');
+if (!entry) throw new Error('The corporate service entry is missing');
+const { service, faqs } = entry;
+const data = service.data;
+const topic = 'corporate travel for my company';
+const mailHref = emailFor('Corporate travel enquiry');
+const sampleFaqs = faqs.some((faq) => faq.data.demo);
+---
+
+<PageLayout
+  title={data.seo.title}
+  description={data.seo.description}
+  topic={topic}
+  mood="corporate"
+  image={data.image}
+  enquiry={{
+    title: 'Talk to the',
+    accent: 'corporate desk.',
+    text: 'Tell us roughly how many people travel, where to and who approves the trips. We will suggest a setup for your company.',
+    next: 'contact',
+  }}
+>
+  <PageHero
+    title="Corporate travel, on one desk"
+    eyebrow="For HR, admin and finance teams"
+    lede={data.intro}
+    crumbs={[{ label: 'Home', href: routes.home }, { label: 'Corporate travel' }]}
+    image={data.image}
+    mood="corporate"
+  >
+    {data.demo && <SampleLabel />}
+    <div class="hero-actions">
+      {mobile && (
+        <Button href={whatsappFor(topic)} size="lg" iconStart="whatsapp" external>
+          Talk to the corporate desk
+        </Button>
+      )}
+      {callHref && (
+        <Button href={callHref} variant="secondary" size="lg" iconStart="phone">
+          Call us
+        </Button>
+      )}
+    </div>
+    {mailHref && (
+      <p class="hero-mail">
+        Prefer email? <Link href={mailHref}>Send us a note</Link>
+      </p>
+    )}
+  </PageHero>
+
+  <Section tone="ink" mood="corporate" aria-labelledby="handle-title">
+    <div class="handle-grid">
+      <div class="handle-head">
+        <h2 id="handle-title" class="t-h2">
+          What we handle
+        </h2>
+        <p class="t-muted">
+          {data.summary} {data.demo && <SampleLabel />}
+        </p>
+      </div>
+      <TickList items={data.whatWeHandle} class="handle-list" />
+    </div>
+  </Section>
+
+  {data.whoItsFor && data.whoItsFor.length > 0 && (
+    <Section tone="white" mood="corporate" aria-labelledby="who-title">
+      <div class="who-grid">
+        <Reveal class="who-photo">
+          <Picture
+            src={meeting}
+            alt="A boardroom with a long table and leather chairs beside floor-to-ceiling windows"
+            formats={['avif', 'webp']}
+            widths={[480, 720, 960]}
+            sizes="(min-width: 1366px) 560px, (min-width: 1024px) 42vw, calc(100vw - 2rem)"
+          />
+        </Reveal>
+        <div class="who-copy">
+          <h2 id="who-title" class="t-h2">
+            Who it is for
+          </h2>
+          <ul class="who-list">
+            {data.whoItsFor.map((item) => (
+              <li>{item}</li>
+            ))}
+          </ul>
+          {data.demo && <SampleLabel />}
+        </div>
+      </div>
+    </Section>
+  )}
+
+  <Section tone="sand" mood="corporate" aria-labelledby="how-title">
+    <div class="section-head">
+      <h2 id="how-title" class="t-h2">
+        How it works
+      </h2>
+      <p>From the first call to the trips themselves. {data.demo && <SampleLabel />}</p>
+    </div>
+    <HowItWorks steps={data.howItWorks} />
+  </Section>
+
+  {faqs.length > 0 && (
+    <Section tone="white" mood="corporate" aria-labelledby="faq-title">
+      <div class="section-head">
+        <h2 id="faq-title" class="t-h2">
+          Questions from companies
+        </h2>
+        <p>
+          <Link href={`${routes.faqs}#faq-corporate`}>See all FAQs</Link>.{' '}
+          {sampleFaqs && <SampleLabel />}
+        </p>
+      </div>
+      <Accordion
+        id="faq-corporate"
+        items={faqs.map((faq) => ({ title: faq.data.question, body: faq.rendered?.html ?? '' }))}
+      />
+    </Section>
+  )}
+</PageLayout>
+
+<style>
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+
+  .hero-mail {
+    color: var(--text-muted);
+  }
+
+  .handle-grid {
+    display: grid;
+    gap: var(--space-8);
+  }
+
+  .handle-head {
+    display: grid;
+    gap: var(--space-4);
+    align-content: start;
+    justify-items: start;
+  }
+
+  .handle-grid :global(.handle-list) {
+    font-size: var(--text-lg);
+  }
+
+  @media (min-width: 1024px) {
+    .handle-grid {
+      grid-template-columns: 5fr 7fr;
+      gap: var(--space-16);
+    }
+  }
+
+  .who-grid {
+    display: grid;
+    gap: var(--space-10);
+  }
+
+  @media (min-width: 1024px) {
+    .who-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-16);
+      align-items: center;
+    }
+  }
+
+  .who-grid :global(.who-photo) {
+    overflow: hidden;
+    aspect-ratio: 4 / 3;
+    border-radius: var(--radius-sm);
+  }
+
+  .who-grid :global(.who-photo picture),
+  .who-grid :global(.who-photo img) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .who-copy {
+    display: grid;
+    gap: var(--space-6);
+    justify-items: start;
+  }
+
+  .who-list {
+    display: grid;
+    gap: var(--space-4);
+    width: 100%;
+  }
+
+  .who-list li {
+    padding-top: var(--space-4);
+    border-top: 2px solid var(--ink);
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    font-weight: var(--weight-bold);
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+</style>

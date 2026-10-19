@@ -27,8 +27,12 @@ import RouteLine from '../components/motion/RouteLine.astro';
 import Reveal from '../components/motion/Reveal.astro';
 import Stagger from '../components/motion/Stagger.astro';
 import Parallax from '../components/motion/Parallax.astro';
-import { mockFooterGroups, mockNav } from './mocks/_shared/nav';
-import { callHref, packages, serviceGroups } from './mocks/_shared/data';
+import { getFooterGroups, getMainNav } from '../lib/nav';
+import { getPackages, type PackageEntry } from '../lib/content';
+import { callHref } from '../lib/enquiry';
+import { formatDate } from '../lib/format';
+import { regionLabels } from '../lib/packages';
+import { packageHref, routes } from '../lib/routes';
 import { shown, site } from '../config/site';
 import { contrast, formatRatio, readColourTokens, threshold, type Use } from '../lib/contrast';
 import tokensCss from '../styles/tokens.css?raw';
@@ -191,12 +195,45 @@ const others = [
   ['--parallax-shift', '8%', 'Parallax drift each way'],
 ];
 
+const nav = await getMainNav();
+const footerGroups = getFooterGroups();
+
+/** Short descriptions for the three service groups in site.ts. */
+const groupCopy: Record<'corporate' | 'leisure' | 'related', string> = {
+  corporate:
+    'One desk for your company’s flights, hotels and visas, booked within your travel policy.',
+  leisure:
+    'Holidays in India and abroad, planned day by day around who is travelling and what they enjoy.',
+  related:
+    'The paperwork and bookings around a trip: visas, forex, insurance, hotels, rail, cruises and ground transport.',
+};
+const serviceGroups = site.services.map((group) => ({
+  id: group.id,
+  name: group.name,
+  copy: groupCopy[group.id],
+  items: group.items.filter((item) => item.status === 'verified' || item.status === 'confirm'),
+}));
 const groupsById = Object.fromEntries(serviceGroups.map((group) => [group.id, group]));
 const leisure = groupsById['leisure'];
 const corporate = groupsById['corporate'];
 const related = groupsById['related'];
-const kerala = packages[0];
-const andaman = packages[2];
+
+const allPackages = await getPackages('title');
+const toCard = (entry: PackageEntry | undefined) =>
+  entry && {
+    name: entry.data.title,
+    region: regionLabels[entry.data.region],
+    days: entry.data.duration.days,
+    nights: entry.data.duration.nights,
+    fromPrice: entry.data.fromPrice,
+    priceBasis: entry.data.priceBasis,
+    validTo: formatDate(entry.data.priceValidUntil),
+    image: entry.data.images.hero.src,
+    alt: entry.data.images.hero.alt,
+    href: packageHref(entry),
+  };
+const kerala = toCard(allPackages.find((entry) => entry.id === 'kerala-backwaters-and-hills'));
+const andaman = toCard(allPackages.find((entry) => entry.id === 'andaman-islands'));
 const budgetOptions = [
   { value: 'under-50k', label: 'Under ₹50,000 per person' },
   { value: '50k-1l', label: '₹50,000 to ₹1,00,000 per person' },
@@ -246,7 +283,7 @@ const facebook = shown(site.social.facebook);
   title={`Styleguide: ${site.displayName}`}
   description={`Internal styleguide for the ${site.displayName} demo: design tokens and every component in every state.`}
 >
-  <Header items={mockNav} homeHref="/mocks/c" currentPath="/styleguide" />
+  <Header items={nav} homeHref={routes.home} currentPath="/styleguide" />
   <main id="main">
     <Section tone="paper" spacing="tight">
       <div class="sg-intro">
@@ -684,7 +721,7 @@ const facebook = shown(site.social.facebook);
             <span class="sg-caption">lg</span>
           </li>
           <li>
-            <Button href="/mocks/c/package" iconEnd="arrow-right">
+            <Button href={kerala?.href ?? routes.holidays} iconEnd="arrow-right">
               See a sample trip
             </Button>
             <span class="sg-caption">Link as button, icon end</span>
@@ -721,14 +758,15 @@ const facebook = shown(site.social.facebook);
         <h3 class="t-h4">Links</h3>
         <p class="sg-prose">
           Inline links are always underlined, as in this link to the
-          <Link href="/mocks/c/package">sample Kerala itinerary</Link> and these forced states:
-          <Link href="/mocks/c" state="hover">
+          <Link href={kerala?.href ?? routes.holidays}>sample Kerala itinerary</Link> and these
+          forced states:
+          <Link href={routes.holidays} state="hover">
             hover
           </Link>
-          <Link href="/mocks/c" state="focus">
+          <Link href={routes.holidays} state="focus">
             focus
           </Link>
-          <Link href="/mocks/c" state="active">
+          <Link href={routes.holidays} state="active">
             pressed
           </Link>
         </p>
@@ -742,13 +780,13 @@ const facebook = shown(site.social.facebook);
         )}
         <ul class="sg-states">
           <li>
-            <Link href="/mocks/c" variant="standalone">
+            <Link href={routes.holidays} variant="standalone">
               See all holidays
             </Link>
             <span class="sg-caption">Standalone</span>
           </li>
           <li>
-            <Link href="/mocks/c" variant="standalone" state="hover">
+            <Link href={routes.holidays} variant="standalone" state="hover">
               See all holidays
             </Link>
             <span class="sg-caption">Standalone, hover</span>
@@ -776,7 +814,7 @@ const facebook = shown(site.social.facebook);
               text={leisure.copy}
               items={leisure.items.map((i) => i.name)}
               tone="red"
-              href="/mocks/c#services"
+              href={routes.services}
             />
           </li>
         )}
@@ -808,7 +846,7 @@ const facebook = shown(site.social.facebook);
               title="Hover"
               text="Lifts and gains a shadow; the arrow moves."
               tone="red"
-              href="/mocks/c#services"
+              href={routes.services}
               state="hover"
             />
           </li>
@@ -819,7 +857,7 @@ const facebook = shown(site.social.facebook);
               title="Focus"
               text="A two-tone ring shows on any background."
               tone="white"
-              href="/mocks/c#services"
+              href={routes.services}
               state="focus"
             />
           </li>
@@ -834,10 +872,11 @@ const facebook = shown(site.social.facebook);
               days={kerala.days}
               nights={kerala.nights}
               fromPrice={kerala.fromPrice}
+              priceBasis={kerala.priceBasis}
               validTo={kerala.validTo}
               image={kerala.image}
               alt={kerala.alt}
-              href="/mocks/c/package"
+              href={kerala?.href ?? routes.holidays}
               demo
             />
             <span class="sg-caption">Default, with link</span>
@@ -853,7 +892,7 @@ const facebook = shown(site.social.facebook);
               fromPrice={andaman.fromPrice}
               image={andaman.image}
               alt={andaman.alt}
-              href="/mocks/c/package"
+              href={kerala?.href ?? routes.holidays}
               demo
               state="hover"
             />
@@ -870,7 +909,7 @@ const facebook = shown(site.social.facebook);
               fromPrice={kerala.fromPrice}
               image={kerala.image}
               alt={kerala.alt}
-              href="/mocks/c/package"
+              href={kerala?.href ?? routes.holidays}
               demo
               state="focus"
             />
@@ -887,15 +926,15 @@ const facebook = shown(site.social.facebook);
           Header and navigation
         </h2>
         <p>
-          The header at the top of this page is live: open Holidays with Enter or Space, close it
+          The header at the top of this page is live: open Services with Enter or Space, close it
           with Escape. Below 1024px the links move into a drawer.
         </p>
       </div>
       <p class="sg-caption sg-caption-block">Submenu open (static copy)</p>
       <div class="sg-frame sg-frame-nav">
         <Header
-          items={mockNav}
-          homeHref="/mocks/c"
+          items={nav}
+          homeHref={routes.home}
           idPrefix="demo"
           navLabel="Main (example)"
           asDemo
@@ -1279,8 +1318,8 @@ const facebook = shown(site.social.facebook);
       <div class="sg-stack">
         <Breadcrumbs
           items={[
-            { label: 'Home', href: '/mocks/c' },
-            { label: 'Holidays', href: '/mocks/c#packages' },
+            { label: 'Home', href: routes.home },
+            { label: 'Holidays', href: routes.holidays },
             { label: 'Kerala backwaters and hills' },
           ]}
         />
@@ -1318,21 +1357,21 @@ const facebook = shown(site.social.facebook);
           </div>
         </div>
         <div class="sg-stack">
-          <p class="sg-caption sg-caption-block">Floating contact, as shown below 1360px</p>
+          <p class="sg-caption sg-caption-block">Floating contact, as shown below 1440px</p>
           <FloatingContact
             inline
             message={`Hello ${site.displayName}, I am looking at your styleguide page.`}
           />
           <p class="t-muted">
-            The live bar sits at the bottom of this page. Below 1360px the page reserves its height,
-            so it never covers the last lines of content; from 1360px it becomes two round buttons
+            The live bar sits at the bottom of this page. Below 1440px the page reserves its height,
+            so it never covers the last lines of content; from 1440px it becomes two round buttons
             in the side margin.
           </p>
         </div>
       </div>
     </Section>
   </main>
-  <Footer homeHref="/mocks/c" groups={mockFooterGroups} />
+  <Footer homeHref={routes.home} groups={footerGroups} />
   <FloatingContact message={`Hello ${site.displayName}, I would like help planning a trip.`} />
   <Toast />
 </BaseLayout>

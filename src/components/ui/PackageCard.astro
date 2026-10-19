@@ -1,6 +1,7 @@
 ---
 /**
- * Holiday package card: arched photo, region and length, name, indicative "from" price.
+ * Holiday package card: arched photo, region and length, name, indicative "from" price and
+ * what that price covers (the entry's priceBasis).
  * With `demo` it carries the visible "Sample content" label (roadmap section 5).
  * With `href` the whole card is one link.
  */
@@ -15,6 +16,8 @@ interface Props {
   days: number;
   nights: number;
   fromPrice: number;
+  /** What the price covers, e.g. "per person, twin sharing, land arrangements only". */
+  priceBasis?: string;
   validTo?: string;
   image: ImageMetadata;
   alt: string;
@@ -32,6 +35,7 @@ const {
   days,
   nights,
   fromPrice,
+  priceBasis,
   validTo,
   image,
   alt,
@@ -65,8 +69,9 @@ const Heading = `h${headingLevel}` as 'h2' | 'h3' | 'h4';
     </p>
     <Heading class="pkg-name">{href ? <a href={href}>{name}</a> : name}</Heading>
     <p class="pkg-price">
-      from <strong>{formatINR(fromPrice)}</strong> per person
+      from <strong>{formatINR(fromPrice)}</strong>
     </p>
+    {priceBasis && <p class="pkg-basis">{priceBasis}</p>}
     {validTo && <p class="pkg-valid">Valid to {validTo}</p>}
     {demo && <SampleLabel />}
   </div>
@@ -158,6 +163,7 @@ const Heading = `h${headingLevel}` as 'h2' | 'h3' | 'h4';
     color: var(--text);
   }
 
+  .pkg-basis,
   .pkg-valid {
     font-size: var(--text-sm);
     color: var(--text-muted);

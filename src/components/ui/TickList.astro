@@ -1,0 +1,60 @@
+---
+/** A list with a tick (or a cross, for exclusions) before each item. Icons are decorative. */
+import Icon from './Icon.astro';
+
+interface Props {
+  items: readonly string[];
+  mark?: 'check' | 'close';
+  class?: string;
+}
+
+const { items, mark = 'check', class: className } = Astro.props;
+---
+
+<ul class:list={['ticks', `ticks-${mark}`, className]}>
+  {items.map((item) => (
+    <li>
+      <span class="tick" aria-hidden="true">
+        <Icon name={mark} size={16} />
+      </span>
+      <span>{item}</span>
+    </li>
+  ))}
+</ul>
+
+<style>
+  .ticks {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .ticks li {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-3);
+    align-items: start;
+  }
+
+  .tick {
+    display: grid;
+    place-items: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-top: 0.125rem;
+    border-radius: 50%;
+    background: var(--accent);
+    color: var(--on-accent);
+  }
+
+  /* Corporate pages stay black and white. */
+  :global(.mood-corporate) .tick {
+    background: var(--text);
+    color: var(--bg);
+  }
+
+  .ticks-close .tick,
+  :global(.mood-corporate) .ticks-close .tick {
+    background: var(--surface-sunken);
+    color: var(--text);
+  }
+</style>

@@ -1,0 +1,133 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import PageHero from '../components/ui/PageHero.astro';
+import Section from '../components/ui/Section.astro';
+import Link from '../components/ui/Link.astro';
+import SampleLabel from '../components/ui/SampleLabel.astro';
+import Accordion from '../components/ui/Accordion.astro';
+import { getFaqsGroupedByService } from '../lib/content';
+import { greeting } from '../lib/enquiry';
+import { midSentence, routes, serviceHref, serviceLabel } from '../lib/routes';
+
+const groups = await getFaqsGroupedByService();
+const hasSample = groups.some((group) => group.faqs.some((faq) => faq.data.demo));
+---
+
+<PageLayout
+  title="Frequently asked questions"
+  description="Answers to common questions about holidays, corporate travel, visas, forex, insurance, hotels, cruises and other travel services."
+  topic="a question about my trip"
+  message={greeting('I have a question that your FAQ page does not answer.')}
+  mood="corporate"
+  enquiry={{
+    title: 'Still have',
+    accent: 'a question?',
+    text: 'Ask us directly. Tell us about your trip and we will answer for your situation.',
+    next: 'contact',
+  }}
+>
+  <PageHero
+    title="Questions and answers"
+    eyebrow="FAQs"
+    lede="Short answers to the questions we hear most often, grouped by service. Each group links to the full service page."
+    crumbs={[{ label: 'Home', href: routes.home }, { label: 'FAQs' }]}
+    mood="corporate"
+  >
+    {hasSample && <SampleLabel />}
+    <nav class="jump" aria-label="FAQ topics">
+      <ul>
+        {groups.map((group) => (
+          <li>
+            <a href={`#faq-${group.service.id}`}>{serviceLabel(group.service)}</a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </PageHero>
+
+  {groups.map((group, index) => (
+    <Section
+      tone={index % 2 === 0 ? 'sand' : 'white'}
+      mood="corporate"
+      spacing="tight"
+      id={`faq-${group.service.id}`}
+      aria-labelledby={`faq-${group.service.id}-title`}
+      class="faq-group"
+    >
+      <div class="group-grid">
+        <div class="group-head">
+          <h2 id={`faq-${group.service.id}-title`} class="t-h3">
+            {group.service.data.title}
+          </h2>
+          <Link href={serviceHref(group.service)} variant="standalone">
+            {group.service.data.category === 'leisure'
+              ? 'See holidays'
+              : `More on ${midSentence(serviceLabel(group.service))}`}
+          </Link>
+          {group.faqs.some((faq) => faq.data.demo) && <SampleLabel />}
+        </div>
+        <Accordion
+          id={`faqs-${group.service.id}`}
+          items={group.faqs.map((faq) => ({
+            title: faq.data.question,
+            body: faq.rendered?.html ?? '',
+          }))}
+        />
+      </div>
+    </Section>
+  ))}
+</PageLayout>
+
+<style>
+  .jump ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .jump a {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--tap);
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-pill);
+    color: var(--text);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-bold);
+    text-decoration: none;
+    box-shadow: inset 0 0 0 1.5px var(--text);
+  }
+
+  .jump a:hover {
+    background: var(--text);
+    color: var(--bg);
+  }
+
+  .group-grid {
+    display: grid;
+    gap: var(--space-6);
+  }
+
+  .group-head {
+    display: grid;
+    gap: var(--space-3);
+    justify-items: start;
+    align-content: start;
+  }
+
+  @media (min-width: 1024px) {
+    .group-grid {
+      grid-template-columns: 4fr 8fr;
+      gap: var(--space-16);
+    }
+
+    .group-head {
+      position: sticky;
+      top: var(--space-8);
+    }
+  }
+
+  .faq-group {
+    scroll-margin-top: var(--space-4);
+  }
+</style>

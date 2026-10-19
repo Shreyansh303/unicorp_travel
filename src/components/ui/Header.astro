@@ -251,6 +251,7 @@ const waHref = mobile
     font: inherit;
     font-weight: var(--weight-bold);
     text-decoration: none;
+    white-space: nowrap;
     cursor: pointer;
     transition: background-color var(--duration-fast) var(--ease-out);
   }
@@ -386,6 +387,10 @@ const waHref = mobile
     }
   }
 
+  .header-actions :global(.btn) {
+    white-space: nowrap;
+  }
+
   @media (min-width: 1024px) {
     .nav-desktop {
       display: block;
@@ -393,6 +398,30 @@ const waHref = mobile
     }
 
     .menu-btn {
+      display: none;
+    }
+  }
+
+  /*
+   * 1024px to 1279px: the six links and the call button share one row, so the links tighten
+   * and the call button drops the number (the number is in the footer and on every page's
+   * enquiry band). The header stays one line at every desktop width.
+   */
+  @media (min-width: 1024px) and (max-width: 1279px) {
+    .nav-desktop {
+      margin-inline: auto var(--space-2);
+    }
+
+    .nav-list {
+      gap: 0;
+    }
+
+    .nav-link {
+      padding-inline: var(--space-3);
+      font-size: var(--text-sm);
+    }
+
+    .call-number {
       display: none;
     }
   }

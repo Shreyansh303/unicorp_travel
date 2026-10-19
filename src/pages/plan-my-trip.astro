@@ -1,0 +1,261 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import PageHero from '../components/ui/PageHero.astro';
+import Section from '../components/ui/Section.astro';
+import Button from '../components/ui/Button.astro';
+import Link from '../components/ui/Link.astro';
+import RouteLine from '../components/motion/RouteLine.astro';
+import { site, whatsappHref } from '../config/site';
+import { callHref, emailFor, greeting, mobile } from '../lib/enquiry';
+import { routes } from '../lib/routes';
+
+/** The questions the guided request asks, in order (F-13). */
+const questions = [
+  {
+    title: 'Trip type',
+    text: 'A holiday, a honeymoon, a family or group trip, or travel for work.',
+    prompt: 'Trip type:',
+  },
+  {
+    title: 'Destination ideas',
+    text: 'Places you have in mind, or simply “beaches” or “somewhere cool in May”.',
+    prompt: 'Destination ideas:',
+  },
+  {
+    title: 'Dates',
+    text: 'When you would like to go and for how long, and whether the dates can move.',
+    prompt: 'Dates and flexibility:',
+  },
+  {
+    title: 'Travellers',
+    text: 'How many adults and children, and the ages of the children.',
+    prompt: 'Travellers:',
+  },
+  {
+    title: 'Budget and interests',
+    text: 'A rough budget per person and what you enjoy: food, adventure, slow days, sights.',
+    prompt: 'Budget per person and interests:',
+  },
+];
+
+const template = [
+  `Hello ${site.displayName}, I would like to plan a trip.`,
+  '',
+  ...questions.map((question) => `${question.prompt} `),
+].join('\n');
+
+const waHref = mobile ? whatsappHref(template) : null;
+const mailHref = emailFor('Plan my trip', template);
+---
+
+<PageLayout
+  title="Plan my trip"
+  description="Tell us the trip type, destinations, dates, travellers and budget, and we will plan the trip with you. Send it by WhatsApp, phone or email."
+  topic="planning a trip"
+  message={greeting('I would like to plan a trip with you.')}
+  enquiry={{
+    title: 'Rather just',
+    accent: 'talk?',
+    text: 'Call or message us and we will ask the questions for you.',
+    next: 'contact',
+  }}
+>
+  <PageHero
+    title="Plan my"
+    accent="trip."
+    lede="Answer five quick questions and send them to us. We reply with ideas, a day-wise plan and a price to talk through. Nothing is booked until you agree."
+    crumbs={[{ label: 'Home', href: routes.home }, { label: 'Plan my trip' }]}
+    size="display"
+  >
+    <div class="hero-actions">
+      {waHref && (
+        <Button href={waHref} size="lg" iconStart="whatsapp" external>
+          Send on WhatsApp
+        </Button>
+      )}
+      {callHref && mobile && (
+        <Button href={callHref} variant="secondary" size="lg" iconStart="phone">
+          Call {mobile.display}
+        </Button>
+      )}
+    </div>
+    <p class="hero-note">
+      The WhatsApp message opens with the five questions ready for your answers.
+    </p>
+  </PageHero>
+
+  <Section tone="sand" rounded aria-labelledby="questions-title">
+    <div class="section-head">
+      <h2 id="questions-title" class="t-h2">
+        Five things <span class="t-accent">to tell us</span>
+      </h2>
+      <p>Rough answers are fine. We will ask about anything we need to know.</p>
+    </div>
+    <div class="q-wrap">
+      <RouteLine
+        class="q-line"
+        d="M20 0 C36 100 4 200 20 300 S36 500 20 600 S4 800 20 1000"
+        viewBox="0 0 40 1000"
+        preserveAspectRatio="none"
+        draw="scroll"
+        strokeWidth={4}
+      />
+      <ol class="q-list">
+        {questions.map((question, index) => (
+          <li class="q">
+            <span class="q-num" aria-hidden="true">
+              {index + 1}
+            </span>
+            <h3 class="t-h3">{question.title}</h3>
+            <p class="t-muted">{question.text}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </Section>
+
+  <Section tone="paper" aria-labelledby="send-title">
+    <div class="send-grid">
+      <div class="send-head">
+        <h2 id="send-title" class="t-h2">
+          Send it your way
+        </h2>
+        <p class="t-muted">
+          Pick whichever suits you. Your message goes straight from your phone or email to us; this
+          website does not store it.
+        </p>
+      </div>
+      <ul class="send-list">
+        {waHref && (
+          <li>
+            <h3 class="t-h4">WhatsApp</h3>
+            <p class="t-muted">Opens a chat with the questions filled in.</p>
+            <Link href={waHref} variant="standalone" external>
+              Send on WhatsApp
+            </Link>
+          </li>
+        )}
+        {mailHref && (
+          <li>
+            <h3 class="t-h4">Email</h3>
+            <p class="t-muted">Opens your email app with the same questions.</p>
+            <Link href={mailHref} variant="standalone">
+              Write an email
+            </Link>
+          </li>
+        )}
+        {callHref && mobile && (
+          <li>
+            <h3 class="t-h4">Phone</h3>
+            <p class="t-muted">Talk it through and we will note the details.</p>
+            <Link href={callHref} variant="standalone">
+              Call {mobile.display}
+            </Link>
+          </li>
+        )}
+        <li>
+          <h3 class="t-h4">Other ways</h3>
+          <p class="t-muted">Office address, all phone numbers and company details.</p>
+          <Link href={routes.contact} variant="standalone">
+            Contact page
+          </Link>
+        </li>
+      </ul>
+    </div>
+  </Section>
+</PageLayout>
+
+<style>
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+
+  .hero-note {
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+  }
+
+  .q-wrap {
+    position: relative;
+    padding-left: var(--space-16);
+  }
+
+  .q-wrap :global(.q-line) {
+    position: absolute;
+    top: 1.25rem;
+    left: 0.25rem;
+    width: 40px;
+    height: calc(100% - 2.5rem);
+  }
+
+  .q-list {
+    display: grid;
+    gap: var(--space-10);
+    max-width: 44rem;
+  }
+
+  .q {
+    position: relative;
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .q-num {
+    position: absolute;
+    top: 0;
+    left: calc(var(--space-16) * -1);
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 50%;
+    background: var(--red-600);
+    color: var(--white);
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: var(--weight-black);
+    box-shadow: 0 0 0 5px var(--sand-100);
+  }
+
+  .send-grid {
+    display: grid;
+    gap: var(--space-10);
+  }
+
+  .send-head {
+    display: grid;
+    gap: var(--space-4);
+    align-content: start;
+  }
+
+  @media (min-width: 1024px) {
+    .send-grid {
+      grid-template-columns: 5fr 7fr;
+      gap: var(--space-16);
+    }
+  }
+
+  .send-list {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  @media (min-width: 768px) {
+    .send-list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .send-list li {
+    display: grid;
+    gap: var(--space-2);
+    align-content: start;
+    justify-items: start;
+    padding: var(--space-6);
+    border-radius: var(--radius-lg);
+    background: var(--white);
+    box-shadow: inset 0 0 0 1px var(--sand-200);
+  }
+</style>

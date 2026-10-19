@@ -7,6 +7,7 @@ import { getCollection, getEntry, type CollectionEntry } from 'astro:content';
 export type ServiceEntry = CollectionEntry<'services'>;
 export type PackageEntry = CollectionEntry<'packages'>;
 export type FaqEntry = CollectionEntry<'faqs'>;
+export type LegalEntry = CollectionEntry<'legal'>;
 export type ServiceCategory = ServiceEntry['data']['category'];
 
 export const serviceCategoryOrder: readonly ServiceCategory[] = ['corporate', 'leisure', 'related'];
@@ -94,4 +95,13 @@ export async function getFeaturedPackages(): Promise<PackageEntry[]> {
 /** One package by slug. */
 export async function getPackage(slug: string): Promise<PackageEntry | undefined> {
   return getEntry('packages', slug);
+}
+
+/** One legal draft (privacy, terms) by id. Throws when it is missing, so a page never renders empty. */
+export async function getLegal(id: string): Promise<LegalEntry> {
+  const entry = await getEntry('legal', id);
+  if (!entry) {
+    throw new Error(`Legal entry "${id}" is missing from src/content/legal`);
+  }
+  return entry;
 }

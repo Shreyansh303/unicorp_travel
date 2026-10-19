@@ -6,6 +6,7 @@
  */
 import Icon from './Icon.astro';
 import FactsBlock from './FactsBlock.astro';
+import { generalEnquiryMessage } from '../../lib/enquiry';
 import type { NavLink } from './types';
 import {
   mailtoHref,
@@ -64,10 +65,12 @@ const social = Object.entries(site.social)
   .map(([key, fact]) => ({ key, label: socialLabels[key] ?? key, href: shown(fact) }))
   .filter((entry): entry is { key: string; label: string; href: string } => entry.href !== null);
 const year = new Date().getFullYear();
+// Columns after the brand column, so every group fits on one row from 1280px.
+const columns = (phones.length > 0 || email ? 1 : 0) + (office ? 1 : 0) + groups.length;
 ---
 
 <Tag class="site-footer tone-ink">
-  <div class="wrap footer-grid">
+  <div class="wrap footer-grid" style={`--footer-cols: ${Math.max(columns, 1)}`}>
     <div class="footer-brand">
       <a class="footer-wordmark" href={homeHref}>
         {site.displayName}
@@ -108,7 +111,11 @@ const year = new Date().getFullYear();
           {mobile && (
             <li>
               <span class="footer-label">WhatsApp</span>
-              <a href={whatsappHref()} target="_blank" rel="noopener noreferrer">
+              <a
+                href={whatsappHref(generalEnquiryMessage)}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 Chat on WhatsApp<span class="sr-only"> (opens in a new tab)</span>
               </a>
             </li>
@@ -172,6 +179,8 @@ const year = new Date().getFullYear();
     background: var(--bg);
     color: var(--text);
     padding-block: var(--space-16) var(--space-8);
+    /* Separates the footer from an ink enquiry band above it on corporate pages. */
+    border-top: 1px solid var(--border);
   }
 
   .footer-grid {
@@ -185,9 +194,11 @@ const year = new Date().getFullYear();
     }
   }
 
-  @media (min-width: 1024px) {
+  /* One row only where every column has room; two columns below that. */
+  @media (min-width: 1280px) {
     .footer-grid {
-      grid-template-columns: 1.4fr repeat(3, minmax(0, 1fr));
+      grid-template-columns: 1.2fr repeat(var(--footer-cols, 3), minmax(0, 1fr));
+      gap: var(--space-8);
     }
   }
 
@@ -208,6 +219,7 @@ const year = new Date().getFullYear();
     font-weight: var(--weight-black);
     letter-spacing: -0.04em;
     text-decoration: none;
+    white-space: nowrap;
   }
 
   .footer-dot {

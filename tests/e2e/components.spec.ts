@@ -126,10 +126,11 @@ test.describe('styleguide keyboard pass', () => {
     expect(missingRing).toEqual([]);
   });
 
+  // site-submenu-2 is the Services submenu (the third item in the main navigation).
   test('nav submenu opens with Enter and Space and closes with Escape', async ({ page }) => {
     await page.goto('/styleguide');
-    const trigger = page.locator('[aria-controls="site-submenu-0"]');
-    const menu = page.locator('#site-submenu-0');
+    const trigger = page.locator('[aria-controls="site-submenu-2"]');
+    const menu = page.locator('#site-submenu-2');
 
     await trigger.focus();
     await page.keyboard.press('Enter');
@@ -213,7 +214,7 @@ test.describe('mobile', () => {
   test.use({ viewport: { width: 375, height: 812 } });
 
   test('menu drawer opens, closes with Escape and returns focus', async ({ page }) => {
-    await page.goto('/mocks/c');
+    await page.goto('/');
     const button = page.getByRole('button', { name: 'Menu', exact: true });
     await button.focus();
     await page.keyboard.press('Enter');
@@ -223,7 +224,7 @@ test.describe('mobile', () => {
     await expect(button).toBeFocused();
   });
 
-  for (const path of ['/mocks/c', '/mocks/c/package', '/styleguide']) {
+  for (const path of ['/', '/holidays/kerala-backwaters-and-hills', '/styleguide']) {
     test(`keyboard focus is never hidden under the floating bar on ${path}`, async ({ page }) => {
       test.setTimeout(120_000);
       await page.goto(path);
@@ -254,7 +255,7 @@ const identity = ['none', 'matrix(1, 0, 0, 1, 0, 0)'];
 test.describe('reduced motion', () => {
   test.use({ reducedMotion: 'reduce', viewport: { width: 1366, height: 900 } });
 
-  for (const path of ['/styleguide', '/mocks/c', '/mocks/c/package']) {
+  for (const path of ['/styleguide', '/', '/holidays/kerala-backwaters-and-hills']) {
     test(`nothing moves on ${path}`, async ({ page }) => {
       await page.goto(path);
       await page.evaluate(async () => {
@@ -349,8 +350,8 @@ test.describe('reduced motion', () => {
     expect(identity).toContain(await transformOf('main .link-standalone .link-arrow'));
 
     // Open submenu and accordion chevrons do not turn.
-    await page.locator('[aria-controls="site-submenu-0"]').click();
-    expect(identity).toContain(await transformOf('[aria-controls="site-submenu-0"] .nav-chevron'));
+    await page.locator('[aria-controls="site-submenu-2"]').click();
+    expect(identity).toContain(await transformOf('[aria-controls="site-submenu-2"] .nav-chevron'));
     await page.keyboard.press('Escape');
     await page.locator('#sg-faq-button-0').click();
     await expect(page.locator('#sg-faq-button-0')).toHaveAttribute('aria-expanded', 'true');
@@ -359,7 +360,7 @@ test.describe('reduced motion', () => {
 
   test('round floating buttons do not grow on hover under reduced motion', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/mocks/c');
+    await page.goto('/');
     const button = page.locator('.floating-fixed .floating-btn').first();
     await button.hover();
     expect(identity).toContain(await button.evaluate((el) => getComputedStyle(el).transform));
@@ -372,11 +373,12 @@ test('without JavaScript every header link is reachable on a phone', async ({ br
     viewport: { width: 375, height: 812 },
   });
   const page = await context.newPage();
-  await page.goto('/mocks/c');
+  await page.goto('/');
   await expect(page.locator('.menu-btn').first()).toBeHidden();
   const fallback = page.getByRole('navigation', { name: 'Main (all links)' });
   await expect(fallback).toBeVisible();
-  await expect(fallback.getByRole('link', { name: 'Kerala backwaters and hills' })).toBeVisible();
-  await expect(fallback.getByRole('link', { name: 'Styleguide' })).toBeVisible();
+  // Submenu links (Services) and top-level links are all listed.
+  await expect(fallback.getByRole('link', { name: 'Visa and passport' })).toBeVisible();
+  await expect(fallback.getByRole('link', { name: 'Contact' })).toBeVisible();
   await context.close();
 });

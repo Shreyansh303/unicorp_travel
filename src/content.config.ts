@@ -1,5 +1,5 @@
 /**
- * Content collections: services, packages and FAQs (roadmap sections 4 and 5).
+ * Content collections: services, packages, FAQs and legal drafts (roadmap sections 4 and 5).
  *
  * Rules enforced here, at build time:
  * - Every entry declares `demo` explicitly (no default).
@@ -71,7 +71,7 @@ function loadedEntries(context: LoaderContext): LoadedEntry[] {
 }
 
 const contentRoot = fileURLToPath(new URL('./content/', import.meta.url));
-const collectionNames = ['services', 'packages', 'faqs'] as const;
+const collectionNames = ['services', 'packages', 'faqs', 'legal'] as const;
 
 /** Entries in every collection whose file sets a top-level `demo: true` (read from disk). */
 function demoEntriesOnDisk(): string[] {
@@ -356,4 +356,25 @@ const faqs = defineCollection({
   }),
 });
 
-export const collections = { services, packages, faqs };
+/** Privacy notice and terms (F-14). Drafts pending legal review, so every entry is sample content. */
+const legal = defineCollection({
+  loader: withChecks(glob({ pattern: '*.md', base: './src/content/legal' }), (entries) => {
+    assertNoDemoContent('legal', entries);
+  }),
+  schema: z.object({
+    title: z
+      .string()
+      .min(5)
+      .max(maxContentTitleLength)
+      .refine((value) => !containsBrand(value), {
+        message: 'Leave the brand name out of the title; pageTitle() adds it from site.ts',
+      }),
+    /** One or two sentences; also the page's meta description. */
+    summary: z.string().min(50).max(160),
+    /** Date of the last change to the text. */
+    updated: z.coerce.date(),
+    demo: z.boolean(),
+  }),
+});
+
+export const collections = { services, packages, faqs, legal };

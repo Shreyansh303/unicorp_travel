@@ -2,7 +2,8 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
 
 const tags = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
-const paths = ['/styleguide', '/mocks/c', '/mocks/c/package'];
+// Public pages are scanned in pages.spec.ts.
+const paths = ['/styleguide'];
 const widths = [375, 1366];
 
 /** Waits for entry animations inside `selector` (dialogs, submenus) to finish before scanning. */
@@ -46,9 +47,10 @@ test('styleguide has no axe violations with the submenu and dialog open', async 
   await page.setViewportSize({ width: 1366, height: 900 });
   await page.goto('/styleguide');
 
-  await page.locator('[aria-controls="site-submenu-0"]').click();
-  await expect(page.locator('#site-submenu-0')).toBeVisible();
-  await settle(page, '#site-submenu-0');
+  // site-submenu-2 is the Services submenu.
+  await page.locator('[aria-controls="site-submenu-2"]').click();
+  await expect(page.locator('#site-submenu-2')).toBeVisible();
+  await settle(page, '#site-submenu-2');
   expect((await scan(page)).violations).toEqual([]);
 
   await page.keyboard.press('Escape');
@@ -60,7 +62,7 @@ test('styleguide has no axe violations with the submenu and dialog open', async 
 
 test('mobile drawer has no axe violations when open', async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 812 });
-  await page.goto('/mocks/c');
+  await page.goto('/');
   await page.getByRole('button', { name: 'Menu', exact: true }).click();
   await expect(page.locator('#site-nav-drawer')).toBeVisible();
   await settle(page, '#site-nav-drawer');

@@ -2,6 +2,13 @@
   "ci": {
     "collect": {
       "staticDistDir": "./dist",
+      "url": [
+        "http://localhost/",
+        "http://localhost/holidays/",
+        "http://localhost/holidays/kerala-backwaters-and-hills/",
+        "http://localhost/services/visa-passport/",
+        "http://localhost/contact/"
+      ],
       "numberOfRuns": 3,
       "settings": {
         "formFactor": "mobile",

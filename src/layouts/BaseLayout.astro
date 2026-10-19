@@ -1,17 +1,57 @@
 ---
 import '../styles/global.css';
 import displayFont from '@fontsource-variable/bricolage-grotesque/files/bricolage-grotesque-latin-wght-normal.woff2?url';
+import textFont from '@fontsource-variable/figtree/files/figtree-latin-wght-normal.woff2?url';
+import { getImage } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
 import PageTransitions from '../components/motion/PageTransitions.astro';
 import { DEMO } from '../config/env';
+import { site } from '../config/site';
+import defaultSharePhoto from '../assets/photos/rajasthan-1.jpg';
+
+export interface ShareImage {
+  src: ImageMetadata;
+  alt: string;
+}
 
 interface Props {
+  /** The full <title>; pages build it with pageTitle() from src/lib/seo.ts. */
   title: string;
   description: string;
   /** Class names for <body>, e.g. a tone such as `tone-white`. */
   bodyClass?: string;
+  ogType?: 'website' | 'article';
+  /** Photo for the share card; defaults to a licensed photo of Udaipur. */
+  image?: ShareImage;
+  /** Set false on pages that should not name a canonical URL (the 404 page). */
+  canonical?: boolean;
 }
 
-const { title, description, bodyClass } = Astro.props;
+const { title, description, bodyClass, ogType = 'website', image, canonical = true } = Astro.props;
+
+/*
+ * Absolute URLs need the site origin, set through SITE_URL in astro.config.mjs. Without it the
+ * page names no canonical URL, no og:url and no og:image, rather than a made-up domain.
+ */
+const origin = Astro.site;
+const path = Astro.url.pathname.replace(/\/+$/, '') || '/';
+const canonicalUrl = origin && canonical ? new URL(path, origin).href : null;
+
+const share: ShareImage = image ?? {
+  src: defaultSharePhoto,
+  alt: 'The City Palace complex in Udaipur rising above the lake under a clear blue sky',
+};
+const shareImage = origin
+  ? await getImage({
+      src: share.src,
+      width: 1200,
+      height: 630,
+      fit: 'cover',
+      format: 'jpg',
+      quality: 78,
+    })
+  : null;
+const shareImageUrl = origin && shareImage ? new URL(shareImage.src, origin).href : null;
 ---
 
 <!doctype html>
@@ -22,7 +62,25 @@ const { title, description, bodyClass } = Astro.props;
     <title>{title}</title>
     <meta name="description" content={description} />
     {DEMO && <meta name="robots" content="noindex, nofollow" />}
+    {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content={site.displayName} />
+    <meta property="og:locale" content="en_IN" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    {canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
+    {shareImageUrl && (
+      <>
+        <meta property="og:image" content={shareImageUrl} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content={share.alt} />
+        <meta name="twitter:card" content="summary_large_image" />
+      </>
+    )}
     <link rel="preload" href={displayFont} as="font" type="font/woff2" crossorigin />
+    {/* The text face is preloaded too: a late swap moved the hero photo on phones (CLS). */}
+    <link rel="preload" href={textFont} as="font" type="font/woff2" crossorigin />
     <script is:inline>
       // Browsers without CSS scroll timelines draw scroll-linked route lines with GSAP. Flag
       // them before first paint so those lines start undrawn instead of flashing fully drawn.

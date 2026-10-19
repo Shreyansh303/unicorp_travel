@@ -1,0 +1,246 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import PageHero from '../components/ui/PageHero.astro';
+import Section from '../components/ui/Section.astro';
+import Icon from '../components/ui/Icon.astro';
+import FactsBlock from '../components/ui/FactsBlock.astro';
+import MapPanel from '../components/ui/MapPanel.astro';
+import { shown, site, telHref, weekdays, whatsappHref, type Weekday } from '../config/site';
+import { emailFor, greeting, mobile } from '../lib/enquiry';
+import { routes } from '../lib/routes';
+
+const office = shown(site.offices.operating);
+const message = greeting('I would like to get in touch about a trip.');
+const officeIn = office ? ` in ${office.locality}` : '';
+const email = shown(site.email);
+const mailHref = emailFor('Travel enquiry');
+const phones = [
+  { label: 'Mobile and WhatsApp', phone: shown(site.phones.mobile) },
+  { label: 'Office', phone: shown(site.phones.landline) },
+  { label: 'Mobile', phone: shown(site.phones.secondMobile) },
+].filter(
+  (entry): entry is { label: string; phone: NonNullable<typeof entry.phone> } =>
+    entry.phone !== null,
+);
+
+// Hours render only when site.ts allows them to be shown, and only for days with both times.
+const hours = shown(site.hours);
+const dayNames: Record<Weekday, string> = {
+  monday: 'Monday',
+  tuesday: 'Tuesday',
+  wednesday: 'Wednesday',
+  thursday: 'Thursday',
+  friday: 'Friday',
+  saturday: 'Saturday',
+  sunday: 'Sunday',
+};
+const hourRows = hours
+  ? weekdays
+      .map((day) => ({ day: dayNames[day], value: hours[day] }))
+      .filter((row) => row.value?.opens && row.value.closes)
+  : [];
+---
+
+<PageLayout
+  title="Contact us"
+  description={`Phone, WhatsApp, email and the office address${officeIn}. Message us about a holiday, business travel or any travel service.`}
+  topic="a trip"
+  message={message}
+  mood="corporate"
+  enquiry={{
+    title: 'Not sure where',
+    accent: 'to start?',
+    text: 'Use the guided trip request: answer a few questions about your trip and send them to us in one go.',
+  }}
+>
+  <PageHero
+    title="Contact us"
+    eyebrow="Talk to a person"
+    lede="Message us on WhatsApp, call, email or visit the office. Tell us a little about the trip and we will take it from there."
+    crumbs={[{ label: 'Home', href: routes.home }, { label: 'Contact' }]}
+    mood="corporate"
+  />
+
+  <Section tone="sand" mood="corporate" aria-labelledby="ways-title">
+    <h2 id="ways-title" class="sr-only">
+      Ways to reach us
+    </h2>
+    <div class="contact-grid">
+      <ul class="ways">
+        {mobile && (
+          <li class="way way-wa">
+            <span class="way-icon" aria-hidden="true">
+              <Icon name="whatsapp" size={24} />
+            </span>
+            <h3 class="t-h4">WhatsApp</h3>
+            <p class="t-muted">Send your plans, dates and questions in one chat.</p>
+            <a
+              class="way-link"
+              href={whatsappHref(message)}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Chat on WhatsApp<span class="sr-only"> (opens in a new tab)</span>
+            </a>
+          </li>
+        )}
+        {phones.length > 0 && (
+          <li class="way">
+            <span class="way-icon" aria-hidden="true">
+              <Icon name="phone" size={24} />
+            </span>
+            <h3 class="t-h4">Phone</h3>
+            <dl class="way-phones">
+              {phones.map((entry) => (
+                <div>
+                  <dt>{entry.label}</dt>
+                  <dd>
+                    <a class="way-link" href={telHref(entry.phone)}>
+                      {entry.phone.display}
+                    </a>
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </li>
+        )}
+        {email && mailHref && (
+          <li class="way">
+            <span class="way-icon" aria-hidden="true">
+              <Icon name="mail" size={24} />
+            </span>
+            <h3 class="t-h4">Email</h3>
+            <p class="t-muted">Good for longer requests and company travel.</p>
+            <a class="way-link" href={mailHref}>
+              {email}
+            </a>
+          </li>
+        )}
+        {hourRows.length > 0 && (
+          <li class="way">
+            <h3 class="t-h4">Office hours</h3>
+            <dl class="way-hours">
+              {hourRows.map((row) => (
+                <div>
+                  <dt>{row.day}</dt>
+                  <dd>
+                    {row.value?.opens} to {row.value?.closes}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </li>
+        )}
+      </ul>
+      {office && (
+        <div class="visit">
+          <h3 class="t-h4 visit-title">Visit the office</h3>
+          <MapPanel address={office} />
+        </div>
+      )}
+    </div>
+  </Section>
+
+  <Section tone="white" mood="corporate" aria-labelledby="facts-title">
+    <div class="facts-grid">
+      <h2 id="facts-title" class="t-h2">
+        Company details
+      </h2>
+      <FactsBlock />
+    </div>
+  </Section>
+</PageLayout>
+
+<style>
+  .contact-grid {
+    display: grid;
+    gap: var(--space-10);
+  }
+
+  @media (min-width: 1024px) {
+    .contact-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-8);
+      align-items: start;
+    }
+  }
+
+  .ways {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .way {
+    display: grid;
+    gap: var(--space-2);
+    justify-items: start;
+    padding: var(--space-6);
+    border-radius: var(--radius-sm);
+    background: var(--white);
+    box-shadow: inset 0 0 0 1px var(--sand-200);
+  }
+
+  .way-icon {
+    display: grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    margin-bottom: var(--space-2);
+    border-radius: var(--radius-sm);
+    background: var(--ink);
+    color: var(--white);
+  }
+
+  .way-wa .way-icon {
+    background: var(--red-600);
+  }
+
+  .way-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--tap);
+    color: var(--ink);
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    font-weight: var(--weight-bold);
+    letter-spacing: -0.02em;
+    text-decoration: underline;
+    text-decoration-color: var(--red-600);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.2em;
+    overflow-wrap: anywhere;
+  }
+
+  .way-link:hover {
+    text-decoration-thickness: 4px;
+  }
+
+  .way-phones,
+  .way-hours {
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .way-phones dt,
+  .way-hours dt {
+    font-size: var(--text-sm);
+    color: var(--stone-600);
+  }
+
+  .visit {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .facts-grid {
+    display: grid;
+    gap: var(--space-8);
+  }
+
+  @media (min-width: 1024px) {
+    .facts-grid {
+      grid-template-columns: 5fr 7fr;
+      gap: var(--space-16);
+    }
+  }
+</style>

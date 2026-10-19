@@ -14,7 +14,7 @@ This repository is private.
 | M1 Foundation | Astro scaffold, facts config, `DEMO` flag and noindex, lint and test scripts | Done |
 | M2 Design system and art direction | Tokens, components, motion primitives, `/styleguide` | Done |
 | M3 Content model and sample content | Zod-validated collections for services, packages and FAQs; sample content; demo-content build check | Done |
-| M4 Pages (static) | Every public route, from home to legal pages and 404 | Not started |
+| M4 Pages (static) | Every public route, from home to legal pages and 404 | Done |
 | M5 Interactive features | Enquiry forms, package filters, "Plan my trip" planner, FAQ accordions, form notices | Not started |
 | M6 Motion and polish | Hero sequence, route-line storytelling, page transitions, visual QA at five widths | Not started |
 | M7 Quality gates | Performance, accessibility, SEO basics, links and browser checks on every page | Not started |
@@ -69,11 +69,16 @@ The dev server prints its local address (Astro's default is `http://localhost:43
 
 | Path | What it shows |
 |---|---|
-| `/` | Home page |
-| `/styleguide` | Every design token and component, in every state |
-| `/mocks` | Design review index for the mock pages |
-| `/mocks/c` | Home page of the chosen direction, built on the design system |
-| `/mocks/c/package` | Package page of the chosen direction |
+| `/` | Home: offer, services, featured sample holidays, corporate teaser |
+| `/holidays`, `/holidays/<slug>` | Sample holiday listing and one page per package |
+| `/corporate-travel` | Corporate travel offer, with FAQs |
+| `/services`, `/services/<slug>` | Travel-related services and one page per service, with FAQs |
+| `/plan-my-trip` | The guided trip request (direct routes until the M5 planner) |
+| `/about`, `/contact`, `/faqs` | Company, contact details with a map link, all FAQs |
+| `/privacy`, `/terms` | Legal drafts, pending legal review |
+| `/styleguide` | Every design token and component, in every state (internal, not linked) |
+
+Every page ends with an enquiry band (WhatsApp, call and a link to Plan my trip or Contact) and has the floating WhatsApp and call buttons with a page-specific message. Unknown paths show the 404 page.
 
 Stop the dev server before running the test suites. Playwright reuses a server that is already running on port 4321 when it is not in CI, so the tests would run against the dev server instead of the build.
 
@@ -93,6 +98,7 @@ All scripts are defined in `package.json`.
 | `npm run test:a11y` | `playwright test --project=a11y` | Runs the axe accessibility tests in `tests/a11y/`. |
 | `npm run test:perf` | `node scripts/lighthouse.mjs` | Runs the Lighthouse mobile budget against `dist/`. Builds first if `dist/index.html` is missing. |
 | `npm run test:content` | `node scripts/test-content.mjs` | Checks the demo-content rule with two real builds. The `DEMO=false` build must fail and name the entries with `demo: true`. The default build must pass. Builds go to a temporary folder, so `dist/` and `.vercel/` are not touched. |
+| `npm run test:links` | `node scripts/check-links.mjs` | Crawls every HTML file in `dist/` and fails on a broken internal `href`, `src` or `srcset`, a missing `#fragment`, an empty or `#` href, a `javascript:` link, an `<a>` without `href`, or a malformed external link (`tel:` must start `tel:+91`, `wa.me` must use the number in `site.ts`). Run `npm run build` first. |
 
 ## Testing and quality
 
@@ -101,12 +107,16 @@ All scripts are defined in `package.json`.
 **End-to-end tests** (`tests/e2e/`):
 
 - `smoke.spec.ts`: the home page has one `h1`, `lang="en-IN"`, and a robots meta tag that follows the `DEMO` flag.
-- `components.spec.ts`: a keyboard pass over the styleguide, with a visible focus ring on every interactive component. It also covers the navigation submenu (Enter, Space and Escape), the dialog (focus trap, Escape, focus returned to the trigger), accordions, filter chips and the mobile drawer. It checks that the floating contact buttons never cover focus or content on the checked pages. Under reduced motion it checks that nothing moves on each page, and that hover and press states do not move. It also checks that every header link is reachable on a phone without JavaScript.
+- `pages.spec.ts`: every route (the list is derived from the content collections in `tests/routes.ts`) returns 200 and has one `h1`, a title ending in the brand, a description, Open Graph tags, breadcrumbs on inner pages, an enquiry band with working WhatsApp and call links as the last thing in `main`, the "Sample content" label where sample content appears, and footer address and phones equal to `site.ts` (F-15). Titles and descriptions are unique across all routes. An unknown path returns the 404 page. Canonical, `og:url` and `og:image` are checked when `SITE_URL` is set and must be absent when it is not.
+- `components.spec.ts`: a keyboard pass over the styleguide, with a visible focus ring on every interactive component. It also covers the navigation submenu (Enter, Space and Escape), the dialog (focus trap, Escape, focus returned to the trigger), accordions, filter chips and the mobile drawer. It checks that the floating contact buttons never cover focus or content on the checked pages. Under reduced motion it checks that nothing moves on each page, and that hover and press states do not move. It also checks that every header link is reachable on a phone without JavaScript. These checks run on `/`, a package page and `/styleguide`.
 
 **Accessibility tests** (`tests/a11y/`):
 
 - `home.spec.ts`: axe finds no violations on the home page.
-- `styleguide.spec.ts`: axe finds no violations on `/styleguide`, `/mocks/c` and `/mocks/c/package`, at 375 px and 1366 px. The WCAG 2.0 A and AA, 2.1 A and AA, and 2.2 AA rule sets are checked. It also scans the styleguide with the submenu and dialog open, and the mobile drawer when it is open.
+- `pages.spec.ts`: axe finds no violations on every route and the 404 page, at 375 px and 1366 px, and on `/faqs` with an accordion open.
+- `styleguide.spec.ts`: axe finds no violations on `/styleguide` at 375 px and 1366 px, with the submenu and dialog open, and with the mobile drawer open on the home page.
+
+All axe scans use the WCAG 2.0 A and AA, 2.1 A and AA, and 2.2 AA rule sets.
 
 **Lighthouse budget** (`lighthouserc.json`, `scripts/lighthouse.mjs`). The budget runs in mobile mode, with a 412 x 823 viewport at 1.75 device pixel ratio, and three runs. The thresholds are:
 
@@ -117,9 +127,15 @@ All scripts are defined in `package.json`.
 | Cumulative Layout Shift | below 0.1 (set to 0.0999) |
 | Total Blocking Time | at most 200 ms |
 
-The config collects from `dist/` and does not list URLs. Reports go to `.lighthouseci/`, which Git ignores.
+The config serves `dist/` and lists its URLs explicitly: home, `/holidays`, one package page, one service page and `/contact`. Reports go to `.lighthouseci/`, which Git ignores.
 
 Lighthouse needs a Chrome binary. The script uses `CHROME_PATH` if you set it. Otherwise it uses a Chrome installed on the machine. If there is none, it falls back to Playwright's Chromium, which `npx playwright install chromium` installs.
+
+## SEO and the site origin
+
+`BaseLayout.astro` gives every page a unique `<title>` (built with `pageTitle()` in `src/lib/seo.ts`), a meta description, and the Open Graph tags `og:title`, `og:description`, `og:type`, `og:locale` (`en_IN`) and `og:site_name`.
+
+Canonical links, `og:url` and `og:image` need absolute URLs, so they depend on the environment variable `SITE_URL`, which `astro.config.mjs` passes to Astro as `site`. When it is unset, pages emit no canonical, `og:url` or `og:image` rather than invent a domain. When it is set, the share image is a 1200 x 630 JPEG cut from a licensed photo: the package's hero photo on package pages, the service photo on service and corporate pages, and the Udaipur photo elsewhere. M8 sets `SITE_URL` to the preview URL. JSON-LD and the sitemap come in M7.
 
 ## The DEMO flag
 
@@ -176,6 +192,7 @@ Link helpers in the same file:
 - Navigation and layout: `Header`, `Footer`, `Breadcrumbs`, `FloatingContact`, `Section`, `Link`.
 - Actions and feedback: `Button`, `Dialog`, `Toast` (with `toast.ts`), `Stepper`, `Accordion`, `FilterChips`.
 - Content: `ServiceCard`, `PackageCard`, `FactsBlock`, `SampleLabel` (the visible "Sample content" label), `Icon`. Icons are inline line icons based on the Lucide set (ISC licence).
+- Page building blocks: `PageHero` (breadcrumbs, the H1, lede and optional photo), `EnquiryBand` (the closing enquiry option on every page, marked `data-enquiry`), `HowItWorks` (numbered steps), `TickList` (inclusions and what we handle) and `MapPanel` (an illustrated office panel with an "Open in Google Maps" link; no map loads on the page).
 - Forms in `src/components/ui/form/`: `Input`, `Textarea`, `Select`, `Checkbox`, `RadioGroup`, `FieldMessage`. Each field has a visible label, a hint and an error message, wired with `aria-describedby`.
 
 **Motion primitives** in `src/components/motion/`:
@@ -215,6 +232,7 @@ unicorp_travel/
 │   ├── demo-roadmap.md         Scope, decisions, rules and milestones
 │   └── image-credits.md        Source and licence for every photo
 ├── scripts/
+│   ├── check-links.mjs         Link checker for dist/ (test:links)
 │   ├── lighthouse.mjs          Runs the Lighthouse budget (test:perf)
 │   ├── vercel-noindex-header.mjs   Adds the X-Robots-Tag route when DEMO is on
 │   └── test-content.mjs        Checks the demo-content rule (test:content)
@@ -226,26 +244,29 @@ unicorp_travel/
 │   ├── config/
 │   │   ├── site.ts             Every business fact and the link helpers
 │   │   └── env.ts              The DEMO flag
-│   ├── content/                Services (11), sample packages (8) and FAQs (36)
+│   ├── content/                Services (11), sample packages (8), FAQs (36) and legal drafts (2)
 │   ├── content.config.ts       Collection schemas, the demo rule and data checks
 │   ├── layouts/
-│   │   └── BaseLayout.astro    Page shell: lang, robots meta, head tags
+│   │   ├── BaseLayout.astro    Document shell: lang, robots meta, SEO and Open Graph tags
+│   │   ├── PageLayout.astro    Public page: header, enquiry band, footer, floating contact
+│   │   └── LegalLayout.astro   Privacy and terms pages from the legal collection
 │   ├── lib/
 │   │   ├── format.ts           Indian rupee formatting
 │   │   ├── contrast.ts         WCAG contrast maths for the styleguide
 │   │   ├── packages.ts         Package regions, themes and budget bands
 │   │   ├── content.ts          Typed access to content collections
+│   │   ├── enquiry.ts          Pre-filled WhatsApp and email messages
+│   │   ├── nav.ts              Header and footer navigation
+│   │   ├── routes.ts           Route paths and service and package links
 │   │   └── seo.ts              Page titles with the brand suffix from site.ts
-│   ├── pages/
-│   │   ├── index.astro         Home page
-│   │   ├── styleguide.astro    Design system reference
-│   │   └── mocks/              Design review pages for the chosen direction
+│   ├── pages/                  Every route in the site map, plus 404 and the styleguide
 │   └── styles/
 │       ├── tokens.css          Design tokens, including motion
 │       └── global.css          Base styles, focus, reduced-motion rules
 └── tests/
-    ├── e2e/                    smoke.spec.ts, components.spec.ts
-    └── a11y/                   home.spec.ts, styleguide.spec.ts
+    ├── routes.ts               Route list derived from the content collections
+    ├── e2e/                    smoke, components and pages specs
+    └── a11y/                   home, styleguide and pages specs
 ```
 
 ## Content rules

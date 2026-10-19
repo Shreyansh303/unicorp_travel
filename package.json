@@ -13,7 +13,8 @@
     "test:e2e": "playwright test --project=e2e",
     "test:a11y": "playwright test --project=a11y",
     "test:perf": "node scripts/lighthouse.mjs",
-    "test:content": "node scripts/test-content.mjs"
+    "test:content": "node scripts/test-content.mjs",
+    "test:links": "node scripts/check-links.mjs"
   },
   "dependencies": {
     "@astrojs/react": "7.1.0",

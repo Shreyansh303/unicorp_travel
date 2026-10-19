@@ -1,0 +1,226 @@
+---
+import type { GetStaticPaths } from 'astro';
+import PageLayout from '../../layouts/PageLayout.astro';
+import PageHero from '../../components/ui/PageHero.astro';
+import Section from '../../components/ui/Section.astro';
+import Button from '../../components/ui/Button.astro';
+import Link from '../../components/ui/Link.astro';
+import SampleLabel from '../../components/ui/SampleLabel.astro';
+import TickList from '../../components/ui/TickList.astro';
+import HowItWorks from '../../components/ui/HowItWorks.astro';
+import Accordion from '../../components/ui/Accordion.astro';
+import {
+  getFaqsForService,
+  getServicesByCategory,
+  type FaqEntry,
+  type ServiceEntry,
+} from '../../lib/content';
+import { callHref, mobile, whatsappFor } from '../../lib/enquiry';
+import { midSentence, routes, serviceHref, serviceLabel } from '../../lib/routes';
+
+export const getStaticPaths = (async () => {
+  const related = await getServicesByCategory('related');
+  return Promise.all(
+    related.map(async (service) => ({
+      params: { slug: service.id },
+      props: { service, faqs: await getFaqsForService(service.id), all: related },
+    })),
+  );
+}) satisfies GetStaticPaths;
+
+interface Props {
+  service: ServiceEntry;
+  faqs: FaqEntry[];
+  all: ServiceEntry[];
+}
+
+const { service, faqs, all } = Astro.props;
+const data = service.data;
+const label = serviceLabel(service);
+const topic = midSentence(data.title);
+const sampleFaqs = faqs.some((faq) => faq.data.demo);
+const otherServices = all.filter((item) => item.id !== service.id);
+---
+
+<PageLayout
+  title={data.seo.title}
+  description={data.seo.description}
+  topic={topic}
+  mood="corporate"
+  image={data.image}
+  enquiry={{
+    title: `${label}?`,
+    accent: 'Ask us.',
+    text: 'Send a short note with your dates and what you need. We will reply with what is involved and the next steps.',
+    next: 'contact',
+  }}
+>
+  <PageHero
+    title={data.title}
+    eyebrow="Travel services"
+    lede={data.intro}
+    crumbs={[
+      { label: 'Home', href: routes.home },
+      { label: 'Services', href: routes.services },
+      { label },
+    ]}
+    image={data.image}
+    mood="corporate"
+  >
+    <div class="hero-actions">
+      {mobile && (
+        <Button href={whatsappFor(topic)} size="lg" iconStart="whatsapp" external>
+          Ask on WhatsApp
+        </Button>
+      )}
+      {callHref && (
+        <Button href={callHref} variant="secondary" size="lg" iconStart="phone">
+          Call us
+        </Button>
+      )}
+    </div>
+  </PageHero>
+
+  <Section tone="sand" mood="corporate" aria-labelledby="handle-title">
+    <div class="handle-grid">
+      <div>
+        <h2 id="handle-title" class="t-h2">
+          What we handle
+        </h2>
+        {data.demo && <SampleLabel />}
+      </div>
+      <TickList items={data.whatWeHandle} class="handle-list" />
+    </div>
+    {data.whoItsFor && data.whoItsFor.length > 0 && (
+      <div class="who">
+        <h3 class="t-h4">Who it is for</h3>
+        <ul class="who-list">
+          {data.whoItsFor.map((item) => (
+            <li>{item}</li>
+          ))}
+        </ul>
+      </div>
+    )}
+  </Section>
+
+  <Section tone="white" mood="corporate" aria-labelledby="how-title">
+    <div class="section-head">
+      <h2 id="how-title" class="t-h2">
+        How it works
+      </h2>
+      <p>You tell us what you need, we propose, and nothing goes ahead until you agree.</p>
+    </div>
+    <HowItWorks steps={data.howItWorks} />
+  </Section>
+
+  {faqs.length > 0 && (
+    <Section tone="paper" mood="corporate" aria-labelledby="faq-title">
+      <div class="section-head">
+        <h2 id="faq-title" class="t-h2">
+          Questions
+        </h2>
+        <p>
+          Short answers to common questions. <Link href={routes.faqs}>See all FAQs</Link>.{' '}
+          {sampleFaqs && <SampleLabel />}
+        </p>
+      </div>
+      <Accordion
+        id={`faq-${service.id}`}
+        items={faqs.map((faq) => ({ title: faq.data.question, body: faq.rendered?.html ?? '' }))}
+      />
+    </Section>
+  )}
+
+  <Section tone="white" mood="corporate" spacing="tight" aria-labelledby="more-title">
+    <h2 id="more-title" class="t-h4 more-title">
+      More travel services
+    </h2>
+    <ul class="more-list">
+      {otherServices.map((item) => (
+        <li>
+          <a href={serviceHref(item)}>{serviceLabel(item)}</a>
+        </li>
+      ))}
+    </ul>
+  </Section>
+</PageLayout>
+
+<style>
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+
+  .handle-grid {
+    display: grid;
+    gap: var(--space-8);
+  }
+
+  .handle-grid > div {
+    display: grid;
+    gap: var(--space-4);
+    justify-items: start;
+    align-content: start;
+  }
+
+  .handle-grid :global(.handle-list) {
+    font-size: var(--text-lg);
+  }
+
+  @media (min-width: 1024px) {
+    .handle-grid {
+      grid-template-columns: 5fr 7fr;
+      gap: var(--space-16);
+    }
+  }
+
+  .who {
+    display: grid;
+    gap: var(--space-4);
+    margin-top: var(--space-12);
+    padding-top: var(--space-8);
+    border-top: 2px solid var(--ink);
+  }
+
+  .who-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .who-list li {
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-pill);
+    background: var(--white);
+    box-shadow: inset 0 0 0 1px var(--border-strong);
+    font-weight: var(--weight-medium);
+  }
+
+  .more-title {
+    margin-bottom: var(--space-4);
+  }
+
+  .more-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-3);
+  }
+
+  .more-list a {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--tap);
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-pill);
+    color: var(--text);
+    font-weight: var(--weight-bold);
+    text-decoration: none;
+    box-shadow: inset 0 0 0 1.5px var(--text);
+  }
+
+  .more-list a:hover {
+    background: var(--text);
+    color: var(--bg);
+  }
+</style>

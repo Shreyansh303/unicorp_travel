@@ -1,0 +1,462 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { Picture } from 'astro:assets';
+import PageLayout from '../../layouts/PageLayout.astro';
+import Section from '../../components/ui/Section.astro';
+import Button from '../../components/ui/Button.astro';
+import Link from '../../components/ui/Link.astro';
+import Breadcrumbs from '../../components/ui/Breadcrumbs.astro';
+import SampleLabel from '../../components/ui/SampleLabel.astro';
+import TickList from '../../components/ui/TickList.astro';
+import RouteLine from '../../components/motion/RouteLine.astro';
+import Stagger from '../../components/motion/Stagger.astro';
+import Parallax from '../../components/motion/Parallax.astro';
+import { getPackages, type PackageEntry } from '../../lib/content';
+import { callHref, mobile, whatsappFor } from '../../lib/enquiry';
+import { formatDate, formatINR, isoDate } from '../../lib/format';
+import { packageTypeLabels, regionLabels, themeLabels } from '../../lib/packages';
+import { routes } from '../../lib/routes';
+
+export const getStaticPaths = (async () => {
+  const packages = await getPackages('featured');
+  return packages.map((pkg) => ({ params: { slug: pkg.id }, props: { pkg } }));
+}) satisfies GetStaticPaths;
+
+interface Props {
+  pkg: PackageEntry;
+}
+
+const { pkg } = Astro.props;
+const data = pkg.data;
+const topic = `your ${data.title} package`;
+const highlightTones = ['tone-red', 'tone-white', 'tone-ink', 'tone-white', 'tone-red', 'tone-ink'];
+const first = data.destinations[0];
+const last = data.destinations.at(-1);
+const route = data.destinations.join(' · ');
+const gallery = data.images.gallery[0];
+const validUntil = formatDate(data.priceValidUntil);
+
+// One wave per day, so the line has a bend beside each stop.
+const days = data.itinerary.length;
+const segment = 1000 / days;
+const itineraryPath = Array.from({ length: days }, (_, index) => {
+  const y = segment * (index + 1);
+  const bend = index % 2 === 0 ? 36 : 4;
+  return `S${bend} ${(y - segment / 2).toFixed(0)} 20 ${y.toFixed(0)}`;
+}).join(' ');
+---
+
+<PageLayout
+  title={data.seo.title}
+  description={data.seo.description}
+  topic={topic}
+  image={data.images.hero}
+  enquiry={{
+    title: 'Like the look of',
+    accent: 'this trip?',
+    text: `Tell us your dates and who is travelling, and we will send a plan and a price for ${data.title}. Changes are welcome.`,
+  }}
+>
+  <Section tone="paper" spacing="none" aria-labelledby="page-title">
+    <div class="pk-grid">
+      <div class="pk-copy">
+        <Breadcrumbs
+          items={[
+            { label: 'Home', href: routes.home },
+            { label: 'Holidays', href: routes.holidays },
+            { label: data.title },
+          ]}
+        />
+        {data.demo && <SampleLabel />}
+        <h1 id="page-title" class="t-display pk-title">
+          {data.title}
+        </h1>
+        <p class="t-lede">{data.summary}</p>
+        <ul class="pk-chips">
+          <li class="pk-chip-red">
+            {data.duration.days} days, {data.duration.nights} nights
+          </li>
+          <li class="pk-chip-ink">
+            {packageTypeLabels[data.type]} · {regionLabels[data.region]}
+          </li>
+          {data.themes.map((theme) => (
+            <li class="pk-chip-line">{themeLabels[theme]}</li>
+          ))}
+        </ul>
+        <div class="pk-price">
+          <p>
+            from <strong>{formatINR(data.fromPrice)}</strong>
+          </p>
+          <p class="pk-basis">{data.priceBasis}</p>
+          <p class="pk-valid">
+            Indicative price, valid until{' '}
+            <time datetime={isoDate(data.priceValidUntil)}>{validUntil}</time>
+          </p>
+        </div>
+        <div class="pk-actions">
+          {mobile && (
+            <Button href={whatsappFor(topic)} size="lg" iconStart="whatsapp" external>
+              Ask about this trip
+            </Button>
+          )}
+          {callHref && (
+            <Button href={callHref} variant="secondary" size="lg" iconStart="phone">
+              Call us
+            </Button>
+          )}
+        </div>
+      </div>
+      <figure class="arch pk-arch">
+        <Picture
+          src={data.images.hero.src}
+          alt={data.images.hero.alt}
+          formats={['avif', 'webp']}
+          widths={[400, 640, 960, 1280]}
+          sizes="(min-width: 1366px) 520px, (min-width: 1024px) 38vw, calc(100vw - 2rem)"
+          loading="eager"
+          fetchpriority="high"
+        />
+      </figure>
+    </div>
+  </Section>
+
+  <Section tone="sand" rounded aria-labelledby="highlights-title">
+    <div class="section-head">
+      <h2 id="highlights-title" class="t-h2">
+        The good <span class="t-accent">bits</span>
+      </h2>
+      <p>
+        What this trip is built around, from {first}
+        {last && last !== first ? ` to ${last}` : ''}. {data.demo && <SampleLabel />}
+      </p>
+    </div>
+    <Stagger as="ul" class="hl-grid">
+      {data.highlights.map((item, index) => (
+        <li class:list={['hl-card', highlightTones[index % highlightTones.length]]}>
+          <span class="hl-num" aria-hidden="true">
+            {String(index + 1).padStart(2, '0')}
+          </span>
+          <p class="hl-text">{item}</p>
+        </li>
+      ))}
+    </Stagger>
+  </Section>
+
+  <Section tone="paper" aria-labelledby="itinerary-title">
+    <div class="itin-grid">
+      <div class="itin-head">
+        <h2 id="itinerary-title" class="t-h2">
+          Day by day
+        </h2>
+        <p class="t-muted">
+          Follow the line through {route}. {data.demo && <SampleLabel />}
+        </p>
+        {gallery && (
+          <Parallax class="itin-photo">
+            <Picture
+              src={gallery.src}
+              alt={gallery.alt}
+              formats={['avif', 'webp']}
+              widths={[400, 640, 960]}
+              sizes="(min-width: 1366px) 480px, 36vw"
+            />
+          </Parallax>
+        )}
+      </div>
+      <div class="itin">
+        <RouteLine
+          class="itin-line"
+          d={`M20 0 ${itineraryPath}`}
+          viewBox="0 0 40 1000"
+          preserveAspectRatio="none"
+          draw="scroll"
+          strokeWidth={4}
+        />
+        <ol>
+          {data.itinerary.map((stop) => (
+            <li class="day">
+              <span class="day-num" aria-hidden="true">
+                {stop.day}
+              </span>
+              <p class="t-eyebrow">Day {stop.day}</p>
+              <h3 class="t-h3">{stop.title}</h3>
+              <p class="day-text">{stop.description}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </div>
+  </Section>
+
+  <Section tone="white" aria-labelledby="included-title">
+    <div class="section-head">
+      <h2 id="included-title" class="t-h2">
+        What the price covers
+      </h2>
+      <p>
+        The indicative price is {data.priceBasis}. We confirm everything in writing before you book.{' '}
+        {data.demo && <SampleLabel />}
+      </p>
+    </div>
+    <div class="inc-grid">
+      <div class="inc-col">
+        <h3 class="t-h4">Included</h3>
+        <TickList items={data.inclusions} />
+      </div>
+      <div class="inc-col">
+        <h3 class="t-h4">Not included</h3>
+        <TickList items={data.exclusions} mark="close" />
+      </div>
+    </div>
+    <p class="inc-more">
+      <Link href={routes.holidays} variant="standalone">
+        See all holidays
+      </Link>
+    </p>
+  </Section>
+</PageLayout>
+
+<style>
+  .pk-grid {
+    display: grid;
+    gap: var(--space-10);
+    padding-block: var(--space-6) var(--space-16);
+  }
+
+  .pk-copy {
+    display: grid;
+    gap: var(--space-5);
+    justify-items: start;
+    align-content: center;
+    min-width: 0;
+  }
+
+  .pk-title {
+    font-size: clamp(2.75rem, 1.4rem + 5.4vw, 6rem);
+  }
+
+  .pk-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .pk-chips li {
+    padding: var(--space-1) var(--space-4);
+    border-radius: var(--radius-pill);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-bold);
+  }
+
+  .pk-chip-red {
+    background: var(--red-600);
+    color: var(--white);
+  }
+
+  .pk-chip-ink {
+    background: var(--ink);
+    color: var(--white);
+  }
+
+  .pk-chip-line {
+    box-shadow: inset 0 0 0 1.5px var(--ink);
+  }
+
+  .pk-price p:first-child {
+    color: var(--text-muted);
+  }
+
+  .pk-price strong {
+    font-family: var(--font-display);
+    font-size: var(--text-2xl);
+    letter-spacing: -0.03em;
+    color: var(--text);
+  }
+
+  .pk-basis,
+  .pk-valid {
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+  }
+
+  .pk-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+
+  .pk-arch {
+    aspect-ratio: 4 / 5;
+    width: min(100%, 27rem);
+    justify-self: center;
+  }
+
+  .pk-arch :global(picture) {
+    display: block;
+    height: 100%;
+  }
+
+  @media (min-width: 1024px) {
+    .pk-grid {
+      grid-template-columns: 1.2fr 1fr;
+      gap: var(--space-16);
+      padding-block: var(--space-12) var(--space-24);
+    }
+
+    .pk-arch {
+      width: 100%;
+    }
+  }
+
+  /* Highlights */
+  .hl-grid {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  @media (min-width: 768px) {
+    .hl-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .hl-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .hl-card {
+    display: grid;
+    gap: var(--space-3);
+    align-content: start;
+    min-height: 10rem;
+    padding: var(--space-6);
+    border-radius: var(--radius-lg);
+    background: var(--bg);
+    color: var(--text);
+  }
+
+  .hl-card.tone-white {
+    box-shadow: inset 0 0 0 1px var(--sand-200);
+  }
+
+  .hl-num {
+    font-family: var(--font-display);
+    font-size: var(--text-2xl);
+    font-weight: var(--weight-black);
+    line-height: 1;
+    color: var(--accent-display);
+  }
+
+  .hl-text {
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    font-weight: var(--weight-bold);
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+  }
+
+  /* Itinerary */
+  .itin-grid {
+    display: grid;
+    gap: var(--space-10);
+  }
+
+  .itin-head {
+    display: grid;
+    gap: var(--space-4);
+    align-content: start;
+  }
+
+  .itin-head :global(.itin-photo) {
+    display: none;
+  }
+
+  @media (min-width: 1024px) {
+    .itin-grid {
+      grid-template-columns: 5fr 7fr;
+      gap: 5rem;
+    }
+
+    .itin-head {
+      position: sticky;
+      top: var(--space-8);
+      align-self: start;
+    }
+
+    .itin-head :global(.itin-photo) {
+      display: block;
+      aspect-ratio: 4 / 3;
+      margin-top: var(--space-4);
+    }
+  }
+
+  .itin {
+    position: relative;
+    padding-left: var(--space-16);
+  }
+
+  .itin :global(.itin-line) {
+    position: absolute;
+    top: 1.25rem;
+    left: 0.25rem;
+    width: 40px;
+    height: calc(100% - 2.5rem);
+  }
+
+  .day {
+    position: relative;
+    display: grid;
+    gap: var(--space-2);
+    padding-bottom: var(--space-12);
+  }
+
+  .day:last-child {
+    padding-bottom: 0;
+  }
+
+  .day-num {
+    position: absolute;
+    top: 0;
+    left: calc(var(--space-16) * -1);
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 50%;
+    background: var(--red-600);
+    color: var(--white);
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: var(--weight-black);
+    box-shadow: 0 0 0 5px var(--paper);
+  }
+
+  .day-text {
+    max-width: var(--measure);
+    color: var(--text-muted);
+  }
+
+  /* Inclusions */
+  .inc-grid {
+    display: grid;
+    gap: var(--space-10);
+  }
+
+  @media (min-width: 768px) {
+    .inc-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .inc-col {
+    display: grid;
+    gap: var(--space-5);
+    align-content: start;
+  }
+
+  .inc-more {
+    margin-top: var(--space-10);
+  }
+</style>

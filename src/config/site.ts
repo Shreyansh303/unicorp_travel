@@ -224,6 +224,17 @@ export function whatsappHref(message?: string, phone?: Phone | null): string {
   return message ? `${base}?text=${encodeURIComponent(message)}` : base;
 }
 
+/**
+ * "Open in Google Maps" link for a postal address: a plain search URL, so no map loads on the
+ * page, no API key is needed and the destination is the verified address itself.
+ */
+export function mapsHref(address: PostalAddress): string {
+  const query = [address.streetAddress, address.locality, address.region, address.postalCode]
+    .concat(address.country)
+    .join(', ');
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+}
+
 /** `mailto:` href with optional encoded subject and body. */
 export function mailtoHref(
   email: string,

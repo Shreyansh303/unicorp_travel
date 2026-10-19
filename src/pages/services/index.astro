@@ -1,0 +1,208 @@
+---
+import { Picture } from 'astro:assets';
+import PageLayout from '../../layouts/PageLayout.astro';
+import PageHero from '../../components/ui/PageHero.astro';
+import Section from '../../components/ui/Section.astro';
+import Button from '../../components/ui/Button.astro';
+import Icon from '../../components/ui/Icon.astro';
+import ServiceCard from '../../components/ui/ServiceCard.astro';
+import Stagger from '../../components/motion/Stagger.astro';
+import { getServicesGrouped } from '../../lib/content';
+import { whatsappFor } from '../../lib/enquiry';
+import { routes, serviceHref, serviceLabel } from '../../lib/routes';
+
+const grouped = await getServicesGrouped();
+const related = grouped.related;
+// Each card shows its entry's summary; sample entries (corporate, for now) carry the label.
+const others = [...grouped.leisure, ...grouped.corporate].map((service) => ({
+  title: service.data.title,
+  text: service.data.summary,
+  href: serviceHref(service),
+  demo: service.data.demo,
+}));
+---
+
+<PageLayout
+  title="Visa, forex, insurance and travel services"
+  description="Visa and passport help, hotels, forex, travel insurance, cruises, MICE, car and coach hire, international rail and FRRO assistance."
+  topic="your travel services"
+  mood="corporate"
+  enquiry={{
+    title: 'Need help with',
+    accent: 'one part of a trip?',
+    text: 'Ask us about a single booking or a document, even if you have planned the rest of the trip yourself.',
+    next: 'contact',
+  }}
+>
+  <PageHero
+    title="Travel services"
+    eyebrow="Around the trip"
+    lede="The paperwork and bookings around a trip, for holidays, business travel or a single booking. Pick a service to see what we handle and how it works."
+    crumbs={[{ label: 'Home', href: routes.home }, { label: 'Services' }]}
+    mood="corporate"
+  >
+    <Button href={whatsappFor('your travel services')} size="lg" iconStart="whatsapp" external>
+      Ask on WhatsApp
+    </Button>
+  </PageHero>
+
+  <Section tone="sand" mood="corporate" aria-labelledby="list-title">
+    <h2 id="list-title" class="sr-only">
+      All travel services
+    </h2>
+    <Stagger as="ul" class="svc-list">
+      {related.map((service) => (
+        <li>
+          <a class="svc-tile" href={serviceHref(service)}>
+            <span class="svc-photo">
+              <Picture
+                src={service.data.image.src}
+                alt=""
+                formats={['avif', 'webp']}
+                widths={[320, 480, 640]}
+                sizes="(min-width: 1366px) 400px, (min-width: 1024px) 30vw, (min-width: 768px) 45vw, calc(100vw - 2rem)"
+              />
+            </span>
+            <span class="svc-body">
+              <span class="svc-name">
+                {serviceLabel(service)}
+                <Icon name="arrow-right" size={22} class="svc-arrow" />
+              </span>
+              <span class="svc-summary">{service.data.summary}</span>
+            </span>
+          </a>
+        </li>
+      ))}
+    </Stagger>
+  </Section>
+
+  <Section tone="white" mood="corporate" aria-labelledby="also-title">
+    <div class="section-head">
+      <h2 id="also-title" class="t-h2">
+        Planning the whole trip?
+      </h2>
+      <p>The same team plans holidays and looks after company travel.</p>
+    </div>
+    <ul class="also-grid">
+      {others.map((card, index) => (
+        <li>
+          <ServiceCard
+            title={card.title}
+            text={card.text}
+            href={card.href}
+            tone={index === 0 ? 'red' : 'ink'}
+            demo={card.demo}
+          />
+        </li>
+      ))}
+    </ul>
+  </Section>
+</PageLayout>
+
+<style>
+  .svc-list {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  @media (min-width: 768px) {
+    .svc-list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-5);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .svc-list {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .svc-list li {
+    display: grid;
+  }
+
+  .svc-tile {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    overflow: hidden;
+    border-radius: var(--radius-sm);
+    background: var(--white);
+    color: var(--ink);
+    text-decoration: none;
+    box-shadow: inset 0 0 0 1px var(--sand-200);
+    /* Only transform animates; the shadow changes at once. */
+    transition: transform var(--duration-base) var(--ease-bounce);
+  }
+
+  .svc-tile:hover {
+    transform: translateY(var(--lift));
+    box-shadow: var(--shadow-lg);
+  }
+
+  .svc-tile:focus-visible {
+    outline: 3px solid var(--ink);
+    outline-offset: 4px;
+    box-shadow: 0 0 0 7px var(--white);
+  }
+
+  .svc-photo {
+    display: block;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+  }
+
+  .svc-photo :global(picture),
+  .svc-photo :global(img) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .svc-body {
+    display: grid;
+    gap: var(--space-2);
+    align-content: start;
+    padding: var(--space-5) var(--space-6) var(--space-6);
+  }
+
+  .svc-name {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    font-weight: var(--weight-black);
+    letter-spacing: var(--tracking-heading);
+    line-height: 1.1;
+  }
+
+  .svc-tile :global(.svc-arrow) {
+    transition: transform var(--duration-base) var(--ease-out);
+  }
+
+  .svc-tile:hover :global(.svc-arrow) {
+    transform: translateX(calc(var(--lift) * -2));
+  }
+
+  .svc-summary {
+    color: var(--stone-600);
+  }
+
+  .also-grid {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  @media (min-width: 768px) {
+    .also-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-5);
+    }
+  }
+
+  .also-grid li {
+    display: grid;
+  }
+</style>

@@ -1,0 +1,168 @@
+---
+/**
+ * Page for a legal draft from the `legal` collection (F-14). The text is sample content pending
+ * legal review, so the page says so and carries the "Sample content" label. The company it
+ * speaks for is named from site.ts, never in the Markdown.
+ */
+import { render } from 'astro:content';
+import PageLayout from './PageLayout.astro';
+import PageHero from '../components/ui/PageHero.astro';
+import Section from '../components/ui/Section.astro';
+import SampleLabel from '../components/ui/SampleLabel.astro';
+import FactsBlock from '../components/ui/FactsBlock.astro';
+import Icon from '../components/ui/Icon.astro';
+import { getLegal } from '../lib/content';
+import { formatDate, isoDate } from '../lib/format';
+import { midSentence, routes } from '../lib/routes';
+
+interface Props {
+  id: 'privacy' | 'terms';
+}
+
+const { id } = Astro.props;
+const entry = await getLegal(id);
+const { Content } = await render(entry);
+---
+
+<PageLayout
+  title={entry.data.title}
+  description={entry.data.summary}
+  topic={`your ${midSentence(entry.data.title)}`}
+  mood="corporate"
+  ogType="article"
+  enquiry={{
+    title: 'Questions about',
+    accent: 'this page?',
+    text: 'Ask us how we handle your details or how bookings work, and we will explain.',
+    next: 'contact',
+  }}
+>
+  <PageHero
+    title={entry.data.title}
+    lede={entry.data.summary}
+    crumbs={[{ label: 'Home', href: routes.home }, { label: entry.data.title }]}
+    mood="corporate"
+  >
+    <div class="legal-status">
+      {entry.data.demo && (
+        <p class="legal-draft">
+          <Icon name="alert-triangle" size={18} />
+          <span>Draft, pending legal review</span>
+        </p>
+      )}
+      {entry.data.demo && <SampleLabel />}
+    </div>
+    <p class="legal-updated">
+      Last updated{' '}
+      <time datetime={isoDate(entry.data.updated)}>{formatDate(entry.data.updated)}</time>
+    </p>
+  </PageHero>
+
+  <Section tone="white" mood="corporate" aria-label={`${entry.data.title} text`}>
+    <div class="legal-grid">
+      <article class="prose">
+        <Content />
+      </article>
+      <aside class="legal-aside" aria-labelledby="legal-company">
+        <h2 id="legal-company" class="t-h4">
+          The company
+        </h2>
+        <p class="t-muted">
+          Questions about this page? Use any of the ways on our{' '}
+          <a href={routes.contact}>contact page</a>.
+        </p>
+        <FactsBlock />
+      </aside>
+    </div>
+  </Section>
+</PageLayout>
+
+<style>
+  .legal-status {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .legal-draft {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-1) var(--space-3);
+    border-radius: var(--radius-sm);
+    background: var(--warning-50);
+    color: var(--warning-700);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-bold);
+  }
+
+  .legal-updated {
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+  }
+
+  .legal-grid {
+    display: grid;
+    gap: var(--space-12);
+  }
+
+  @media (min-width: 1024px) {
+    .legal-grid {
+      grid-template-columns: 8fr 4fr;
+      gap: var(--space-16);
+    }
+
+    .legal-aside {
+      position: sticky;
+      top: var(--space-8);
+      align-self: start;
+    }
+  }
+
+  .legal-aside {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  /* The aside is narrow, so the facts stack in one column. */
+  .legal-aside :global(.facts-list) {
+    grid-template-columns: 1fr;
+  }
+
+  .legal-aside a {
+    color: var(--text);
+    font-weight: var(--weight-bold);
+    text-decoration-color: var(--red-600);
+    text-underline-offset: 0.2em;
+  }
+
+  .prose {
+    max-width: 44rem;
+  }
+
+  .prose :global(h2) {
+    margin-top: var(--space-10);
+    margin-bottom: var(--space-3);
+    font-size: var(--text-xl);
+    letter-spacing: -0.02em;
+  }
+
+  .prose :global(h2:first-child) {
+    margin-top: 0;
+  }
+
+  .prose :global(p) {
+    margin-bottom: var(--space-4);
+    color: var(--stone-600);
+  }
+
+  .prose :global(a) {
+    color: var(--ink);
+    font-weight: var(--weight-bold);
+    text-decoration: underline;
+    text-decoration-color: var(--red-600);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.2em;
+  }
+</style>
