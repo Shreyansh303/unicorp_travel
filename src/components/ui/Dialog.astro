@@ -1,6 +1,8 @@
 ---
 /**
- * Modal dialog or side drawer on the native <dialog> element.
+ * Modal dialog, side drawer or full-screen sheet on the native <dialog> element.
+ * - The 'fullscreen' variant (phone menu) covers the screen on the paper tone. It has no default
+ *   close button: put your own header row (with a data-dialog-close control) in the "head" slot.
  * - Open it with any button carrying `data-dialog-open="<id>"`; close with `data-dialog-close`,
  *   Escape or a click on the backdrop.
  * - showModal() makes the rest of the page inert. Tab and Shift+Tab are kept inside the panel,
@@ -11,7 +13,7 @@ import Icon from './Icon.astro';
 interface Props {
   id: string;
   title: string;
-  variant?: 'dialog' | 'drawer';
+  variant?: 'dialog' | 'drawer' | 'fullscreen';
   /** Visually hide the title (it still names the dialog). */
   hideTitle?: boolean;
   class?: string;
@@ -19,22 +21,27 @@ interface Props {
 
 const { id, title, variant = 'dialog', hideTitle = false, class: className } = Astro.props;
 const titleId = `${id}-title`;
+const fullscreen = variant === 'fullscreen';
 ---
 
 <dialog
   id={id}
-  class:list={['dlg', `dlg-${variant}`, 'tone-white', className]}
+  class:list={['dlg', `dlg-${variant}`, fullscreen ? 'tone-paper' : 'tone-white', className]}
   aria-labelledby={titleId}
   data-dialog
 >
   <div class="dlg-panel">
     <div class="dlg-head">
-      <h2 id={titleId} class:list={['dlg-title', hideTitle && 'sr-only']}>
+      <h2 id={titleId} class:list={['dlg-title', (hideTitle || fullscreen) && 'sr-only']}>
         {title}
       </h2>
-      <button type="button" class="dlg-close" data-dialog-close aria-label={`Close: ${title}`}>
-        <Icon name="close" size={22} />
-      </button>
+      {fullscreen ? (
+        <slot name="head" />
+      ) : (
+        <button type="button" class="dlg-close" data-dialog-close aria-label={`Close: ${title}`}>
+          <Icon name="close" size={22} />
+        </button>
+      )}
     </div>
     <div class="dlg-body">
       <slot />
@@ -99,6 +106,46 @@ const titleId = `${id}-title`;
     padding: var(--space-6);
   }
 
+  /* Full screen (phone menu): a fixed head row, a body that fills the rest and scrolls inside. */
+  .dlg-fullscreen[open] {
+    inset: 0;
+    width: 100%;
+    height: 100dvh;
+    margin: 0;
+    overflow: hidden;
+  }
+
+  .dlg-fullscreen .dlg-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    box-shadow: none;
+  }
+
+  .dlg-fullscreen .dlg-head {
+    flex: none;
+    align-items: center;
+    box-sizing: border-box;
+    height: calc(4rem + env(safe-area-inset-top, 0px));
+    padding: env(safe-area-inset-top, 0px) 1.25rem 0;
+  }
+
+  .dlg-fullscreen .dlg-body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  @media (min-width: 768px) {
+    .dlg-fullscreen[open] {
+      display: none;
+    }
+  }
+
   .dlg-head {
     display: flex;
     align-items: start;
@@ -153,12 +200,18 @@ const titleId = `${id}-title`;
       opacity: 0;
       transform: translateX(calc(var(--reveal-distance) * 2));
     }
+
+    .dlg-fullscreen[open] .dlg-panel {
+      opacity: 0;
+      transform: translateY(var(--reveal-distance));
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
     @starting-style {
       .dlg-dialog[open] .dlg-panel,
-      .dlg-drawer[open] .dlg-panel {
+      .dlg-drawer[open] .dlg-panel,
+      .dlg-fullscreen[open] .dlg-panel {
         transform: none;
       }
     }

@@ -60,8 +60,17 @@ test('styleguide has no axe violations with the submenu and dialog open', async 
   expect((await scan(page)).violations).toEqual([]);
 });
 
-test('mobile drawer has no axe violations when open', async ({ page }) => {
+test('mobile menu has no axe violations when open', async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 812 });
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Menu', exact: true }).click();
+  await expect(page.locator('#site-nav-menu')).toBeVisible();
+  await settle(page, '#site-nav-menu');
+  expect((await scan(page)).violations).toEqual([]);
+});
+
+test('tablet drawer has no axe violations when open', async ({ page }) => {
+  await page.setViewportSize({ width: 800, height: 900 });
   await page.goto('/');
   await page.getByRole('button', { name: 'Menu', exact: true }).click();
   await expect(page.locator('#site-nav-drawer')).toBeVisible();

@@ -213,14 +213,14 @@ test.describe('styleguide keyboard pass', () => {
 test.describe('mobile', () => {
   test.use({ viewport: { width: 375, height: 812 } });
 
-  test('menu drawer opens, closes with Escape and returns focus', async ({ page }) => {
+  test('menu opens full screen, closes with Escape and returns focus', async ({ page }) => {
     await page.goto('/');
     const button = page.getByRole('button', { name: 'Menu', exact: true });
     await button.focus();
     await page.keyboard.press('Enter');
-    await expect(page.locator('#site-nav-drawer')).toBeVisible();
+    await expect(page.locator('#site-nav-menu')).toBeVisible();
     await page.keyboard.press('Escape');
-    await expect(page.locator('#site-nav-drawer')).toBeHidden();
+    await expect(page.locator('#site-nav-menu')).toBeHidden();
     await expect(button).toBeFocused();
   });
 

@@ -3,6 +3,11 @@
  * Site header: wordmark, main navigation with keyboard-operable submenus, a call button and,
  * below 1024px, a menu button that opens the navigation in a drawer.
  *
+ * Below 768px the header row is just the logo. A fixed "Menu" pill (it shrinks to an icon once the
+ * header row has scrolled away) opens a full-screen menu with the main pages and the WhatsApp
+ * and call buttons. While that menu is open, <html> carries `data-menu-open`.
+ * From 768px the desktop nav (1024px and up) or the drawer (768px to 1023px) is used instead.
+ *
  * Submenus: a button with aria-expanded controls a list of links. Enter or Space toggles it,
  * Escape closes it and returns focus to the button, and it closes when focus or a click
  * leaves it. Facts (name, phone) come from site.ts.
@@ -12,8 +17,9 @@ import logo from '../../assets/brand/logo.png';
 import Button from './Button.astro';
 import Dialog from './Dialog.astro';
 import Icon from './Icon.astro';
-import { hasChildren, type NavItem } from './types';
+import { hasChildren, type NavItem, type NavLink } from './types';
 import { shown, site, telHref, whatsappHref } from '../../config/site';
+import { routes } from '../../lib/routes';
 
 interface Props {
   items: NavItem[];
@@ -45,6 +51,7 @@ const {
 
 const mobile = shown(site.phones.mobile);
 const drawerId = `${idPrefix}-nav-drawer`;
+const menuId = `${idPrefix}-nav-menu`;
 const Tag = asDemo ? 'div' : 'header';
 const current = (href: string) => (currentPath === href ? 'page' : undefined);
 const firstSubmenuIndex = items.findIndex(hasChildren);
@@ -52,6 +59,24 @@ const links = items.flatMap((item) => (hasChildren(item) ? item.children : [item
 const waHref = mobile
   ? whatsappHref(whatsappMessage ?? `Hello ${site.displayName}, I would like help planning a trip.`)
   : null;
+
+// Phone menu: the main pages as big rows (Services opens its overview page, not the 11 service
+// links), then About, Contact and FAQs as a smaller group.
+const bigHrefs: string[] = [routes.holidays, routes.corporate, routes.planMyTrip];
+const smallHrefs: string[] = [routes.about, routes.contact];
+const menuPrimary: NavLink[] = items.flatMap((item): NavLink[] =>
+  hasChildren(item)
+    ? [{ label: item.label, href: routes.services }]
+    : bigHrefs.includes(item.href)
+      ? [item]
+      : [],
+);
+const menuSecondary: NavLink[] = [
+  ...items.flatMap((item): NavLink[] =>
+    !hasChildren(item) && smallHrefs.includes(item.href) ? [item] : [],
+  ),
+  { label: 'FAQs', href: routes.faqs },
+];
 ---
 
 <Tag class="site-header tone-paper">
@@ -143,6 +168,7 @@ const waHref = mobile
     </nav>
     <style is:inline>
       .menu-btn,
+      .menu-pill,
       .nav-desktop {
         display: none !important;
       }
@@ -189,7 +215,85 @@ const waHref = mobile
       )}
     </div>
   </Dialog>
+
+  {!asDemo && (
+    <Dialog id={menuId} title="Menu" variant="fullscreen">
+      <Fragment slot="head">
+        <a class="menu-logo" href={homeHref} data-dialog-close>
+          <Image
+            class="wordmark-logo"
+            src={logo}
+            alt={site.displayName}
+            height={40}
+            densities={[1, 2]}
+          />
+        </a>
+        <button type="button" class="menu-close" data-dialog-close>
+          <Icon name="close" size={20} />
+          Close
+        </button>
+      </Fragment>
+      <nav class="menu-nav" aria-label={`${navLabel} (menu)`}>
+        <ul class="menu-primary">
+          {menuPrimary.map((link) => (
+            <li>
+              <a
+                class="menu-link"
+                href={link.href}
+                aria-current={current(link.href)}
+                data-dialog-close
+              >
+                {link.label}
+                <Icon name="arrow-right" size={24} />
+              </a>
+            </li>
+          ))}
+        </ul>
+        <ul class="menu-secondary">
+          {menuSecondary.map((link) => (
+            <li>
+              <a
+                class="menu-small"
+                href={link.href}
+                aria-current={current(link.href)}
+                data-dialog-close
+              >
+                {link.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+      <div class="menu-actions">
+        {waHref && (
+          <Button href={waHref} iconStart="whatsapp" external>
+            Chat on WhatsApp
+          </Button>
+        )}
+        {mobile && (
+          <Button variant="secondary" href={telHref(mobile)} iconStart="phone">
+            Call {mobile.display}
+          </Button>
+        )}
+      </div>
+    </Dialog>
+  )}
 </Tag>
+
+{!asDemo && (
+  <button
+    type="button"
+    class="menu-pill"
+    aria-haspopup="dialog"
+    aria-expanded="false"
+    data-dialog-open={menuId}
+    data-menu-pill
+    data-state="expanded"
+  >
+    <Icon name="menu" size={20} />
+    <span class="menu-pill-label">Menu</span>
+  </button>
+)}
 
 <style>
   .site-header {
@@ -424,6 +528,196 @@ const waHref = mobile
     }
   }
 
+  /* ---------- Phones (below 768px): logo row, sticky Menu pill, full-screen menu ---------- */
+  .menu-pill {
+    display: none;
+  }
+
+  @media (max-width: 767.98px) {
+    /* The bottom bar and the menu carry Call; the row is just the logo. */
+    .header-actions {
+      display: none;
+    }
+
+    .menu-pill {
+      position: fixed;
+      top: calc(10px + env(safe-area-inset-top, 0px));
+      right: 20px;
+      z-index: var(--z-overlay);
+      box-sizing: border-box;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      height: 2.75rem;
+      min-width: 2.75rem;
+      padding: 0 18px 0 14px;
+      border: 1.5px solid var(--ink);
+      border-radius: 22px;
+      background: var(--white);
+      color: var(--ink);
+      box-shadow: 0 2px 10px rgb(20 17 16 / 0.18);
+      font-family: var(--font-text);
+      font-size: 15px;
+      font-weight: var(--weight-bold);
+      line-height: 1;
+      cursor: pointer;
+      transform-origin: right center;
+      view-transition-name: menu-pill;
+    }
+
+    /* Scrolled past the header row: icon only, same spot. The label stays as the accessible name. */
+    .menu-pill[data-state='collapsed'] {
+      width: 2.75rem;
+      padding: 0;
+      gap: 0;
+    }
+
+    .menu-pill[data-state='collapsed'] .menu-pill-label {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+
+    /* Only transform and opacity move; the box itself changes size at once. */
+    .menu-pill[data-animate][data-state='collapsed'] {
+      animation: menu-pill-a var(--duration-fast) var(--ease-out);
+    }
+
+    .menu-pill[data-animate][data-state='expanded'] {
+      animation: menu-pill-b var(--duration-fast) var(--ease-out);
+    }
+
+    .menu-pill:focus-visible {
+      outline: 3px solid var(--ink);
+      outline-offset: 3px;
+      box-shadow: 0 0 0 6px var(--white);
+    }
+  }
+
+  @keyframes menu-pill-a {
+    from {
+      opacity: 0.4;
+      transform: scale(0.88);
+    }
+  }
+
+  @keyframes menu-pill-b {
+    from {
+      opacity: 0.4;
+      transform: scale(0.88);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .menu-pill {
+      animation: none !important;
+    }
+  }
+
+  /* Menu overlay: the head row (logo and Close) is slotted into the dialog's own head. */
+  .menu-logo {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--tap);
+  }
+
+  .menu-close {
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 2.75rem;
+    padding: 0 18px 0 14px;
+    border: 2px solid var(--ink);
+    border-radius: 22px;
+    background: transparent;
+    color: var(--ink);
+    font-family: var(--font-text);
+    font-size: 15px;
+    font-weight: var(--weight-bold);
+    cursor: pointer;
+  }
+
+  .menu-close:hover {
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  .menu-close:focus-visible,
+  .menu-link:focus-visible,
+  .menu-small:focus-visible,
+  .menu-logo:focus-visible {
+    outline: 3px solid var(--ink);
+    outline-offset: 3px;
+  }
+
+  /* The middle scrolls on a short screen; the two buttons below it stay pinned. */
+  .menu-nav {
+    flex: 1;
+    min-height: 0;
+    padding: var(--space-4) 1.25rem 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .menu-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+    min-height: 4.5rem;
+    border-bottom: 1px solid var(--sand-200);
+    color: var(--ink);
+    font-family: var(--font-display);
+    font-size: 2.125rem;
+    font-weight: var(--weight-black);
+    letter-spacing: -0.04em;
+    line-height: 1.1;
+    text-decoration: none;
+  }
+
+  .menu-link[aria-current='page'],
+  .menu-small[aria-current='page'] {
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: 3px;
+    text-underline-offset: 0.2em;
+  }
+
+  .menu-secondary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--space-6);
+    padding-block: var(--space-4);
+  }
+
+  .menu-small {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--tap);
+    color: var(--ink);
+    font-size: var(--text-lg);
+    font-weight: var(--weight-bold);
+    text-decoration: none;
+  }
+
+  .menu-actions {
+    display: grid;
+    flex: none;
+    gap: 0.75rem;
+    padding: var(--space-5) 1.25rem calc(2rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  .menu-actions :global(.btn) {
+    min-height: 3.5rem;
+    font-size: 17px;
+    white-space: nowrap;
+  }
+
   /* No-JavaScript link list */
   :global(.nav-noscript ul) {
     display: flex;
@@ -483,6 +777,13 @@ const waHref = mobile
   }
 </style>
 
+<style is:global>
+  /* The Menu pill is the same on every page, so it holds still during page transitions. */
+  ::view-transition-group(menu-pill) {
+    animation: none;
+  }
+</style>
+
 <script>
   function closeAll(except?: HTMLElement): void {
     document.querySelectorAll<HTMLElement>('[data-submenu]').forEach((item) => {
@@ -529,7 +830,58 @@ const waHref = mobile
     if (!target?.closest('[data-submenu]')) closeAll();
   });
 
+  // ---- Phones: the Menu pill and the full-screen menu ----
+  let pillObserver: IntersectionObserver | undefined;
+  let menuObserver: MutationObserver | undefined;
+
+  /** The pill is a full "Menu" button while the header row is on screen, an icon after that. */
+  function initPill(): void {
+    pillObserver?.disconnect();
+    const pill = document.querySelector<HTMLElement>('[data-menu-pill]');
+    const header = document.querySelector<HTMLElement>('header.site-header');
+    if (!pill || !header || !('IntersectionObserver' in window)) return;
+    let settled = false;
+    pillObserver = new IntersectionObserver((entries) => {
+      const entry = entries[entries.length - 1];
+      if (!entry) return;
+      const state = entry.isIntersecting ? 'expanded' : 'collapsed';
+      if (pill.dataset['state'] !== state) {
+        // No pop on the first reading (a reload part-way down the page).
+        if (settled) pill.setAttribute('data-animate', '');
+        pill.dataset['state'] = state;
+      }
+      settled = true;
+    });
+    pillObserver.observe(header);
+  }
+
+  /** Flags <html data-menu-open> while the phone menu is open, so the bottom bar can step aside. */
+  function initMenuFlag(): void {
+    menuObserver?.disconnect();
+    const root = document.documentElement;
+    const menu = document.querySelector<HTMLDialogElement>('dialog[id$="-nav-menu"]');
+    root.removeAttribute('data-menu-open');
+    if (!menu) return;
+    const sync = (): void => {
+      root.toggleAttribute('data-menu-open', menu.open);
+    };
+    menuObserver = new MutationObserver(sync);
+    menuObserver.observe(menu, { attributes: true, attributeFilter: ['open'] });
+    sync();
+  }
+
+  // Crossing 768px swaps the phone menu for the drawer or the desktop nav: close whichever is open.
+  window.matchMedia('(min-width: 768px)').addEventListener('change', () => {
+    document
+      .querySelectorAll<HTMLDialogElement>(
+        'dialog[id$="-nav-menu"][open], dialog[id$="-nav-drawer"][open]',
+      )
+      .forEach((dialog) => dialog.close());
+  });
+
   document.addEventListener('astro:page-load', () => {
     document.querySelectorAll<HTMLElement>('[data-submenu]').forEach(bind);
+    initPill();
+    initMenuFlag();
   });
 </script>
