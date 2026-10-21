@@ -1,5 +1,4 @@
 ---
-import { Picture } from 'astro:assets';
 import PageLayout from '../layouts/PageLayout.astro';
 import Section from '../components/ui/Section.astro';
 import Button from '../components/ui/Button.astro';
@@ -8,6 +7,7 @@ import ServiceCard from '../components/ui/ServiceCard.astro';
 import PackageCard from '../components/ui/PackageCard.astro';
 import SampleLabel from '../components/ui/SampleLabel.astro';
 import Icon, { type IconName } from '../components/ui/Icon.astro';
+import HeroCrossfade from '../components/ui/HeroCrossfade.astro';
 import RouteLine from '../components/motion/RouteLine.astro';
 import Stagger from '../components/motion/Stagger.astro';
 import Reveal from '../components/motion/Reveal.astro';
@@ -19,6 +19,10 @@ import { formatDate } from '../lib/format';
 import { regionLabels } from '../lib/packages';
 import { packageHref, routes } from '../lib/routes';
 import udaipur from '../assets/photos/rajasthan-1.jpg';
+import kerala from '../assets/photos/kerala-backwaters-1.jpg';
+import bali from '../assets/photos/bali-1.jpg';
+import singapore from '../assets/photos/singapore-1.jpg';
+import switzerland from '../assets/photos/switzerland-1.jpg';
 
 const office = shown(site.offices.operating);
 const from = office ? ` from ${office.locality}` : '';
@@ -93,8 +97,36 @@ const reasons: { icon: IconName; title: string; text: string }[] = [
   },
 ];
 
-const heroRoute =
-  'M0 470 C80 560 200 560 250 500 C300 440 230 390 200 430 C170 470 260 540 360 500 C440 470 470 380 480 300 C488 230 470 160 440 110';
+/** Photos for the hero crossfade; the first is the LCP image. Each caption names its photo. */
+const heroPhotos = [
+  {
+    src: udaipur,
+    alt: 'The City Palace complex in Udaipur rising above the lake under a clear blue sky',
+    caption: 'Udaipur, Rajasthan',
+  },
+  {
+    src: kerala,
+    alt: 'A traditional houseboat gliding along a palm-lined backwater in Kerala',
+    caption: 'Kerala backwaters',
+  },
+  {
+    src: bali,
+    alt: 'Green rice terraces among palm trees in Tegalalang, Bali',
+    caption: 'Tegalalang, Bali',
+  },
+  {
+    src: singapore,
+    alt: 'Aerial view of the Marina Bay waterfront in Singapore at dusk',
+    caption: 'Marina Bay, Singapore',
+  },
+  {
+    src: switzerland,
+    alt: 'A still alpine lake below snow-capped Swiss peaks',
+    caption: 'Swiss Alps',
+  },
+];
+const heroSizes =
+  '(min-width: 1366px) 440px, (min-width: 1024px) 34vw, (min-width: 768px) 82vw, 100vw';
 ---
 
 <PageLayout
@@ -125,29 +157,7 @@ const heroRoute =
           Booking for a company? <Link href={routes.corporate}>See corporate travel</Link>
         </p>
       </div>
-      <div class="hero-art">
-        <figure class="arch hero-arch">
-          <Picture
-            src={udaipur}
-            alt="The City Palace complex in Udaipur rising above the lake under a clear blue sky"
-            formats={['avif', 'webp']}
-            widths={[400, 640, 960, 1280]}
-            sizes="(min-width: 1366px) 440px, (min-width: 1024px) 34vw, (min-width: 768px) 82vw, 100vw"
-            loading="eager"
-            fetchpriority="high"
-          />
-        </figure>
-        <p class="hero-chip hero-pop" style="--enter-delay: var(--delay-late)">
-          Udaipur, Rajasthan
-        </p>
-        <RouteLine
-          class="hero-route"
-          d={heroRoute}
-          viewBox="0 0 496 580"
-          halo
-          markers={[{ cx: 440, cy: 110, r: 11, shape: 'pin' }]}
-        />
-      </div>
+      <HeroCrossfade variant="home" photos={heroPhotos} sizes={heroSizes} />
     </div>
   </Section>
 
@@ -336,47 +346,6 @@ const heroRoute =
     color: var(--text-muted);
   }
 
-  .hero-art {
-    position: relative;
-    width: 82%;
-    max-width: 26rem;
-    margin-inline: auto;
-    aspect-ratio: 400 / 500;
-  }
-
-  .hero-arch {
-    height: 100%;
-  }
-
-  .hero-arch :global(picture) {
-    display: block;
-    height: 100%;
-  }
-
-  .hero-art :global(.hero-route) {
-    position: absolute;
-    top: -8%;
-    left: -12%;
-    width: 124%;
-    height: 116%;
-  }
-
-  .hero-chip {
-    position: absolute;
-    left: -0.75rem;
-    top: 44%;
-    z-index: 1;
-    rotate: -4deg;
-    padding: var(--space-1) var(--space-4);
-    border-radius: var(--radius-pill);
-    background: var(--white);
-    color: var(--ink);
-    box-shadow: var(--shadow-md);
-    font-size: var(--text-sm);
-    font-weight: var(--weight-bold);
-    white-space: nowrap;
-  }
-
   /* Phones: full-bleed photo, then the headline on a cream sheet that overlaps it by 32px. */
   @media (max-width: 767.98px) {
     .hero-grid {
@@ -385,34 +354,6 @@ const heroRoute =
       gap: 0;
       padding-block: 0;
       margin-inline: calc(-1 * var(--gutter));
-    }
-
-    .hero-art {
-      order: -1;
-      width: 100%;
-      max-width: none;
-      height: 23.75rem;
-      margin: 0;
-      aspect-ratio: auto;
-    }
-
-    .hero-arch {
-      border-radius: 0;
-    }
-
-    .hero-arch :global(img) {
-      object-position: 55% 50%;
-    }
-
-    .hero-art :global(.hero-route) {
-      display: none;
-    }
-
-    .hero-chip {
-      left: 1.25rem;
-      top: auto;
-      bottom: 3rem;
-      rotate: 0deg;
     }
 
     .hero-copy {
@@ -476,11 +417,6 @@ const heroRoute =
       grid-template-columns: 1.15fr 1fr;
       gap: var(--space-16);
       padding-block: var(--space-12) var(--space-24);
-    }
-
-    .hero-art {
-      width: 78%;
-      max-width: none;
     }
   }
 

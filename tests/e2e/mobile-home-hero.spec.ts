@@ -18,7 +18,7 @@ test.describe('phone Home hero at 390x844', () => {
 
   test('the photo fills the top, 380px tall, eager and high priority', async ({ page }) => {
     await page.goto('/');
-    const photo = page.locator('.hero-arch img');
+    const photo = page.locator('.hero-arch img').first();
     await expect(photo).toHaveAttribute('alt', ALT);
     await expect(photo).toHaveAttribute('loading', 'eager');
     await expect(photo).toHaveAttribute('fetchpriority', 'high');

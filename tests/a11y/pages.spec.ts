@@ -63,14 +63,14 @@ test('FAQ accordions have no axe violations when open', async ({ page }) => {
 
 // The hero crossfade pages with every photo and the pause toggle in place, mid-crossfade.
 for (const width of widths) {
-  for (const path of ['/holidays', '/services', '/plan-my-trip']) {
+  for (const path of ['/', '/holidays', '/services', '/plan-my-trip']) {
     test(`${path} has no axe violations at ${width}px with the hero crossfade running`, async ({
       page,
     }) => {
       await page.setViewportSize({ width, height: 900 });
       await page.emulateMedia({ reducedMotion: 'no-preference' });
       await page.goto(path);
-      await expect(page.locator('[data-hero-fade] [data-slide]')).toHaveCount(4);
+      await expect(page.locator('[data-hero-fade] [data-slide]')).toHaveCount(path === '/' ? 5 : 4);
       const results = await new AxeBuilder({ page }).withTags(tags).analyze();
       expect(summarise(results.violations)).toEqual([]);
     });

@@ -46,7 +46,7 @@ Section 6, design and motion:
 - Animate only `transform` and `opacity` (plus SVG stroke for the route line). CLS under 0.1.
 - The LCP element is visible in the HTML at once; animation never delays it.
 - Respect `prefers-reduced-motion` (no smooth scroll, no parallax).
-- No auto-advancing carousel, except the hero photo crossfade on /holidays, /services and /plan-my-trip (see roadmap section 6). GSAP and ScrollTrigger load only where used, after first paint.
+- No auto-advancing carousel, except the hero photo crossfade on Home, /holidays, /services and /plan-my-trip (see roadmap section 6). GSAP and ScrollTrigger load only where used, after first paint.
 - Mobile-first at 375 px, then 768, 1024, 1366 and 1920. On phones the offer and call to action come before decoration.
 
 Section 9, do not repeat the old site's mistakes:

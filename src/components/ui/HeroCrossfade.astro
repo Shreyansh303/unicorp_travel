@@ -7,22 +7,38 @@
  * Opacity only, about 5 s per photo. No pause button (user decision, 2026-10-19); the fade pauses
  * while the tab is hidden and while keyboard focus is inside the hero. Under reduced motion, and
  * without JavaScript, the first photo simply stays.
+ *
+ * The `home` variant is the Home hero: the same crossfade in that page's own frame (arch beside the
+ * headline from 768px, full-bleed photo on phones) with a destination chip per photo. The chip
+ * fades with its photo (opacity only). It is visual only: each photo's alt names the place for
+ * assistive technology, and only the visible photo and chip are exposed to it.
  */
 import { Picture, getImage } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 import RouteLine from '../motion/RouteLine.astro';
 
 interface Props {
-  /** At least two photos; the first is shown at once. */
-  photos: { src: ImageMetadata; alt: string }[];
+  /** At least two photos; the first is shown at once. `caption` is the destination chip (home). */
+  photos: { src: ImageMetadata; alt: string; caption?: string }[];
+  /** `home` is the Home hero; the default is the inner-page hero. */
+  variant?: 'page' | 'home';
+  /** The `sizes` of every photo; the default suits the inner-page frame. */
+  sizes?: string;
 }
 
-const { photos } = Astro.props;
+const {
+  photos,
+  variant = 'page',
+  sizes = '(min-width: 1366px) 520px, (min-width: 1024px) 38vw, min(82vw, 26rem)',
+} = Astro.props;
+const home = variant === 'home';
 const [first, ...others] = photos;
 if (!first) throw new Error('HeroCrossfade needs photos');
+if (photos.some((photo) => Boolean(photo.caption) !== Boolean(first.caption))) {
+  throw new Error('HeroCrossfade: give every photo a caption, or none');
+}
 
 const widths = [400, 640, 960, 1280];
-const sizes = '(min-width: 1366px) 520px, (min-width: 1024px) 38vw, min(82vw, 26rem)';
 
 const slides = await Promise.all(
   others.map(async (photo) => {
@@ -33,7 +49,7 @@ const slides = await Promise.all(
       }),
     );
     const fallback = await getImage({ src: photo.src, format: 'webp', width: 960 });
-    return { alt: photo.alt, sources, src: fallback.src };
+    return { alt: photo.alt, caption: photo.caption, sources, src: fallback.src };
   }),
 );
 
@@ -42,8 +58,13 @@ const route =
   'M0 470 C80 560 200 560 250 500 C300 440 230 390 200 430 C170 470 260 540 360 500 C440 470 470 380 480 300 C488 230 470 160 440 110';
 ---
 
-<div class="hf" data-hero-fade data-slides={JSON.stringify(slides)} data-sizes={sizes}>
-  <figure class="hf-frame arch">
+<div
+  class:list={['hf', home && 'hf-home hero-art']}
+  data-hero-fade
+  data-slides={JSON.stringify(slides)}
+  data-sizes={sizes}
+>
+  <figure class:list={['hf-frame arch', home && 'hero-arch']}>
     <div class="hf-slide is-active" data-slide>
       <Picture
         src={first.src}
@@ -56,8 +77,15 @@ const route =
       />
     </div>
   </figure>
+  {first.caption && (
+    <div class="hf-chips hero-pop" style="--enter-delay: var(--delay-late)" data-chips>
+      <p class="hf-chip hero-chip is-active" data-chip>
+        {first.caption}
+      </p>
+    </div>
+  )}
   <RouteLine
-    class="hf-route"
+    class={home ? 'hf-route hero-route' : 'hf-route'}
     d={route}
     viewBox="0 0 496 580"
     halo
@@ -117,11 +145,90 @@ const route =
     height: 116%;
     pointer-events: none;
   }
+
+  /* Destination chips (home): stacked in one grid cell, so the chip for the visible photo is the
+     only one showing and the box never changes size. */
+  .hf-chips {
+    position: absolute;
+    left: -0.75rem;
+    top: 44%;
+    z-index: 1;
+    display: grid;
+    justify-items: start;
+    pointer-events: none;
+  }
+
+  .hf :global(.hf-chip) {
+    grid-area: 1 / 1;
+    margin: 0;
+    rotate: -4deg;
+    padding: var(--space-1) var(--space-4);
+    border-radius: var(--radius-pill);
+    background: var(--white);
+    color: var(--ink);
+    box-shadow: var(--shadow-md);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-bold);
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity var(--duration-photo-fade) var(--ease-in-out);
+  }
+
+  .hf :global(.hf-chip.is-active) {
+    opacity: 1;
+  }
+
+  /* Home: the frame beside the headline, and a full-bleed photo on phones. */
+  .hf-home {
+    width: 82%;
+    max-width: 26rem;
+  }
+
+  @media (max-width: 767.98px) {
+    .hf-home {
+      order: -1;
+      width: 100%;
+      max-width: none;
+      height: 23.75rem;
+      margin: 0;
+      aspect-ratio: auto;
+    }
+
+    .hf-home .hf-frame {
+      border-radius: 0;
+    }
+
+    .hf-home :global(.hf-slide img) {
+      object-position: 55% 50%;
+    }
+
+    .hf-home :global(.hf-route) {
+      display: none;
+    }
+
+    .hf-chips {
+      left: 1.25rem;
+      top: auto;
+      bottom: 3rem;
+    }
+
+    .hf :global(.hf-chip) {
+      rotate: 0deg;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .hf-home {
+      width: 78%;
+      max-width: none;
+    }
+  }
 </style>
 
 <script>
   interface Slide {
     alt: string;
+    caption?: string;
     src: string;
     sources: { type: string; srcset: string }[];
   }
@@ -163,9 +270,20 @@ const route =
     return slide;
   }
 
+  /** The destination chip of a photo: visual only, shown with its photo and hidden from assistive tech. */
+  function buildChip(text: string): HTMLElement {
+    const chip = document.createElement('p');
+    chip.className = 'hf-chip hero-chip';
+    chip.dataset['chip'] = '';
+    chip.setAttribute('aria-hidden', 'true');
+    chip.textContent = text;
+    return chip;
+  }
+
   function start(root: HTMLElement): Controller | null {
     const frame = root.querySelector<HTMLElement>('.hf-frame');
-    const hero = root.closest<HTMLElement>('.page-hero') ?? root;
+    const chipBox = root.querySelector<HTMLElement>('[data-chips]');
+    const hero = root.closest<HTMLElement>('.page-hero, .hero') ?? root;
     if (!frame || reduce.matches) return null;
 
     let data: Slide[] = [];
@@ -184,6 +302,7 @@ const route =
     let focusInside = false;
     let current = 0;
     const slides: HTMLElement[] = Array.from(frame.querySelectorAll<HTMLElement>('[data-slide]'));
+    const chips: HTMLElement[] = Array.from(root.querySelectorAll<HTMLElement>('[data-chip]'));
 
     const paused = () => document.hidden || focusInside;
 
@@ -198,6 +317,12 @@ const route =
       from.setAttribute('aria-hidden', 'true');
       to.classList.add('is-active');
       to.removeAttribute('aria-hidden');
+      const chipFrom = chips[current];
+      const chipTo = chips[next];
+      chipFrom?.classList.remove('is-active');
+      chipFrom?.setAttribute('aria-hidden', 'true');
+      chipTo?.classList.add('is-active');
+      chipTo?.removeAttribute('aria-hidden');
       current = next;
       root.dataset['fadeIndex'] = String(next);
       settle = window.setTimeout(
@@ -270,6 +395,11 @@ const route =
         const slide = buildSlide(item, sizes);
         frame.append(slide);
         slides.push(slide);
+        if (chipBox && item.caption) {
+          const chip = buildChip(item.caption);
+          chipBox.append(chip);
+          chips.push(chip);
+        }
       });
       ready = true;
       sync();
