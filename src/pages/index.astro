@@ -27,6 +27,11 @@ const featured = await getFeaturedPackages();
 // so everything about it on this page sits inside a labelled block.
 const corporateDemo = (await getEntry('services', 'corporate'))?.data.demo ?? true;
 
+// One shared price-valid-until date can go in the phone footnote; differing dates are left out.
+const validDates = new Set(featured.map((item) => formatDate(item.data.priceValidUntil)));
+const sharedValidTo = validDates.size === 1 ? [...validDates][0] : undefined;
+const packageSizes = '(min-width: 1024px) 22vw, (min-width: 768px) 45vw, calc(100vw - 2.5rem)';
+
 const groupNames = Object.fromEntries(site.services.map((group) => [group.id, group]));
 const shownItems = (id: string) =>
   (groupNames[id]?.items ?? [])
@@ -146,8 +151,8 @@ const heroRoute =
     </div>
   </Section>
 
-  <Section tone="sand" rounded aria-labelledby="services-title" id="services">
-    <div data-reveal class="section-head">
+  <Section tone="sand" rounded aria-labelledby="services-title" id="services" class="fold-section">
+    <div data-reveal class="section-head svc-head">
       <h2 id="services-title" class="t-h2">
         Holidays first. <span class="t-accent">Everything else,</span> sorted.
       </h2>
@@ -156,7 +161,7 @@ const heroRoute =
         bookings around them. Companies use the same team for business travel.
       </p>
     </div>
-    <Stagger as="ul" class="svc-grid">
+    <Stagger as="ul" class="svc-grid" data-fold-group>
       {serviceCards.map((card) => (
         <li class:list={['svc-cell', `svc-${card.id}`]}>
           <ServiceCard
@@ -166,14 +171,15 @@ const heroRoute =
             tone={card.tone}
             href={card.href}
             demo={card.demo}
+            fold
           />
         </li>
       ))}
     </Stagger>
   </Section>
 
-  <Section tone="paper" aria-labelledby="packages-title" id="packages">
-    <div data-reveal class="section-head">
+  <Section tone="paper" aria-labelledby="packages-title" id="packages" class="fold-section">
+    <div data-reveal class="section-head pkg-head">
       <h2 id="packages-title" class="t-h2">
         Trips to start dreaming about
       </h2>
@@ -182,7 +188,7 @@ const heroRoute =
         <SampleLabel />
       </p>
     </div>
-    <div class="pkg-wrap">
+    <div class="pkg-wrap" data-pager>
       <RouteLine
         class="pkg-route"
         d="M0 30 C100 0 200 60 300 30 S500 0 600 30 S800 60 900 30 S1100 0 1200 30"
@@ -191,7 +197,7 @@ const heroRoute =
         draw="scroll"
         strokeWidth={4}
       />
-      <Stagger as="ul" class="pkg-grid">
+      <Stagger as="ul" class="pkg-grid" data-pager-track>
         {featured.map((item) => (
           <li class="pkg-cell">
             <PackageCard
@@ -206,11 +212,36 @@ const heroRoute =
               alt={item.data.images.hero.alt}
               href={packageHref(item)}
               demo={item.data.demo}
+              sizes={packageSizes}
+              fold
             />
           </li>
         ))}
       </Stagger>
+      {/* Phones only: the script shows these under 768px. The row also swipes and tabs natively. */}
+      <div class="pkg-pager" data-pager-controls hidden>
+        <p class="pkg-count" aria-live="polite" data-pager-count>
+          1 of {featured.length}
+        </p>
+        <div class="pkg-arrows">
+          <button
+            type="button"
+            class="pkg-arrow pkg-prev"
+            aria-label="Previous trip"
+            data-pager-prev
+          >
+            <Icon name="arrow-right" size={20} />
+          </button>
+          <button type="button" class="pkg-arrow pkg-next" aria-label="Next trip" data-pager-next>
+            <Icon name="arrow-right" size={20} />
+          </button>
+        </div>
+      </div>
     </div>
+    <p class="pkg-note">
+      Sample trips to show the idea{sharedValidTo ? `, valid to ${sharedValidTo}` : ''}. We change
+      the pace, the hotels and the length to suit you. <SampleLabel />
+    </p>
     <div class="pkg-more">
       <Link href={routes.holidays} variant="standalone">
         See all holidays
@@ -460,6 +491,24 @@ const heroRoute =
     }
   }
 
+  /* Phones: the Services and Trips sections use a 20px gutter and 48px of air. */
+  @media (max-width: 767.98px) {
+    .fold-section {
+      --gutter: 1.25rem;
+      --space-section: 3rem;
+    }
+
+    .svc-head,
+    .pkg-head {
+      margin-bottom: var(--space-4);
+    }
+
+    .svc-head > p,
+    .pkg-head > p {
+      display: none;
+    }
+  }
+
   /* Services */
   .svc-grid {
     display: grid;
@@ -468,6 +517,13 @@ const heroRoute =
 
   .svc-cell {
     display: grid;
+  }
+
+  @media (max-width: 767.98px) {
+    .svc-grid {
+      gap: 0;
+      border-top: 1px solid var(--stone-300);
+    }
   }
 
   @media (min-width: 1024px) {
@@ -523,8 +579,103 @@ const heroRoute =
     }
   }
 
+  .pkg-pager,
+  .pkg-note {
+    display: none;
+  }
+
+  /* Phones: one trip at a time in a swipeable row; the buttons and the counter drive the same row. */
+  @media (max-width: 767.98px) {
+    .pkg-grid {
+      display: flex;
+      gap: 1.5rem;
+      /* Room for the focus ring inside the clipping scroller; the margin cancels the padding. */
+      margin: -0.75rem;
+      padding: 0.75rem;
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      scroll-snap-type: x mandatory;
+      scroll-padding-inline: 0.75rem;
+      scrollbar-width: none;
+    }
+
+    .pkg-grid::-webkit-scrollbar {
+      display: none;
+    }
+
+    .pkg-cell {
+      flex: 0 0 100%;
+      scroll-snap-align: start;
+    }
+
+    /* Cards beside the visible one are clipped, not below the fold: never hide them for a reveal. */
+    .pkg-cell.reveal-armed {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+
+    .pkg-pager:not([hidden]) {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 1.25rem;
+    }
+
+    .pkg-count {
+      font-size: 0.9375rem;
+      font-weight: 700;
+    }
+
+    .pkg-arrows {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .pkg-arrow {
+      display: grid;
+      place-items: center;
+      width: 3rem;
+      height: 3rem;
+      padding: 0;
+      border: 2px solid var(--ink);
+      border-radius: 50%;
+      background: transparent;
+      color: var(--ink);
+      cursor: pointer;
+      transition: transform var(--duration-fast) var(--ease-bounce);
+    }
+
+    .pkg-arrow:active {
+      transform: scale(var(--press-scale));
+    }
+
+    .pkg-next {
+      background: var(--ink);
+      color: var(--white);
+    }
+
+    .pkg-prev :global(svg) {
+      transform: scaleX(-1);
+    }
+
+    .pkg-note {
+      display: block;
+      margin-top: 1.25rem;
+      font-size: 0.8125rem;
+      line-height: 1.5;
+      color: var(--stone-600);
+    }
+  }
+
   .pkg-more {
     margin-top: var(--space-10);
+  }
+
+  @media (max-width: 767.98px) {
+    .pkg-more {
+      margin-top: 0.75rem;
+    }
   }
 
   /* Why */
@@ -592,3 +743,61 @@ const heroRoute =
     }
   }
 </style>
+
+<script>
+  /**
+   * Trips pager (phones, under 768px). The cards stay one scroll-snap row, so swiping, tabbing
+   * and every link keep working natively; the buttons and the "1 of N" counter are added on top.
+   * At 768px and up the controls stay hidden and the row is a grid.
+   */
+  const phone = window.matchMedia('(max-width: 767.98px)');
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  function bind(root: HTMLElement): void {
+    const track = root.querySelector<HTMLElement>('[data-pager-track]');
+    const controls = root.querySelector<HTMLElement>('[data-pager-controls]');
+    const count = root.querySelector<HTMLElement>('[data-pager-count]');
+    const prev = root.querySelector<HTMLButtonElement>('[data-pager-prev]');
+    const next = root.querySelector<HTMLButtonElement>('[data-pager-next]');
+    if (!track || !controls || !count || !prev || !next) return;
+    const cards = Array.from(track.children) as HTMLElement[];
+    const total = cards.length;
+    let timer = 0;
+
+    const step = (): number => {
+      const [first, second] = cards;
+      return first && second ? second.offsetLeft - first.offsetLeft : track.clientWidth;
+    };
+    const current = (): number =>
+      Math.min(total - 1, Math.max(0, Math.round(track.scrollLeft / step())));
+    const show = (): void => {
+      count.textContent = `${current() + 1} of ${total}`;
+    };
+    const go = (index: number): void => {
+      track.scrollTo({ left: index * step(), behavior: reduced.matches ? 'auto' : 'smooth' });
+    };
+
+    // The counter settles once the row stops moving, so a wrap-around does not announce every card.
+    track.addEventListener('scroll', () => {
+      window.clearTimeout(timer);
+      timer = window.setTimeout(show, 90);
+    });
+    prev.addEventListener('click', () => go((current() - 1 + total) % total));
+    next.addEventListener('click', () => go((current() + 1) % total));
+
+    const sync = (): void => {
+      controls.hidden = !phone.matches;
+      if (phone.matches) show();
+    };
+    phone.addEventListener('change', sync);
+    sync();
+  }
+
+  document.addEventListener('astro:page-load', () => {
+    document.querySelectorAll<HTMLElement>('[data-pager]').forEach((root) => {
+      if (root.dataset['bound']) return;
+      root.dataset['bound'] = 'true';
+      bind(root);
+    });
+  });
+</script>

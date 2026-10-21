@@ -4,6 +4,8 @@
  * what that price covers (the entry's priceBasis).
  * With `demo` it carries the visible "Sample content" label (roadmap section 5).
  * With `href` the whole card is one link.
+ * With `fold` (Home) the card is a 380px photo card on phones, with the details on a white inset
+ * panel; the per-card label and "Valid to" line step aside there (the section carries both).
  */
 import { Picture } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
@@ -23,6 +25,8 @@ interface Props {
   alt: string;
   href?: string | undefined;
   demo?: boolean;
+  /** Phone photo-card layout (Home pager). */
+  fold?: boolean;
   headingLevel?: 2 | 3 | 4;
   sizes?: string;
   state?: 'hover' | 'focus';
@@ -41,6 +45,7 @@ const {
   alt,
   href,
   demo = false,
+  fold = false,
   headingLevel = 3,
   sizes = '(min-width: 1024px) 22vw, (min-width: 768px) 45vw, 100vw',
   state,
@@ -51,7 +56,13 @@ const Heading = `h${headingLevel}` as 'h2' | 'h3' | 'h4';
 ---
 
 <article
-  class:list={['pkg-card', href && 'pkg-card-link', state && `is-${state}`, className]}
+  class:list={[
+    'pkg-card',
+    href && 'pkg-card-link',
+    fold && 'pkg-fold',
+    state && `is-${state}`,
+    className,
+  ]}
   {...rest}
 >
   <div class="arch pkg-photo">
@@ -180,5 +191,85 @@ const Heading = `h${headingLevel}` as 'h2' | 'h3' | 'h4';
   .pkg-valid {
     font-size: var(--text-sm);
     color: var(--text-muted);
+  }
+
+  /* ---------- Phone photo card (Home only: the card has `fold`) ---------- */
+  @media (max-width: 767.98px) {
+    .pkg-fold {
+      align-content: end;
+      height: 23.75rem;
+      padding: 0.75rem;
+      border-radius: var(--radius-lg);
+      background: var(--stone-800);
+    }
+
+    .pkg-fold .pkg-photo {
+      position: absolute;
+      inset: 0;
+      aspect-ratio: auto;
+      border-radius: var(--radius-lg);
+    }
+
+    /* A grid item with z-index paints above the photo and leaves the card as the link's box. */
+    .pkg-fold .pkg-body {
+      z-index: 1;
+      gap: 0.375rem;
+      padding: 1rem;
+      border-radius: var(--radius-md);
+      background: var(--white);
+      color: var(--ink);
+    }
+
+    .pkg-fold .pkg-meta {
+      font-size: 0.75rem;
+      letter-spacing: 0.06em;
+      color: var(--red-700);
+    }
+
+    .pkg-fold .pkg-name {
+      font-size: 1.5rem;
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+    }
+
+    .pkg-fold .pkg-name a {
+      text-decoration: none;
+    }
+
+    .pkg-fold .pkg-price {
+      margin-top: 0.125rem;
+      font-size: 0.875rem;
+      color: var(--stone-600);
+    }
+
+    .pkg-fold .pkg-price strong {
+      font-size: 1.75rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+
+    .pkg-fold .pkg-basis {
+      font-size: 0.8125rem;
+      line-height: 1.4;
+      color: var(--stone-600);
+    }
+
+    .pkg-fold .pkg-valid,
+    .pkg-fold :global(.sample-label) {
+      display: none;
+    }
+
+    /* The scrolling row would clip an outside ring, so the ring sits inside the card edge. */
+    .pkg-fold:has(a:focus-visible) {
+      outline: none;
+      box-shadow: none;
+    }
+
+    .pkg-fold:has(a:focus-visible) .pkg-name a::after {
+      box-shadow:
+        inset 0 0 0 3px var(--ink),
+        inset 0 0 0 6px var(--white);
+    }
   }
 </style>

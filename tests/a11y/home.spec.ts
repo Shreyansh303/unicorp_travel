@@ -8,3 +8,25 @@ test('home page has no axe violations', async ({ page }) => {
     .analyze();
   expect(results.violations).toEqual([]);
 });
+
+test.describe('home page on a phone', () => {
+  test.use({ viewport: { width: 390, height: 844 } });
+
+  test('has no axe violations, with the first and then another service panel open', async ({
+    page,
+  }) => {
+    // No scroll reveals: axe must not sample a section half way through its fade.
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto('/');
+    const scan = () =>
+      new AxeBuilder({ page })
+        .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
+        .analyze();
+    expect((await scan()).violations).toEqual([]);
+    await page.locator('#services .svc-fold-btn').nth(1).click();
+    expect((await scan()).violations).toEqual([]);
+    await page.getByRole('button', { name: 'Next trip' }).click();
+    await expect(page.locator('[data-pager-count]')).toHaveText('2 of 4');
+    expect((await scan()).violations).toEqual([]);
+  });
+});
