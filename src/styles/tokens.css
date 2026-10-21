@@ -15,6 +15,7 @@
   /* ---------- Colour: brand red ---------- */
   --red-50: #fff3f1;
   --red-100: #ffe1dc;
+  --red-300: #ff8a80; /* small caps labels on ink; 8.2:1 on ink */
   --red-400: #ff5a4f;
   --red-600: #ed0000;
   --red-700: #b80000;
