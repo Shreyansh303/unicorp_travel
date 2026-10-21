@@ -114,6 +114,17 @@ test.describe('phone Home hero at 390x844', () => {
   });
 });
 
+test.describe('phone Home hero on a short screen (375x667)', () => {
+  test.use({ viewport: { width: 375, height: 667 } });
+
+  test('"Plan my trip" sits fully above the bottom bar', async ({ page }) => {
+    await page.goto('/');
+    const cta = await boxOf(page.locator('.hero').getByRole('link', { name: /Plan my trip/ }));
+    const bar = await boxOf(page.locator('.floating-fixed'));
+    expect(cta.y + cta.height).toBeLessThanOrEqual(bar.y);
+  });
+});
+
 test.describe('Home hero at 1366x900', () => {
   test.use({ viewport: { width: 1366, height: 900 } });
 
