@@ -75,6 +75,13 @@ const isRounded = rounded ?? false;
     border-radius: var(--section-radius, var(--radius-xl) var(--radius-xl) 0 0);
   }
 
+  /* Tuck the rounded top under the section above, so its colour (not the page background)
+     fills the corners. The transparent border adds back the height the margin takes away. */
+  .section-rounded:not(:first-child):not(.mood-corporate) {
+    margin-top: calc(-1 * var(--radius-xl));
+    border-top: var(--radius-xl) solid transparent;
+  }
+
   .mood-corporate.section-rounded {
     border-radius: 0;
   }
