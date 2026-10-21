@@ -31,7 +31,10 @@ test.describe('every page', () => {
       // One H1, a title with the brand, a description.
       await expect(page.locator('h1')).toHaveCount(1);
       await expect(page.locator('h1')).toBeVisible();
-      await expect(page).toHaveTitle(new RegExp(`${site.displayName}$`));
+      // Home leads with the brand so a narrow tab still shows it; every other page ends with it.
+      await expect(page).toHaveTitle(
+        new RegExp(path === '/' ? `^${site.displayName} [|] ` : `${site.displayName}$`),
+      );
       const description = await page.locator('meta[name="description"]').getAttribute('content');
       expect(description?.length ?? 0).toBeGreaterThanOrEqual(50);
 

@@ -23,7 +23,12 @@ export function containsBrand(text: string): boolean {
   );
 }
 
-/** `"Kerala backwaters and hills, 6 days"` becomes `"Kerala backwaters and hills, 6 days | Unicorp Travel"`. */
-export function pageTitle(title: string): string {
-  return `${title}${titleSeparator}${site.displayName}`;
+/**
+ * `"Kerala backwaters and hills, 6 days"` becomes `"Kerala backwaters and hills, 6 days | Unicorp Travel"`.
+ * With `brandFirst` (the home page), the brand leads, so a narrow browser tab still shows it.
+ */
+export function pageTitle(title: string, brandFirst = false): string {
+  return brandFirst
+    ? `${site.displayName}${titleSeparator}${title}`
+    : `${title}${titleSeparator}${site.displayName}`;
 }

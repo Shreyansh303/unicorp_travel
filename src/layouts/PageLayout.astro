@@ -25,6 +25,8 @@ interface Enquiry {
 interface Props {
   /** Page title without the brand; pageTitle() adds it. */
   title: string;
+  /** Put the brand before the title (the home page). */
+  brandFirst?: boolean;
   description: string;
   /** What the page is about, for pre-filled WhatsApp and email messages. */
   topic?: string;
@@ -41,6 +43,7 @@ interface Props {
 
 const {
   title,
+  brandFirst = false,
   description,
   topic,
   message: customMessage,
@@ -59,7 +62,7 @@ const message = customMessage ?? enquiryMessage(topic);
 ---
 
 <BaseLayout
-  title={pageTitle(title)}
+  title={pageTitle(title, brandFirst)}
   description={description}
   {...(image ? { image } : {})}
   {...(ogType ? { ogType } : {})}
