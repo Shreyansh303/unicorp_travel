@@ -50,6 +50,6 @@ Supplied by the client (2026-10-19), not licensed from a third party.
 
 | File | Use |
 |---|---|
-| src/assets/brand/logo.png | Header logo (transparent margins trimmed; Astro generates the delivered sizes) |
+| src/assets/brand/logo.png | Header logo, high-resolution version supplied 2026-10-21 (transparent margins trimmed; Astro generates the delivered sizes) |
 | public/favicon.svg | Favicon, from the supplied vector mark (2026-10-21), filled in the logo red `#db2228` on a white disc |
 | public/favicon-32x32.png, public/apple-touch-icon.png | PNG fallback and home-screen icon, rendered from `public/favicon.svg` |
