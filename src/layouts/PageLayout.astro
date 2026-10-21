@@ -35,6 +35,8 @@ interface Props {
   image?: ShareImage;
   ogType?: 'website' | 'article';
   canonical?: boolean;
+  /** Phones: the header row overlays a photo at the top of the page. */
+  overlayHeader?: boolean;
 }
 
 const {
@@ -47,6 +49,7 @@ const {
   image,
   ogType,
   canonical,
+  overlayHeader = false,
 } = Astro.props;
 
 const nav = await getMainNav();
@@ -65,7 +68,13 @@ const message = customMessage ?? enquiryMessage(topic);
   <a class="skip-link" href="#main">
     Skip to content
   </a>
-  <Header items={nav} homeHref={routes.home} currentPath={currentPath} whatsappMessage={message} />
+  <Header
+    items={nav}
+    homeHref={routes.home}
+    currentPath={currentPath}
+    whatsappMessage={message}
+    overlay={overlayHeader}
+  />
   <main id="main" tabindex="-1">
     <slot />
     <EnquiryBand {...enquiry} mood={mood} message={message} {...(topic ? { topic } : {})} />

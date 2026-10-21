@@ -93,6 +93,7 @@ const heroRoute =
 ---
 
 <PageLayout
+  overlayHeader
   title={`Holidays and business travel${from}`}
   description={`Holidays in India and abroad, corporate travel and visa, forex and insurance help, from one travel desk${office ? ` in ${office.locality}` : ''}. Send us an enquiry.`}
 >
@@ -126,7 +127,7 @@ const heroRoute =
             alt="The City Palace complex in Udaipur rising above the lake under a clear blue sky"
             formats={['avif', 'webp']}
             widths={[400, 640, 960, 1280]}
-            sizes="(min-width: 1366px) 440px, (min-width: 1024px) 34vw, 82vw"
+            sizes="(min-width: 1366px) 440px, (min-width: 1024px) 34vw, (min-width: 768px) 82vw, 100vw"
             loading="eager"
             fetchpriority="high"
           />
@@ -343,6 +344,100 @@ const heroRoute =
     font-size: var(--text-sm);
     font-weight: var(--weight-bold);
     white-space: nowrap;
+  }
+
+  /* Phones: full-bleed photo, then the headline on a cream sheet that overlaps it by 32px. */
+  @media (max-width: 767.98px) {
+    .hero-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      padding-block: 0;
+      margin-inline: calc(-1 * var(--gutter));
+    }
+
+    .hero-art {
+      order: -1;
+      width: 100%;
+      max-width: none;
+      height: 23.75rem;
+      margin: 0;
+      aspect-ratio: auto;
+    }
+
+    .hero-arch {
+      border-radius: 0;
+    }
+
+    .hero-arch :global(img) {
+      object-position: 55% 50%;
+    }
+
+    .hero-art :global(.hero-route) {
+      display: none;
+    }
+
+    .hero-chip {
+      left: 1.25rem;
+      top: auto;
+      bottom: 3rem;
+      rotate: 0deg;
+    }
+
+    .hero-copy {
+      position: relative;
+      z-index: var(--z-raised);
+      margin-top: -2rem;
+      padding: 2rem 1.25rem 2.5rem;
+      border-radius: 2rem 2rem 0 0;
+      background: var(--paper);
+      justify-items: stretch;
+    }
+
+    .hero-tag,
+    .hero-corp {
+      display: none;
+    }
+
+    .hero-copy h1 {
+      font-size: 3.125rem;
+      line-height: 0.96;
+      letter-spacing: -0.045em;
+    }
+
+    .hero-copy .t-lede {
+      font-size: 1.0625rem;
+      line-height: 1.55;
+      color: var(--stone-600);
+      margin-top: -0.625rem;
+    }
+
+    .hero-actions {
+      flex-direction: column;
+      flex-wrap: nowrap;
+      gap: 0.25rem;
+    }
+
+    .hero-actions :global(.btn-primary) {
+      width: 100%;
+      min-height: 3.5rem;
+      font-size: 1.0625rem;
+    }
+
+    .hero-actions :global(.btn-secondary),
+    .hero-actions :global(.btn-secondary:hover) {
+      min-height: 3rem;
+      padding: 0;
+      background: transparent;
+      box-shadow: none;
+      transform: none;
+      color: var(--ink);
+      font-size: 1rem;
+      font-weight: var(--weight-bold);
+      text-decoration: underline;
+      text-decoration-thickness: 2px;
+      text-underline-offset: 4px;
+    }
   }
 
   @media (min-width: 1024px) {

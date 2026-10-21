@@ -36,6 +36,8 @@ interface Props {
   openFirst?: boolean;
   /** WhatsApp message for the drawer's WhatsApp button. */
   whatsappMessage?: string;
+  /** Phones only: the logo row sits over the photo at the top of the page (Home). */
+  overlay?: boolean;
 }
 
 const {
@@ -47,6 +49,7 @@ const {
   asDemo = false,
   openFirst = false,
   whatsappMessage,
+  overlay = false,
 } = Astro.props;
 
 const mobile = shown(site.phones.mobile);
@@ -79,7 +82,7 @@ const menuSecondary: NavLink[] = [
 ];
 ---
 
-<Tag class="site-header tone-paper">
+<Tag class:list={['site-header', 'tone-paper', overlay && 'is-overlay']}>
   <div class="wrap header-row">
     <a class="wordmark" href={homeHref}>
       <Image
@@ -537,6 +540,25 @@ const menuSecondary: NavLink[] = [
     /* The bottom bar and the menu carry Call; the row is just the logo. */
     .header-actions {
       display: none;
+    }
+
+    /* Over a photo (Home): the 64px row floats on the photo, the logo on a cream chip. It still
+       scrolls away with the page, so the Menu pill collapses as before. */
+    .site-header.is-overlay {
+      position: absolute;
+      inset: 0 0 auto;
+      background: transparent;
+    }
+
+    .is-overlay .header-row {
+      min-height: 4rem;
+      padding: 0 1.25rem;
+    }
+
+    .is-overlay .wordmark {
+      padding-inline: 0.75rem;
+      border-radius: 0.75rem;
+      background: var(--paper);
     }
 
     .menu-pill {
