@@ -23,6 +23,8 @@ import kerala from '../assets/photos/kerala-backwaters-1.jpg';
 import bali from '../assets/photos/bali-1.jpg';
 import singapore from '../assets/photos/singapore-1.jpg';
 import switzerland from '../assets/photos/switzerland-1.jpg';
+import airport from '../assets/photos/corporate-airport.jpg';
+import { getImage } from 'astro:assets';
 
 const office = shown(site.offices.operating);
 const from = office ? ` from ${office.locality}` : '';
@@ -127,6 +129,23 @@ const heroPhotos = [
 ];
 const heroSizes =
   '(min-width: 1366px) 440px, (min-width: 1024px) 34vw, (min-width: 768px) 82vw, 100vw';
+
+// Corporate band photo, phones only. Its sources match only below 768px and the fallback is an
+// empty pixel, so a desktop browser has no reason to fetch the photo (the slot is also display:none
+// there, and lazy). The slot is about 350px wide on a 390px phone.
+const corpPhotoSizes = 'calc(100vw - 2.5rem)';
+const corpPhotoSources = await Promise.all(
+  (['avif', 'webp'] as const).map(async (format) => {
+    const image = await getImage({
+      src: airport,
+      format,
+      widths: [350, 700, 1050],
+      sizes: corpPhotoSizes,
+    });
+    return { type: `image/${format}`, srcset: image.srcSet.attribute };
+  }),
+);
+const emptyPixel = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
 ---
 
 <PageLayout
@@ -260,16 +279,19 @@ const heroSizes =
     </div>
   </Section>
 
-  <Section tone="white" mood="corporate" aria-labelledby="why-title">
-    <div data-reveal class="section-head">
+  <Section tone="white" mood="corporate" aria-labelledby="why-title" class="why-section">
+    <div data-reveal class="section-head why-head">
       <h2 id="why-title" class="t-h2">
         Why people come to us
       </h2>
       <p>What we do, plainly put. Ask us anything about a trip before you decide.</p>
     </div>
-    <Stagger as="ul" class="why-grid">
-      {reasons.map((reason) => (
+    <Stagger as="ul" class="why-grid" data-why-row>
+      {reasons.map((reason, index) => (
         <li class="why-item">
+          <span class="why-num" aria-hidden="true">
+            {String(index + 1).padStart(2, '0')}
+          </span>
           <span class="why-icon" aria-hidden="true">
             <Icon name={reason.icon} size={22} />
           </span>
@@ -280,8 +302,21 @@ const heroSizes =
     </Stagger>
   </Section>
 
-  <Section tone="ink" mood="corporate" aria-labelledby="corporate-title">
+  <Section tone="ink" mood="corporate" aria-labelledby="corporate-title" class="corp-section">
     <Reveal class="corp">
+      <div class="corp-photo" aria-hidden="true">
+        <picture>
+          {corpPhotoSources.map((source) => (
+            <source
+              type={source.type}
+              srcset={source.srcset}
+              sizes={corpPhotoSizes}
+              media="(max-width: 767.98px)"
+            />
+          ))}
+          <img src={emptyPixel} alt="" width="350" height="160" loading="lazy" decoding="async" />
+        </picture>
+      </div>
       <div>
         <p class="t-eyebrow">Corporate travel</p>
         <h2 id="corporate-title" class="t-h2">
@@ -295,7 +330,7 @@ const heroSizes =
         </p>
         {corporateDemo && <SampleLabel />}
         <div class="corp-actions">
-          <Button href={routes.corporate} iconEnd="arrow-right">
+          <Button href={routes.corporate} iconEnd="arrow-right" class="corp-link">
             Corporate travel
           </Button>
           <Button
@@ -303,6 +338,7 @@ const heroSizes =
             variant="secondary"
             iconStart="whatsapp"
             external
+            class="corp-desk"
           >
             Talk to the corporate desk
           </Button>
@@ -621,6 +657,10 @@ const heroSizes =
     gap: var(--space-8);
   }
 
+  .why-num {
+    display: none;
+  }
+
   @media (min-width: 768px) {
     .why-grid {
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -651,6 +691,90 @@ const heroSizes =
     color: var(--white);
   }
 
+  /* Phones: four 256px cards in one native swipe row on sand; the next card peeks past the edge. */
+  @media (max-width: 767.98px) {
+    .why-section {
+      --gutter: 1.25rem;
+      --space-section: 3rem;
+    }
+
+    .why-section.tone-white {
+      --bg: var(--sand-100);
+    }
+
+    .why-head {
+      margin-bottom: 1.25rem;
+    }
+
+    .why-head > p {
+      display: none;
+    }
+
+    .why-grid {
+      display: flex;
+      gap: 0.75rem;
+      margin-inline: calc(-1 * var(--gutter));
+      padding: 0 var(--gutter) 0.25rem;
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      scroll-snap-type: x mandatory;
+      scroll-padding-inline: var(--gutter);
+      scrollbar-width: none;
+    }
+
+    .why-grid::-webkit-scrollbar {
+      display: none;
+    }
+
+    .why-grid:focus-visible {
+      outline: 3px solid var(--ink);
+      outline-offset: -3px;
+    }
+
+    .why-item {
+      flex: 0 0 16rem;
+      box-sizing: border-box;
+      min-height: 12.5rem;
+      gap: 0.625rem;
+      padding: 1.25rem;
+      border-top: 0;
+      border-radius: 1.25rem;
+      background: var(--white);
+      scroll-snap-align: start;
+    }
+
+    /* Cards beside the visible one are clipped, not below the fold: never hide them for a reveal. */
+    .why-item.reveal-armed {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+
+    .why-icon {
+      display: none;
+    }
+
+    .why-num {
+      display: block;
+      font-family: var(--font-display);
+      font-size: 0.875rem;
+      font-weight: 800;
+      line-height: 1.2;
+      color: var(--red-700);
+    }
+
+    .why-item h3 {
+      font-size: 1.3125rem;
+      line-height: 1.1;
+    }
+
+    .why-item p {
+      font-size: 0.9375rem;
+      line-height: 1.5;
+      color: var(--stone-600);
+    }
+  }
+
   /* Corporate band */
   .corp {
     display: grid;
@@ -673,10 +797,95 @@ const heroSizes =
     gap: var(--space-3);
   }
 
+  .corp-photo {
+    display: none;
+  }
+
   @media (min-width: 1024px) {
     .corp {
       grid-template-columns: 1.2fr 1fr;
       align-items: end;
+    }
+  }
+
+  /* Phones: a 160px photo, the label and heading, then the outlined desk button and a text link. */
+  @media (max-width: 767.98px) {
+    .corp-section {
+      --gutter: 1.25rem;
+      --space-section: 3rem;
+    }
+
+    .corp {
+      gap: 1rem;
+    }
+
+    .corp-photo {
+      display: block;
+      height: 10rem;
+      border-radius: 1.25rem;
+      overflow: hidden;
+      background: var(--stone-800);
+    }
+
+    .corp-photo :global(picture),
+    .corp-photo :global(img) {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .corp .t-eyebrow {
+      margin-bottom: 1rem;
+      color: var(--red-300);
+    }
+
+    .corp h2 {
+      font-size: 2rem;
+      line-height: 1.05;
+    }
+
+    .corp .t-lede {
+      font-size: 1rem;
+      line-height: 1.55;
+    }
+
+    .corp-copy {
+      gap: 1rem;
+      justify-items: stretch;
+    }
+
+    .corp-copy :global(.sample-label) {
+      justify-self: start;
+    }
+
+    /* Stacked in DOM order (text link, then the outlined button), so focus order matches. */
+    .corp-actions {
+      flex-direction: column;
+      flex-wrap: nowrap;
+      gap: 0.25rem;
+      margin-top: 0.5rem;
+    }
+
+    .corp-actions :global(.corp-desk) {
+      width: 100%;
+      min-height: 3.25rem;
+      font-size: 1rem;
+    }
+
+    .corp-actions :global(.corp-link),
+    .corp-actions :global(.corp-link:hover) {
+      align-self: flex-start;
+      min-height: 3rem;
+      padding: 0;
+      background: transparent;
+      transform: none;
+      color: var(--white);
+      font-size: 1rem;
+      font-weight: var(--weight-bold);
+      text-decoration: underline;
+      text-decoration-thickness: 2px;
+      text-underline-offset: 4px;
     }
   }
 </style>
@@ -730,7 +939,31 @@ const heroSizes =
     sync();
   }
 
+  /**
+   * Why row (phones). A scroller that holds no focusable item must itself be focusable, so a keyboard
+   * user can scroll it with the arrow keys. It is a tab stop and gets a name only on phones; from
+   * 768px the list is a plain grid and stays as it was.
+   */
+  function bindWhyRow(row: HTMLElement): void {
+    const sync = (): void => {
+      if (phone.matches) {
+        row.tabIndex = 0;
+        row.setAttribute('aria-label', 'Reasons to choose us, swipe sideways');
+      } else {
+        row.removeAttribute('tabindex');
+        row.removeAttribute('aria-label');
+      }
+    };
+    phone.addEventListener('change', sync);
+    sync();
+  }
+
   document.addEventListener('astro:page-load', () => {
+    document.querySelectorAll<HTMLElement>('[data-why-row]').forEach((row) => {
+      if (row.dataset['bound']) return;
+      row.dataset['bound'] = 'true';
+      bindWhyRow(row);
+    });
     document.querySelectorAll<HTMLElement>('[data-pager]').forEach((root) => {
       if (root.dataset['bound']) return;
       root.dataset['bound'] = 'true';

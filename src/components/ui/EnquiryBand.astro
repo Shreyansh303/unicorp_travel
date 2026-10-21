@@ -68,12 +68,19 @@ const nextLink =
             iconStart="whatsapp"
             size="lg"
             external
+            class="enquiry-wa"
           >
             Chat on WhatsApp
           </Button>
         )}
         {callHref && mobile && (
-          <Button href={callHref} variant="secondary" iconStart="phone" size="lg">
+          <Button
+            href={callHref}
+            variant="secondary"
+            iconStart="phone"
+            size="lg"
+            class="enquiry-call"
+          >
             Call {mobile.display}
           </Button>
         )}
@@ -176,5 +183,81 @@ const nextLink =
 
   .enquiry-card address span {
     display: block;
+  }
+
+  /*
+   * Phones: the red band is the deeper red (white text 7:1), both actions are full-width 56px
+   * pills, the next step is an underlined text link, and the email and address card steps aside
+   * because the footer carries both. Corporate (ink) bands keep their tone with the same layout.
+   */
+  @media (max-width: 767.98px) {
+    .enquiry {
+      --gutter: 1.25rem;
+      --space-section: 3rem;
+    }
+
+    .enquiry.mood-holiday {
+      --bg: var(--red-700);
+    }
+
+    .enquiry-grid {
+      gap: 0;
+    }
+
+    .enquiry-card {
+      display: none;
+    }
+
+    .enquiry-copy {
+      gap: 1rem;
+      justify-items: stretch;
+    }
+
+    .enquiry-copy h2 {
+      font-size: 2.5rem;
+      line-height: 0.98;
+      letter-spacing: -0.045em;
+    }
+
+    /* The accent word is ink on the desktop red; on the deeper red it would be too dim. */
+    .enquiry-copy h2 :global(.t-accent) {
+      color: var(--white);
+    }
+
+    .enquiry-lede {
+      font-size: 1.0625rem;
+      line-height: 1.55;
+    }
+
+    .enquiry-actions {
+      flex-direction: column;
+      flex-wrap: nowrap;
+      gap: 0.75rem;
+      margin-top: 0.5rem;
+    }
+
+    .enquiry-actions :global(.btn) {
+      width: 100%;
+      min-height: 3.5rem;
+      padding-block: 0;
+      font-size: 1.0625rem;
+    }
+
+    .enquiry.mood-holiday .enquiry-actions :global(.enquiry-wa) {
+      color: var(--red-700);
+    }
+
+    .enquiry :global(.enquiry-next) {
+      align-self: flex-start;
+      min-height: 3rem;
+      font-size: 1rem;
+      text-decoration-color: currentcolor;
+      text-decoration-thickness: 2px;
+      text-underline-offset: 4px;
+    }
+
+    .enquiry :global(.enquiry-next .link-arrow) {
+      color: currentcolor;
+    }
   }
 </style>
