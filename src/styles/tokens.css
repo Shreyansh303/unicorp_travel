@@ -12,6 +12,9 @@
  */
 
 :root {
+  /* The site has one light theme; forced dark modes must not invert it. */
+  color-scheme: only light;
+
   /* ---------- Colour: brand red ---------- */
   --red-50: #fff3f1;
   --red-100: #ffe1dc;

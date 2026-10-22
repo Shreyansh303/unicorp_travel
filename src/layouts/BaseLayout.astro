@@ -59,6 +59,8 @@ const shareImageUrl = origin && shareImage ? new URL(shareImage.src, origin).hre
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {/* Light only: stops forced dark modes (Samsung Internet, Chrome) recolouring the page and logo. */}
+    <meta name="color-scheme" content="only light" />
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
