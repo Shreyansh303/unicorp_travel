@@ -20,11 +20,11 @@ async function tripHrefs(page: Page): Promise<(string | null)[]> {
 test.describe('phone Services accordion at 390x844', () => {
   test.use({ viewport: { width: 390, height: 844 } });
 
-  test('three rows, the first open, panels stay in the DOM', async ({ page }) => {
+  test('three rows, all closed at first, panels stay in the DOM', async ({ page }) => {
     await page.goto('/');
     await expect(rows(page)).toHaveCount(3);
     await expect(rows(page)).toHaveText(GROUPS);
-    await expect(rows(page).nth(0)).toHaveAttribute('aria-expanded', 'true');
+    await expect(rows(page).nth(0)).toHaveAttribute('aria-expanded', 'false');
     await expect(rows(page).nth(1)).toHaveAttribute('aria-expanded', 'false');
     await expect(rows(page).nth(2)).toHaveAttribute('aria-expanded', 'false');
     for (let i = 0; i < 3; i += 1) {
@@ -39,13 +39,14 @@ test.describe('phone Services accordion at 390x844', () => {
       );
       // A closed panel is hidden but its text is still in the page.
       expect(((await panel.textContent()) ?? '').trim().length).toBeGreaterThan(20);
-      expect(await panel.isVisible()).toBe(i === 0);
+      expect(await panel.isVisible()).toBe(false);
       expect(Math.round((await button.boundingBox())?.height ?? 0)).toBeGreaterThanOrEqual(64);
     }
   });
 
   test('opening one row closes the others, and a row closes again', async ({ page }) => {
     await page.goto('/');
+    await rows(page).nth(0).click();
     await rows(page).nth(1).click();
     await expect(rows(page).nth(0)).toHaveAttribute('aria-expanded', 'false');
     await expect(rows(page).nth(1)).toHaveAttribute('aria-expanded', 'true');
@@ -94,6 +95,8 @@ test.describe('phone Services accordion at 390x844', () => {
         .nth(index)
         .locator('.svc-plus')
         .evaluate((el) => getComputedStyle(el).transform);
+    await expect.poll(() => rotated(0)).toBe('none');
+    await rows(page).nth(0).click();
     await expect.poll(() => rotated(0)).not.toBe('none');
     await expect.poll(() => rotated(1)).toBe('none');
   });

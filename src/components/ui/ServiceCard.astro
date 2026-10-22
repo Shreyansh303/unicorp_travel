@@ -374,7 +374,7 @@ const bodyProps = fold
     panel.hidden = !open;
   }
 
-  function enhance(card: HTMLElement, first: boolean): void {
+  function enhance(card: HTMLElement): void {
     if (card.dataset['foldActive']) return;
     const heading = card.querySelector<HTMLElement>('.svc-title');
     const link = heading?.querySelector<HTMLAnchorElement>('a');
@@ -399,7 +399,7 @@ const bodyProps = fold
     panel.insertBefore(link, panel.querySelector('.svc-sample'));
     heading.replaceChildren(button);
     card.dataset['foldActive'] = 'true';
-    toggle(card, first);
+    toggle(card, false);
 
     button.addEventListener('click', () => {
       const open = button.getAttribute('aria-expanded') !== 'true';
@@ -428,13 +428,9 @@ const bodyProps = fold
   }
 
   function sync(): void {
-    const seen = new Set<Element | Document>();
     document.querySelectorAll<HTMLElement>('[data-fold]').forEach((card) => {
       if (!phone.matches) return restore(card);
-      const group = card.closest('[data-fold-group]') ?? document;
-      const first = !seen.has(group);
-      seen.add(group);
-      enhance(card, first);
+      enhance(card);
     });
   }
 
