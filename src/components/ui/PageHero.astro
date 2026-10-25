@@ -33,6 +33,12 @@ interface Props {
    * and is not fetched on phones. Only for pages that take a single `image`.
    */
   compact?: boolean;
+  /**
+   * Phones, with `photos`: a short full-bleed crossfading photo, then a cream sheet over its
+   * lower edge holding the H1, a lede folded to two lines and the page's primary action (slot).
+   * From 768 px nothing changes.
+   */
+  sheet?: boolean;
 }
 
 const {
@@ -47,6 +53,7 @@ const {
   tone,
   size = 'page',
   compact = false,
+  sheet = false,
 } = Astro.props;
 
 // Compact: the photo's sources match only from 768 px up and the phone fallback is an empty
@@ -65,6 +72,8 @@ const compactPhoto =
         fallback: await getImage({ src: image.src, widths: photoWidths }),
       }
     : null;
+const sheetSizes =
+  '(min-width: 1366px) 520px, (min-width: 1024px) 38vw, (min-width: 768px) min(82vw, 26rem), 100vw';
 const emptyPixel = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
 ---
 
@@ -73,7 +82,7 @@ const emptyPixel = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAA
   mood={mood}
   spacing="none"
   aria-labelledby="page-title"
-  class:list={['page-hero', compact && 'ph-compact']}
+  class:list={['page-hero', compact && 'ph-compact', sheet && 'ph-sheet']}
 >
   <div class:list={['ph-grid', (image || photos) && 'ph-with-image']}>
     <div class="ph-copy">
@@ -84,16 +93,16 @@ const emptyPixel = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAA
         {accent && ' '}
         {accent && <span class="t-accent">{accent}</span>}
       </h1>
-      {lede && compact && (
+      {lede && (compact || sheet) && (
         <ReadMore id="page-lede" lines={2} class="t-lede hero-enter">
           {lede}
         </ReadMore>
       )}
-      {lede && !compact && <p class="t-lede hero-enter">{lede}</p>}
+      {lede && !compact && !sheet && <p class="t-lede hero-enter">{lede}</p>}
       <slot />
     </div>
     {photos && photos.length > 1 ? (
-      <HeroCrossfade photos={photos} />
+      <HeroCrossfade photos={photos} sheet={sheet} {...(sheet ? { sizes: sheetSizes } : {})} />
     ) : compactPhoto && image ? (
       <figure
         class:list={[
@@ -222,6 +231,11 @@ const emptyPixel = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAA
       line-height: 1;
     }
 
+    /* Title to intro: 14px (the row gap is 8px). */
+    .ph-compact .ph-copy > :global(.rm) {
+      margin-top: 0.375rem;
+    }
+
     .ph-compact .ph-copy :global(.t-lede) {
       font-size: 1.0625rem;
       line-height: 1.5;
@@ -229,6 +243,59 @@ const emptyPixel = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAA
 
     .ph-compact .ph-photo-desktop {
       display: none;
+    }
+  }
+
+  /* Photo header on phones: full-bleed crossfade, then the cream sheet with the heading and action. */
+  @media (max-width: 767.98px) {
+    .ph-sheet .ph-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      padding-block: 0;
+      margin-inline: calc(-1 * var(--gutter));
+    }
+
+    .ph-sheet .ph-copy {
+      position: relative;
+      z-index: var(--z-raised);
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: var(--space-3);
+      margin-top: -2rem;
+      padding: 2rem 1.25rem var(--space-6);
+      border-radius: 2rem 2rem 0 0;
+      background: var(--bg);
+    }
+
+    .ph-sheet .t-eyebrow {
+      display: none;
+    }
+
+    .ph-sheet .ph-title {
+      font-size: 2.5rem;
+      letter-spacing: -0.04em;
+      line-height: 1;
+    }
+
+    .ph-sheet .ph-copy :global(.t-lede) {
+      font-size: 1.0625rem;
+      line-height: 1.5;
+    }
+
+    /* The breadcrumb is a 44px row at the top of the sheet, above the title. */
+    .ph-sheet .ph-copy > :global(nav) {
+      order: -1;
+      display: flex;
+      align-items: center;
+      min-height: 2.75rem;
+      margin-top: -0.5rem;
+    }
+
+    /* Title to intro: 14px (the row gap is 12px). */
+    .ph-sheet .ph-copy > :global(.rm) {
+      margin-top: 0.125rem;
     }
   }
 

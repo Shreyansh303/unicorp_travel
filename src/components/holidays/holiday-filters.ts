@@ -24,7 +24,13 @@ interface Parts {
   panel: HTMLElement | null;
   activeCount: HTMLElement | null;
   total: number;
+  more: HTMLButtonElement | null;
 }
+
+/** Phones show this many matching holidays first; "Show more" reveals the rest. */
+const firstBatch = 6;
+/** True once the visitor has pressed "Show more" for the current filters. */
+let expanded = false;
 
 let current: Parts | null = null;
 
@@ -41,6 +47,7 @@ function find(): Parts | null {
     panel: root.querySelector('[data-filters-panel]'),
     activeCount: root.querySelector('[data-active-count]'),
     total: Number(root.dataset['total'] ?? 0),
+    more: document.querySelector<HTMLButtonElement>('[data-show-more]'),
   };
 }
 
@@ -107,8 +114,11 @@ function render(parts: Parts, state: State): void {
   for (const card of parts.cards) {
     const visible = matches(card, state);
     card.hidden = !visible;
+    // The class only has an effect on phones (see the page's styles); every card stays in the DOM.
+    card.classList.toggle('is-folded', visible && !expanded && shown >= firstBatch);
     if (visible) shown += 1;
   }
+  if (parts.more) parts.more.hidden = expanded || shown <= firstBatch;
   const active = groups.reduce((sum, group) => sum + state[group].length, 0);
   const text = `Showing ${shown} of ${parts.total} ${parts.total === 1 ? 'holiday' : 'holidays'}`;
   if (parts.count && parts.count.textContent !== text) parts.count.textContent = text;
@@ -124,6 +134,7 @@ function render(parts: Parts, state: State): void {
 
 function update(parts: Parts, state: State): void {
   const search = toSearch(state);
+  expanded = false;
   if (search !== location.search) {
     const url = `${location.pathname}${search}${location.hash}`;
     history.pushState({ ...(history.state ?? {}), holidayFilters: true }, '', url);
@@ -150,6 +161,12 @@ function bind(): void {
     groups.some((group) => initial[group].length > 0),
   );
 
+  parts.more?.addEventListener('click', () => {
+    expanded = true;
+    const firstFolded = parts.cards.find((card) => card.classList.contains('is-folded'));
+    render(parts, fromChips(parts.root));
+    firstFolded?.querySelector<HTMLElement>('a')?.focus();
+  });
   parts.root.addEventListener('chips:change', () => update(parts, fromChips(parts.root)));
   parts.toggle?.addEventListener('click', () =>
     setOpen(parts, parts.toggle?.getAttribute('aria-expanded') !== 'true'),

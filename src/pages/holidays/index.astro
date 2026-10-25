@@ -43,6 +43,7 @@ const heroPhotos = [
   title={leisure.data.seo.title}
   description={leisure.data.seo.description}
   topic="a holiday"
+  overlayHeader
   message={greeting('I would like help planning a holiday.')}
   enquiry={{
     title: 'Not quite',
@@ -57,6 +58,7 @@ const heroPhotos = [
     lede={leisure.data.intro}
     crumbs={[{ label: 'Home', href: routes.home }, { label: 'Holidays' }]}
     size="display"
+    sheet
   >
     <div class="hero-actions">
       <Button href={routes.planMyTrip} size="lg" iconEnd="arrow-right">
@@ -74,7 +76,7 @@ const heroPhotos = [
     </div>
   </PageHero>
 
-  <Section tone="sand" rounded aria-labelledby="list-title" id="packages">
+  <Section tone="sand" rounded aria-labelledby="list-title" id="packages" class="sec-compact">
     <div data-reveal class="section-head">
       <h2 id="list-title" class="t-h2">
         Sample <span class="t-accent">holidays</span>
@@ -113,6 +115,9 @@ const heroPhotos = [
         </li>
       ))}
     </Stagger>
+    <button type="button" class="list-more" data-show-more hidden>
+      Show more
+    </button>
     <div class="list-empty" data-filter-empty hidden>
       <h3 class="t-h3">No holidays match all of those filters</h3>
       <p>Try fewer filters, or tell us what you have in mind and we will plan a trip around it.</p>
@@ -127,7 +132,7 @@ const heroPhotos = [
     </div>
   </Section>
 
-  <Section tone="paper" aria-labelledby="how-title">
+  <Section tone="paper" aria-labelledby="how-title" class="sec-compact">
     <div data-reveal class="section-head">
       <h2 id="how-title" class="t-h2">
         How a holiday comes together
@@ -137,7 +142,7 @@ const heroPhotos = [
         <Link href={routes.faqs + '#faq-leisure'}>Read the holiday FAQs</Link>.
       </p>
     </div>
-    <HowItWorks steps={leisure.data.howItWorks} />
+    <HowItWorks steps={leisure.data.howItWorks} list />
   </Section>
 
   <EnquirySection
@@ -147,6 +152,8 @@ const heroPhotos = [
     topic="a holiday"
     tone="sand"
     rounded
+    foldLabel="Request a call back"
+    class="sec-compact"
   />
 </PageLayout>
 
@@ -172,6 +179,96 @@ const heroPhotos = [
   @media (min-width: 1024px) {
     .list-grid {
       grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  .list-more {
+    display: none;
+  }
+
+  /* Phones: a hero action fills the sheet (the WhatsApp link is in the bottom bar); the cards
+     are a calm single column with a 16:10 photo; the cards after the sixth wait behind "Show more". */
+  @media (max-width: 767.98px) {
+    .hero-actions {
+      display: grid;
+    }
+
+    .hero-actions > :global(a) {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .hero-actions > :global(a:nth-child(2)) {
+      display: none;
+    }
+
+    .list-grid {
+      gap: var(--space-6);
+    }
+
+    /* The heading above the list carries the "Sample content" label for every card. */
+    .list-grid :global(.sample-label) {
+      display: none;
+    }
+
+    .list-grid > :global(li.is-folded) {
+      display: none;
+    }
+
+    .list-grid :global(.pkg-photo) {
+      aspect-ratio: 16 / 10;
+      border-radius: 1.25rem;
+    }
+
+    .list-grid :global(.pkg-body) {
+      gap: 0.25rem;
+      padding-top: var(--space-3);
+    }
+
+    .list-grid :global(.pkg-name) {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .list-grid :global(.pkg-price) {
+      font-size: 0.875rem;
+    }
+
+    .list-grid :global(.pkg-basis),
+    .list-grid :global(.pkg-valid) {
+      font-size: 0.8125rem;
+      line-height: 1.4;
+    }
+
+    .list-grid :global(.pkg-price strong) {
+      font-size: 1.75rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+
+    .list-more:not([hidden]) {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      min-height: 3.5rem;
+      margin-top: var(--space-8);
+      padding: var(--space-3) var(--space-6);
+      border: 0;
+      border-radius: var(--radius-pill);
+      background: transparent;
+      color: var(--ink);
+      box-shadow: inset 0 0 0 2px var(--ink);
+      font: inherit;
+      font-size: 1.0625rem;
+      font-weight: var(--weight-black);
+      cursor: pointer;
+    }
+
+    .list-more:focus-visible {
+      outline: 3px solid var(--focus);
+      outline-offset: 3px;
     }
   }
 

@@ -17,14 +17,16 @@ interface Props {
   steps: readonly Step[];
   headingLevel?: 3 | 4;
   swipe?: boolean;
+  /** On phones the steps become a compact numbered list (number, title, one line) with hairlines. */
+  list?: boolean;
   class?: string;
 }
 
-const { steps, headingLevel = 3, swipe = false, class: className } = Astro.props;
+const { steps, headingLevel = 3, swipe = false, list = false, class: className } = Astro.props;
 const Heading = `h${headingLevel}` as 'h3' | 'h4';
 ---
 
-<div class:list={['steps-wrap', swipe && 'steps-swipe', className]}>
+<div class:list={['steps-wrap', swipe && 'steps-swipe', list && 'steps-list', className]}>
   <RouteLine
     class="steps-route"
     d="M0 20 C120 2 230 38 350 20 S580 2 700 20 S930 38 1050 20 S1170 8 1200 14"
@@ -105,6 +107,39 @@ const Heading = `h${headingLevel}` as 'h3' | 'h4';
   }
 
   @media (max-width: 767.98px) {
+    .steps-list .steps {
+      gap: 0;
+      border-top: 1px solid var(--sand-200);
+    }
+
+    .steps-list .step {
+      grid-template-columns: 2.5rem 1fr;
+      column-gap: var(--space-2);
+      row-gap: var(--space-1);
+      align-items: baseline;
+      padding: var(--space-4) 0;
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+      border-bottom: 1px solid var(--sand-200);
+    }
+
+    .steps-list .step-num {
+      grid-row: 1 / span 2;
+      font-size: var(--text-lg);
+      color: var(--red-700);
+    }
+
+    .steps-list .step-title,
+    .steps-list .step-text {
+      grid-column: 2;
+    }
+
+    .steps-list .step-text {
+      font-size: 0.9375rem;
+      line-height: 1.5;
+    }
+
     .steps-swipe .steps {
       display: flex;
       gap: var(--space-3);

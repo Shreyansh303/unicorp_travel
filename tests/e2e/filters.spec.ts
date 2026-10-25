@@ -220,23 +220,18 @@ test.describe('holiday filters', () => {
 test.describe('on a phone', () => {
   test.use({ viewport: { width: 375, height: 812 } });
 
-  test('the filters open from a toggle and still filter', async ({ page }) => {
+  test('the chips are one scrolling row (no toggle) and still filter', async ({ page }) => {
     await open(page);
-    const toggle = page.locator('[data-filters-toggle]');
-    await expect(toggle).toHaveAttribute('aria-expanded', 'false');
-    await expect(chip(page, 'type', 'domestic')).toBeHidden();
-    await toggle.focus();
-    await page.keyboard.press('Enter');
-    await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+    await expect(page.locator('[data-filters-toggle]')).toBeHidden();
+    await expect(chip(page, 'type', 'domestic')).toBeVisible();
     await chip(page, 'type', 'domestic').click();
     expect(await visibleSlugs(page)).toEqual(expected({ type: ['domestic'] }));
-    await expect(toggle).toContainText('(1 on)');
+    await expect(page.locator('[data-active-count]')).toContainText('(1 on)');
   });
 
   test('a shared link opens the panel with its filters', async ({ page }) => {
     await open(page, '/holidays?theme=family');
-    await expect(page.locator('[data-filters-toggle]')).toHaveAttribute('aria-expanded', 'true');
-    await expect(chip(page, 'theme', 'family')).toBeVisible();
+    await expect(chip(page, 'theme', 'family')).toHaveAttribute('aria-pressed', 'true');
   });
 });
 

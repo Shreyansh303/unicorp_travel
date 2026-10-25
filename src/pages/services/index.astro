@@ -41,6 +41,7 @@ const heroPhotos = [
   description="Visa and passport help, hotels, forex, travel insurance, cruises, MICE, car and coach hire, international rail and FRRO assistance."
   topic="your travel services"
   mood="corporate"
+  overlayHeader
   enquiry={{
     title: 'Need help with',
     accent: 'one part of a trip?',
@@ -55,13 +56,14 @@ const heroPhotos = [
     lede="The paperwork and bookings around a trip, for holidays, business travel or a single booking. Pick a service to see what we handle and how it works."
     crumbs={[{ label: 'Home', href: routes.home }, { label: 'Services' }]}
     mood="corporate"
+    sheet
   >
     <Button href={whatsappFor('your travel services')} size="lg" iconStart="whatsapp" external>
       Ask on WhatsApp
     </Button>
   </PageHero>
 
-  <Section tone="sand" mood="corporate" aria-labelledby="list-title">
+  <Section tone="sand" mood="corporate" aria-labelledby="list-title" class="sec-compact">
     <h2 id="list-title" class="sr-only">
       All travel services
     </h2>
@@ -91,7 +93,7 @@ const heroPhotos = [
     </Stagger>
   </Section>
 
-  <Section tone="white" mood="corporate" aria-labelledby="also-title">
+  <Section tone="white" mood="corporate" aria-labelledby="also-title" class="sec-compact">
     <div data-reveal class="section-head">
       <h2 id="also-title" class="t-h2">
         Planning the whole trip?
@@ -209,6 +211,66 @@ const heroPhotos = [
 
   .svc-summary {
     color: var(--stone-600);
+  }
+
+  /* Phones: each service is a 64px+ row (title, one line,
+     arrow) between hairlines, and the photo stays out (it is not fetched). */
+  @media (max-width: 767.98px) {
+    .svc-list {
+      gap: 0;
+      border-top: 1px solid var(--sand-200);
+    }
+
+    .svc-tile {
+      grid-template-rows: none;
+      min-height: 4rem;
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+      border-bottom: 1px solid var(--sand-200);
+    }
+
+    .svc-tile:hover,
+    .svc-tile:active {
+      transform: none;
+      box-shadow: none;
+    }
+
+    .svc-tile:focus-visible {
+      outline-offset: -3px;
+      box-shadow: none;
+    }
+
+    .svc-photo {
+      display: none;
+    }
+
+    .svc-body {
+      position: relative;
+      gap: 0.125rem;
+      padding: var(--space-3) 2.5rem var(--space-3) 0;
+    }
+
+    .svc-name {
+      font-size: 1.1875rem;
+      font-weight: 700;
+    }
+
+    .svc-tile :global(.svc-arrow) {
+      position: absolute;
+      top: 50%;
+      right: 0;
+      translate: 0 -50%;
+    }
+
+    .svc-summary {
+      font-size: 0.9375rem;
+      line-height: 1.4;
+    }
+
+    .also-grid {
+      gap: var(--space-3);
+    }
   }
 
   .also-grid {
