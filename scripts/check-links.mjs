@@ -91,6 +91,8 @@ function parse(file) {
       if (key === 'id') {
         ids.add(value);
       } else if (key === 'srcset') {
+        // A single inline image (a placeholder pixel) has a comma of its own; it is not a link.
+        if (value.trim().startsWith('data:image/')) continue;
         for (const candidate of value.split(',')) {
           const url = candidate.trim().split(/\s+/)[0];
           if (url) links.push({ tag: name, attr: key, url });
@@ -113,6 +115,8 @@ const counts = { internal: 0, fragment: 0, tel: 0, whatsapp: 0, mailto: 0, maps:
 const fail = (file, message) => failures.push(`${pagePath(file)}: ${message}`);
 
 function checkExternal(file, { attr, url }) {
+  // An inline image (e.g. a transparent placeholder pixel) is data, not a link.
+  if (attr !== 'href' && url.startsWith('data:image/')) return;
   if (url.startsWith('tel:')) {
     counts.tel += 1;
     if (!/^tel:\+91\d{10}$/.test(url)) fail(file, `malformed tel link "${url}" (use tel:+91...)`);

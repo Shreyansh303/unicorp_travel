@@ -98,7 +98,7 @@ test.describe('every page', () => {
 
       // Sample content carries the visible label (pages derived from the collections in routes.ts).
       if (sampleRoutes.includes(path)) {
-        await expect(page.locator('main .sample-label').first()).toBeVisible();
+        await expect(page.locator('main .sample-label:visible').first()).toBeVisible();
       }
       // Every sample package card has its own label.
       for (const card of await page.locator('main .pkg-card').all()) {
@@ -113,6 +113,14 @@ test.describe('every page', () => {
           .locator('main .svc-card')
           .filter({ has: page.locator('a[href="/corporate-travel"]') })
           .all()) {
+          // A closed accordion row hides the offer and its label together; open it to check.
+          const toggle = card.locator('.svc-fold-btn');
+          if (
+            (await toggle.count()) > 0 &&
+            (await toggle.getAttribute('aria-expanded')) === 'false'
+          ) {
+            await toggle.click();
+          }
           await expect(card.locator('.sample-label')).toBeVisible();
         }
       }

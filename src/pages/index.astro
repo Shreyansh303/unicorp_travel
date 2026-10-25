@@ -51,6 +51,7 @@ const serviceCards = [
     text: 'Holidays in India and abroad, planned day by day around who is travelling and what they enjoy.',
     items: shownItems('leisure'),
     href: routes.holidays,
+    linkLabel: 'See sample trips',
     tone: 'red',
     demo: false,
   },
@@ -60,6 +61,7 @@ const serviceCards = [
     text: 'Flights, hotels and visas for your company’s travellers, booked within your travel policy.',
     items: shownItems('corporate'),
     href: routes.corporate,
+    linkLabel: 'See corporate travel',
     tone: 'ink',
     demo: corporateDemo,
   },
@@ -69,6 +71,7 @@ const serviceCards = [
     text: 'The paperwork and bookings around a trip, whether or not we plan the trip itself.',
     items: shownItems('related'),
     href: routes.services,
+    linkLabel: 'See all services',
     tone: 'white',
     demo: false,
   },
@@ -200,6 +203,7 @@ const emptyPixel = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAA
             items={card.items}
             tone={card.tone}
             href={card.href}
+            linkLabel={card.linkLabel}
             demo={card.demo}
             fold
           />
@@ -499,15 +503,10 @@ const emptyPixel = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAA
     }
   }
 
-  @media (min-width: 1024px) {
+  @media (min-width: 768px) {
     .svc-grid {
-      grid-template-columns: 1fr 1fr;
-      gap: var(--space-5);
-    }
-
-    .svc-related {
-      grid-column: 2;
-      grid-row: 1 / span 2;
+      gap: 0;
+      border-top: 1px solid var(--stone-600);
     }
   }
 

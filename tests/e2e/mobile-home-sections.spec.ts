@@ -23,7 +23,7 @@ test.describe('phone Services accordion at 390x844', () => {
   test('three rows, all closed at first, panels stay in the DOM', async ({ page }) => {
     await page.goto('/');
     await expect(rows(page)).toHaveCount(3);
-    await expect(rows(page)).toHaveText(GROUPS);
+    await expect(rows(page)).toHaveText(GROUPS, { useInnerText: true });
     await expect(rows(page).nth(0)).toHaveAttribute('aria-expanded', 'false');
     await expect(rows(page).nth(1)).toHaveAttribute('aria-expanded', 'false');
     await expect(rows(page).nth(2)).toHaveAttribute('aria-expanded', 'false');
@@ -241,12 +241,31 @@ test.describe('phone Home sections have no sideways overflow', () => {
 test.describe('Home sections at 1366x900', () => {
   test.use({ viewport: { width: 1366, height: 900 } });
 
-  test('no accordion button, no pager controls, the grids as before', async ({ page }) => {
+  test('a numbered services accordion with the first row open, no pager controls', async ({
+    page,
+  }) => {
     await page.goto('/');
-    await expect(page.locator('.svc-fold-btn')).toHaveCount(0);
-    await expect(page.locator('#services a.svc-go')).toHaveCount(0);
+    await expect(rows(page)).toHaveCount(3);
+    await expect(rows(page).nth(0)).toHaveAttribute('aria-expanded', 'true');
+    await expect(rows(page).nth(1)).toHaveAttribute('aria-expanded', 'false');
+    await expect(page.locator('#services .svc-num').nth(1)).toHaveText('02');
+    await expect(page.locator('#services .svc-num').nth(1)).toBeVisible();
+    // The number is decoration: the button's name is the title.
+    await expect(rows(page).nth(0)).toHaveAccessibleName('Leisure travel');
+    await expect(page.locator('#services [data-fold-body]:visible')).toHaveCount(1);
+    const open = page.locator('#services [data-fold-body]').nth(0);
+    await expect(open.locator('a.svc-go')).toHaveText(/See sample trips/);
+    await expect(open.locator('a.svc-go')).toHaveAttribute('href', '/holidays');
+    // Description on the left, chips on the right.
+    const text = await open.locator('.svc-text').boundingBox();
+    const chips = await open.locator('.svc-items').boundingBox();
+    expect((chips?.x ?? 0) > (text?.x ?? 0) + (text?.width ?? 0)).toBe(true);
+    // The corporate row's sample label stays readable (its text is not transparent).
+    await rows(page).nth(1).click();
+    const label = page.locator('#services [data-fold-body]').nth(1).locator('.sample-label');
+    await expect(label).toBeVisible();
+    expect(await label.evaluate((el) => getComputedStyle(el).color)).not.toBe('rgba(0, 0, 0, 0)');
     await expect(page.locator('[data-pager-controls]')).toBeHidden();
-    await expect(page.locator('#services [data-fold-body]:visible')).toHaveCount(3);
     await expect(page.locator('#services .svc-head > p')).toBeVisible();
     await expect(page.locator('#packages .pkg-head > p')).toBeVisible();
     await expect(page.locator('#packages .pkg-note')).toBeHidden();
@@ -258,31 +277,20 @@ test.describe('Home sections at 1366x900', () => {
       .locator('#packages .pkg-cell')
       .evaluateAll((items) => items.map((el) => el.getBoundingClientRect().right <= 1366));
     expect(inView).toEqual([true, true, true, true]);
-    // Each service card is still one link over the whole card.
-    const link = page.locator('#services .svc-title a').first();
-    await expect(link).toHaveAttribute('href', '/holidays');
-    const card = await page.locator('#services .svc-card').first().boundingBox();
-    const after = await link.evaluate((el) => {
-      const css = getComputedStyle(el, '::after');
-      return { position: css.position, content: css.content };
-    });
-    expect(after.position).toBe('absolute');
-    expect(after.content).not.toBe('none');
-    expect(card?.width ?? 0).toBeGreaterThan(300);
   });
 
-  test('resizing from a phone to a desktop width removes the accordion and the controls', async ({
+  test('resizing between phone and desktop widths keeps one accordion and hides the controls', async ({
     page,
   }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/');
     await expect(rows(page)).toHaveCount(3);
     await page.setViewportSize({ width: 1024, height: 800 });
-    await expect(rows(page)).toHaveCount(0);
+    await expect(rows(page)).toHaveCount(3);
+    await expect(page.locator('#services .svc-num').first()).toBeVisible();
     await expect(page.locator('[data-pager-controls]')).toBeHidden();
-    await expect(page.locator('#services [data-fold-body]:visible')).toHaveCount(3);
-    await expect(page.locator('#services .svc-title a')).toHaveCount(3);
     await page.setViewportSize({ width: 390, height: 844 });
     await expect(rows(page)).toHaveCount(3);
+    await expect(page.locator('#services .svc-num').first()).toBeHidden();
   });
 });

@@ -3,8 +3,8 @@
  * Service card: a rounded colour block with a heading, a line of copy and the services as pills.
  * With `href` the whole card is one link (the heading link stretches over the card).
  * With `demo` the card carries the visible "Sample content" label (roadmap section 5).
- * With `fold` (Home) the card becomes an accordion row on phones: the description, items, label
- * and link sit in one panel, and a script adds the toggle button under 768px only (see below).
+ * With `fold` (Home) the card becomes a numbered accordion row at every width: the description,
+ * items, label and link sit in one panel, and a script turns the title into the toggle (see below).
  */
 import Icon from './Icon.astro';
 import SampleLabel from './SampleLabel.astro';
@@ -16,8 +16,10 @@ interface Props {
   href?: string | undefined;
   tone?: 'red' | 'ink' | 'white';
   demo?: boolean;
-  /** Phone accordion row (Home). Needs a `data-fold-group` ancestor to close its siblings. */
+  /** Accordion row (Home). Needs a `data-fold-group` ancestor to close its siblings. */
   fold?: boolean;
+  /** Text of the link to the group's page inside an open row, e.g. "See sample trips". */
+  linkLabel?: string | undefined;
   headingLevel?: 2 | 3 | 4;
   state?: 'hover' | 'focus';
   class?: string;
@@ -31,6 +33,7 @@ const {
   tone = 'white',
   demo = false,
   fold = false,
+  linkLabel,
   headingLevel = 3,
   state,
   class: className,
@@ -57,6 +60,7 @@ const bodyProps = fold
     className,
   ]}
   data-fold={fold ? '' : undefined}
+  data-go-label={fold && linkLabel ? linkLabel : undefined}
   {...rest}
 >
   <Heading class="svc-title">
@@ -188,13 +192,9 @@ const bodyProps = fold
     border-color: rgb(255 255 255 / 0.6);
   }
 
-  /* ---------- Phone accordion row (Home only: the card has `fold`) ----------
-     From 768px the body is transparent to layout, so the card is exactly the card above. */
-  .svc-fold .svc-body {
-    display: contents;
-  }
-
-  @media (max-width: 767.98px) {
+  /* ---------- Accordion row (Home only: the card has `fold`) ----------
+     Phone sizes first; from 768px the numbered desktop row further down. */
+  @media all {
     .svc-card.svc-fold {
       /* Reset the tone: rows sit straight on the section colour. */
       --bg: transparent;
@@ -267,7 +267,9 @@ const bodyProps = fold
       font-weight: 600;
     }
 
+    /* The label inverts the card colours; the row's background is transparent, so give it paper. */
     .svc-fold :global(.svc-sample) {
+      --bg: var(--paper);
       margin-top: 0;
     }
 
@@ -346,19 +348,132 @@ const bodyProps = fold
     }
   }
 
-  @media (max-width: 767.98px) and (prefers-reduced-motion: reduce) {
+  @media (prefers-reduced-motion: reduce) {
     .svc-fold :global(.svc-plus) {
       transition: none;
+    }
+  }
+  /* The row number shows only from 768px. */
+  .svc-fold :global(.svc-num) {
+    display: none;
+  }
+
+  @media (min-width: 768px) {
+    .svc-card.svc-fold {
+      border-bottom-color: var(--stone-600);
+    }
+
+    .svc-fold .svc-title {
+      font-size: clamp(2rem, 1rem + 2.4vw, 3rem);
+      line-height: 1;
+      letter-spacing: -0.045em;
+    }
+
+    .svc-fold :global(.svc-fold-btn) {
+      display: grid;
+      grid-template-columns: 3.5rem minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 0;
+      min-height: 5.5rem;
+      padding-block: 1.25rem;
+    }
+
+    .svc-fold :global(.svc-num) {
+      display: block;
+      font-family: var(--font-text);
+      font-size: var(--text-sm);
+      font-weight: 800;
+      letter-spacing: 0;
+      color: var(--red-700);
+    }
+
+    /* The round toggle: an outlined plus, filled ink with a white cross when open or hovered. */
+    .svc-fold :global(.svc-plus) {
+      width: 2.75rem;
+      height: 2.75rem;
+      border: 1.5px solid var(--ink);
+      border-radius: 50%;
+      transition:
+        transform var(--duration-base) var(--ease-out),
+        background-color var(--duration-fast) var(--ease-out);
+    }
+
+    .svc-fold :global(.svc-plus::before),
+    .svc-fold :global(.svc-plus::after) {
+      inset: 50% 0.8rem auto;
+      height: 1.5px;
+      margin-top: -0.75px;
+    }
+
+    .svc-fold :global(.svc-fold-btn[aria-expanded='true'] .svc-plus),
+    .svc-fold :global(.svc-fold-btn:hover .svc-plus) {
+      background: var(--ink);
+      color: var(--white);
+    }
+
+    /* Open panel: the description beside the chips and the link, indented under the title. */
+    .svc-fold .svc-body:not([hidden]) {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+      grid-auto-rows: min-content;
+      column-gap: var(--space-10);
+      row-gap: 0.875rem;
+      align-items: start;
+      padding: 0 0 var(--space-10) 3.5rem;
+    }
+
+    .svc-fold .svc-text {
+      grid-column: 1;
+      grid-row: 1 / span 3;
+      max-width: 26rem;
+      font-size: 1.0625rem;
+      line-height: 1.6;
+      color: var(--stone-800);
+    }
+
+    .svc-fold .svc-items,
+    .svc-fold :global(.svc-go),
+    .svc-fold :global(.svc-sample) {
+      grid-column: 2;
+      justify-self: start;
+    }
+
+    .svc-fold .svc-items li {
+      padding: 0.5rem 0.875rem;
+      border-color: var(--ink);
+      font-size: var(--text-sm);
+    }
+
+    .svc-fold :global(.svc-go) {
+      color: var(--red-700);
+      font-size: var(--text-sm);
+      text-decoration: none;
+    }
+
+    .svc-fold :global(.svc-go:hover) {
+      text-decoration: underline;
+      text-decoration-thickness: 2px;
+      text-underline-offset: 4px;
+    }
+
+    .svc-fold :global(.svc-go svg) {
+      width: 1rem;
+      height: 1rem;
+      transition: transform var(--duration-base) var(--ease-out);
+    }
+
+    .svc-fold :global(.svc-go:hover svg) {
+      transform: translateX(3px);
     }
   }
 </style>
 
 <script>
   /**
-   * Phone accordion for `fold` cards. Under 768px each card's title link becomes a button
-   * (aria-expanded, aria-controls) that opens its panel and closes its siblings; the link to the
-   * group's page moves into the panel. At 768px and up, or without JavaScript, nothing is added:
-   * no button exists and every panel is open. One copy of the content serves both layouts.
+   * Accordion for `fold` cards. Each card's title link becomes a button (aria-expanded,
+   * aria-controls) that opens its panel and closes its siblings; the link to the group's page moves
+   * into the panel, worded by `data-go-label`. On phones every row starts closed; from 768px the
+   * first row starts open. Without JavaScript the titles stay links and every panel is open.
    */
   const phone = window.matchMedia('(max-width: 767.98px)');
 
@@ -374,7 +489,7 @@ const bodyProps = fold
     panel.hidden = !open;
   }
 
-  function enhance(card: HTMLElement): void {
+  function enhance(card: HTMLElement, index: number): void {
     if (card.dataset['foldActive']) return;
     const heading = card.querySelector<HTMLElement>('.svc-title');
     const link = heading?.querySelector<HTMLAnchorElement>('a');
@@ -386,12 +501,24 @@ const bodyProps = fold
     button.className = 'svc-fold-btn';
     button.id = panel.id.replace(/-panel$/, '-button');
     button.setAttribute('aria-controls', panel.id);
+    const num = document.createElement('span');
+    num.className = 'svc-num';
+    num.setAttribute('aria-hidden', 'true');
+    num.textContent = String(index + 1).padStart(2, '0');
     const label = document.createElement('span');
     label.textContent = (link.textContent ?? '').trim();
     const plus = document.createElement('span');
     plus.className = 'svc-plus';
     plus.setAttribute('aria-hidden', 'true');
-    button.append(label, plus);
+    button.append(num, label, plus);
+
+    const goLabel = card.dataset['goLabel'];
+    if (goLabel) {
+      const text = Array.from(link.childNodes).find(
+        (node) => node.nodeType === Node.TEXT_NODE && (node.textContent ?? '').trim() !== '',
+      );
+      if (text) text.textContent = goLabel + ' ';
+    }
 
     panel.setAttribute('role', 'region');
     panel.setAttribute('aria-labelledby', button.id);
@@ -399,7 +526,7 @@ const bodyProps = fold
     panel.insertBefore(link, panel.querySelector('.svc-sample'));
     heading.replaceChildren(button);
     card.dataset['foldActive'] = 'true';
-    toggle(card, false);
+    toggle(card, !phone.matches && index === 0);
 
     button.addEventListener('click', () => {
       const open = button.getAttribute('aria-expanded') !== 'true';
@@ -413,27 +540,13 @@ const bodyProps = fold
     });
   }
 
-  function restore(card: HTMLElement): void {
-    if (!card.dataset['foldActive']) return;
-    const heading = card.querySelector<HTMLElement>('.svc-title');
-    const link = card.querySelector<HTMLAnchorElement>('.svc-go');
-    const panel = panelOf(card);
-    if (!heading || !link || !panel) return;
-    link.classList.remove('svc-go');
-    heading.replaceChildren(link);
-    panel.hidden = false;
-    panel.removeAttribute('role');
-    panel.removeAttribute('aria-labelledby');
-    delete card.dataset['foldActive'];
-  }
-
   function sync(): void {
-    document.querySelectorAll<HTMLElement>('[data-fold]').forEach((card) => {
-      if (!phone.matches) return restore(card);
-      enhance(card);
+    document.querySelectorAll<HTMLElement>('[data-fold-group]').forEach((group) => {
+      group.querySelectorAll<HTMLElement>('[data-fold]').forEach((card, index) => {
+        enhance(card, index);
+      });
     });
   }
 
-  phone.addEventListener('change', sync);
   document.addEventListener('astro:page-load', sync);
 </script>
