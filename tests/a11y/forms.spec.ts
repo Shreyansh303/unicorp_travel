@@ -18,6 +18,9 @@ async function violations(page: Page) {
 async function openForms(page: Page, path: string) {
   await page.goto(path);
   await page.locator('form[data-bound]').first().waitFor({ state: 'attached' });
+  // Phones fold the long forms on some pages: open each fold.
+  const folds = page.locator('[data-fold-button]:visible');
+  while ((await folds.count()) > 0) await folds.first().click();
 }
 
 for (const width of [375, 1366]) {

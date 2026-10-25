@@ -39,6 +39,7 @@ const { service, faqs, all } = Astro.props;
 const data = service.data;
 const label = serviceLabel(service);
 const topic = midSentence(data.title);
+const topicShort = midSentence(label);
 const sampleFaqs = faqs.some((faq) => faq.data.demo);
 const otherServices = all.filter((item) => item.id !== service.id);
 ---
@@ -67,6 +68,7 @@ const otherServices = all.filter((item) => item.id !== service.id);
     ]}
     image={data.image}
     mood="corporate"
+    compact
   >
     <div class="hero-actions">
       {mobile && (
@@ -80,12 +82,14 @@ const otherServices = all.filter((item) => item.id !== service.id);
         </Button>
       )}
     </div>
-    <Link href="#enquire" variant="standalone">
-      Or send the details with the form
-    </Link>
+    <div class="hero-link">
+      <Link href="#enquire" variant="standalone">
+        Or send the details with the form
+      </Link>
+    </div>
   </PageHero>
 
-  <Section tone="sand" mood="corporate" aria-labelledby="handle-title">
+  <Section tone="sand" mood="corporate" aria-labelledby="handle-title" class="sec-compact">
     <div class="handle-grid">
       <div>
         <h2 id="handle-title" class="t-h2">
@@ -107,18 +111,18 @@ const otherServices = all.filter((item) => item.id !== service.id);
     )}
   </Section>
 
-  <Section tone="white" mood="corporate" aria-labelledby="how-title">
+  <Section tone="white" mood="corporate" aria-labelledby="how-title" class="sec-compact">
     <div data-reveal class="section-head">
       <h2 id="how-title" class="t-h2">
         How it works
       </h2>
       <p>You tell us what you need, we propose, and nothing goes ahead until you agree.</p>
     </div>
-    <HowItWorks steps={data.howItWorks} />
+    <HowItWorks steps={data.howItWorks} swipe />
   </Section>
 
   {faqs.length > 0 && (
-    <Section tone="paper" mood="corporate" aria-labelledby="faq-title">
+    <Section tone="paper" mood="corporate" aria-labelledby="faq-title" class="sec-compact">
       <div data-reveal class="section-head">
         <h2 id="faq-title" class="t-h2">
           Questions
@@ -131,6 +135,7 @@ const otherServices = all.filter((item) => item.id !== service.id);
       <Accordion
         id={`faq-${service.id}`}
         items={faqs.map((faq) => ({ title: faq.data.question, body: faq.rendered?.html ?? '' }))}
+        phoneRows
       />
     </Section>
   )}
@@ -142,9 +147,17 @@ const otherServices = all.filter((item) => item.id !== service.id);
     topic={topic}
     formType={data.formType}
     mood="corporate"
+    foldLabel={`Enquire about ${topicShort}`}
+    class="sec-compact"
   />
 
-  <Section tone="white" mood="corporate" spacing="tight" aria-labelledby="more-title">
+  <Section
+    tone="white"
+    mood="corporate"
+    spacing="tight"
+    aria-labelledby="more-title"
+    class="more-section"
+  >
     <h2 id="more-title" class="t-h4 more-title">
       More travel services
     </h2>
@@ -235,5 +248,57 @@ const otherServices = all.filter((item) => item.id !== service.id);
   .more-list a:hover {
     background: var(--text);
     color: var(--bg);
+  }
+
+  @media (max-width: 767.98px) {
+    /* The bottom bar already has WhatsApp and Call, and the form has its own button below. */
+    .hero-actions,
+    .hero-link {
+      display: none;
+    }
+
+    .handle-grid {
+      gap: var(--space-5);
+    }
+
+    .handle-grid :global(.handle-list) {
+      gap: var(--space-3);
+      font-size: 1rem;
+    }
+
+    .who {
+      gap: var(--space-3);
+      margin-top: var(--space-8);
+      padding-top: var(--space-5);
+    }
+
+    :global(.more-section) {
+      padding-block: var(--space-8);
+    }
+
+    .more-list {
+      flex-wrap: nowrap;
+      gap: var(--space-2);
+      margin-inline: calc(var(--gutter) * -1);
+      padding: var(--space-1) var(--gutter);
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      scroll-snap-type: x proximity;
+      scroll-padding-inline: var(--gutter);
+      scrollbar-width: none;
+    }
+
+    .more-list::-webkit-scrollbar {
+      display: none;
+    }
+
+    .more-list li {
+      flex: none;
+      scroll-snap-align: start;
+    }
+
+    .more-list a {
+      white-space: nowrap;
+    }
   }
 </style>

@@ -1,11 +1,13 @@
 ---
 /**
  * The page section that holds a page's forms: the F-01 enquiry form for the page's form type
- * and the F-02 callback request beside it (stacked on phones, enquiry first).
+ * and the F-02 callback request beside it (stacked on phones, enquiry first). With `foldLabel`,
+ * phones show each form behind a full-width button that opens it in place (see FormFold).
  */
 import Section, { type Mood, type Tone } from '../ui/Section.astro';
 import EnquiryForm from './EnquiryForm.astro';
 import CallbackForm from './CallbackForm.astro';
+import FormFold from './FormFold.astro';
 import type { FormType } from '../../lib/forms';
 
 interface Props {
@@ -20,9 +22,13 @@ interface Props {
   prefill?: Record<string, string>;
   packageRef?: string;
   callback?: boolean;
+  /** Phones: fold the forms behind buttons; this is the enquiry button's label. */
+  foldLabel?: string;
+  callbackFoldLabel?: string;
   tone?: Tone;
   mood?: Mood;
   rounded?: boolean;
+  class?: string;
 }
 
 const {
@@ -35,9 +41,12 @@ const {
   prefill,
   packageRef,
   callback = true,
+  foldLabel,
+  callbackFoldLabel = 'Request a call back',
   tone = 'sand',
   mood = 'holiday',
   rounded,
+  class: className,
 } = Astro.props;
 ---
 
@@ -47,6 +56,7 @@ const {
   id="enquire"
   aria-labelledby="enquire-title"
   data-forms
+  class={className}
   {...(rounded === undefined ? {} : { rounded })}
 >
   <div data-reveal class="section-head">
@@ -58,17 +68,36 @@ const {
     <p>{intro}</p>
   </div>
   <div class:list={['forms-grid', !formType && 'forms-grid-single']}>
-    {formType && (
-      <EnquiryForm
-        id="enquiry"
-        formType={formType}
-        topic={topic}
-        title={formTitle}
-        {...(prefill ? { prefill } : {})}
-        {...(packageRef ? { packageRef } : {})}
-      />
+    {formType && foldLabel ? (
+      <FormFold id="enquiry-fold" label={foldLabel}>
+        <EnquiryForm
+          id="enquiry"
+          formType={formType}
+          topic={topic}
+          title={formTitle}
+          {...(prefill ? { prefill } : {})}
+          {...(packageRef ? { packageRef } : {})}
+        />
+      </FormFold>
+    ) : (
+      formType && (
+        <EnquiryForm
+          id="enquiry"
+          formType={formType}
+          topic={topic}
+          title={formTitle}
+          {...(prefill ? { prefill } : {})}
+          {...(packageRef ? { packageRef } : {})}
+        />
+      )
     )}
-    {callback && <CallbackForm topic={topic} />}
+    {callback && foldLabel ? (
+      <FormFold id="callback-fold" label={callbackFoldLabel} variant="secondary">
+        <CallbackForm topic={topic} />
+      </FormFold>
+    ) : (
+      callback && <CallbackForm topic={topic} />
+    )}
   </div>
 </Section>
 
@@ -81,6 +110,12 @@ const {
 
   .forms-grid-single {
     max-width: 36rem;
+  }
+
+  @media (max-width: 767.98px) {
+    .forms-grid {
+      gap: var(--space-4);
+    }
   }
 
   @media (min-width: 1024px) {

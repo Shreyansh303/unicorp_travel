@@ -45,6 +45,7 @@ const sampleFaqs = faqs.some((faq) => faq.data.demo);
     crumbs={[{ label: 'Home', href: routes.home }, { label: 'Corporate travel' }]}
     image={data.image}
     mood="corporate"
+    compact
   >
     {data.demo && <SampleLabel />}
     <div class="hero-actions">
@@ -67,7 +68,7 @@ const sampleFaqs = faqs.some((faq) => faq.data.demo);
     )}
   </PageHero>
 
-  <Section tone="ink" mood="corporate" aria-labelledby="handle-title">
+  <Section tone="ink" mood="corporate" aria-labelledby="handle-title" class="sec-compact">
     <div class="handle-grid">
       <div class="handle-head">
         <h2 id="handle-title" class="t-h2">
@@ -82,7 +83,7 @@ const sampleFaqs = faqs.some((faq) => faq.data.demo);
   </Section>
 
   {data.whoItsFor && data.whoItsFor.length > 0 && (
-    <Section tone="white" mood="corporate" aria-labelledby="who-title">
+    <Section tone="white" mood="corporate" aria-labelledby="who-title" class="sec-compact">
       <div class="who-grid">
         <Reveal class="who-photo">
           <Picture
@@ -91,6 +92,7 @@ const sampleFaqs = faqs.some((faq) => faq.data.demo);
             formats={['avif', 'webp']}
             widths={[480, 720, 960]}
             sizes="(min-width: 1366px) 560px, (min-width: 1024px) 42vw, calc(100vw - 2rem)"
+            loading="lazy"
           />
         </Reveal>
         <div class="who-copy">
@@ -108,18 +110,18 @@ const sampleFaqs = faqs.some((faq) => faq.data.demo);
     </Section>
   )}
 
-  <Section tone="sand" mood="corporate" aria-labelledby="how-title">
+  <Section tone="sand" mood="corporate" aria-labelledby="how-title" class="sec-compact">
     <div data-reveal class="section-head">
       <h2 id="how-title" class="t-h2">
         How it works
       </h2>
       <p>From the first call to the trips themselves. {data.demo && <SampleLabel />}</p>
     </div>
-    <HowItWorks steps={data.howItWorks} />
+    <HowItWorks steps={data.howItWorks} swipe />
   </Section>
 
   {faqs.length > 0 && (
-    <Section tone="white" mood="corporate" aria-labelledby="faq-title">
+    <Section tone="white" mood="corporate" aria-labelledby="faq-title" class="sec-compact">
       <div data-reveal class="section-head">
         <h2 id="faq-title" class="t-h2">
           Questions from companies
@@ -132,6 +134,7 @@ const sampleFaqs = faqs.some((faq) => faq.data.demo);
       <Accordion
         id="faq-corporate"
         items={faqs.map((faq) => ({ title: faq.data.question, body: faq.rendered?.html ?? '' }))}
+        phoneRows
       />
     </Section>
   )}
@@ -144,6 +147,8 @@ const sampleFaqs = faqs.some((faq) => faq.data.demo);
     formType="corporate"
     formTitle="Company details"
     mood="corporate"
+    foldLabel="Enquire about corporate travel"
+    class="sec-compact"
   />
 </PageLayout>
 
@@ -220,6 +225,37 @@ const sampleFaqs = faqs.some((faq) => faq.data.demo);
     width: 100%;
   }
 
+  @media (max-width: 767.98px) {
+    /* The bottom bar already has WhatsApp and Call; the email and form routes are repeated at the end. */
+    .hero-actions,
+    .hero-mail {
+      display: none;
+    }
+
+    .handle-grid {
+      gap: var(--space-5);
+    }
+
+    .handle-grid :global(.handle-list) {
+      gap: var(--space-3);
+      font-size: 1rem;
+    }
+
+    /* "Who it is for" is three short lines: a plain list, without the photo. */
+    .who-grid {
+      gap: 0;
+    }
+
+    .who-grid :global(.who-photo) {
+      display: none;
+    }
+
+    .who-copy {
+      gap: var(--space-4);
+    }
+
+  }
+
   .who-list li {
     padding-top: var(--space-4);
     border-top: 2px solid var(--ink);
@@ -228,5 +264,16 @@ const sampleFaqs = faqs.some((faq) => faq.data.demo);
     font-weight: var(--weight-bold);
     letter-spacing: -0.02em;
     line-height: 1.2;
+  }
+
+  @media (max-width: 767.98px) {
+    .who-list {
+      gap: var(--space-3);
+    }
+
+    .who-list li {
+      padding-top: var(--space-3);
+      font-size: 1.1875rem;
+    }
   }
 </style>

@@ -1,0 +1,89 @@
+---
+/**
+ * Phones: folds a long form behind one full-width button. Pressing it opens the form in place
+ * and moves focus to its first field; the button then goes away, so an error summary or the
+ * success screen can never end up inside a closed fold. The form stays in the DOM while closed.
+ * From 768 px, and without JavaScript, the form is simply shown.
+ */
+import Button from '../ui/Button.astro';
+
+interface Props {
+  /** Unique on the page; the button controls the element with this id. */
+  id: string;
+  label: string;
+  variant?: 'primary' | 'secondary';
+}
+
+const { id, label, variant = 'primary' } = Astro.props;
+---
+
+<div class="fold" data-fold>
+  <Button
+    variant={variant}
+    size="lg"
+    iconEnd="chevron-down"
+    class="fold-button"
+    aria-expanded="false"
+    aria-controls={id}
+    data-fold-button
+    data-needs-js
+  >
+    {label}
+  </Button>
+  <div class="fold-body" id={id}>
+    <slot />
+  </div>
+  <noscript>
+    <style is:inline>
+      .fold-body {
+        display: block !important;
+      }
+    </style>
+  </noscript>
+</div>
+
+<style>
+  .fold {
+    display: grid;
+    min-width: 0;
+  }
+
+  .fold :global(.fold-button) {
+    display: none;
+  }
+
+  @media (max-width: 767.98px) {
+    .fold :global(.fold-button) {
+      display: inline-flex;
+      width: 100%;
+    }
+
+    .fold :global(.fold-button[hidden]) {
+      display: none;
+    }
+
+    .fold:not(.is-open) .fold-body {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  function bind(root: HTMLElement): void {
+    if (root.dataset['bound']) return;
+    root.dataset['bound'] = 'true';
+    const button = root.querySelector<HTMLButtonElement>('[data-fold-button]');
+    const body = root.querySelector<HTMLElement>('.fold-body');
+    if (!button || !body) return;
+    button.addEventListener('click', () => {
+      root.classList.add('is-open');
+      button.setAttribute('aria-expanded', 'true');
+      button.hidden = true;
+      body.querySelector<HTMLElement>('input:not([type="hidden"]), select, textarea')?.focus();
+    });
+  }
+
+  document.addEventListener('astro:page-load', () => {
+    document.querySelectorAll<HTMLElement>('[data-fold]').forEach(bind);
+  });
+</script>

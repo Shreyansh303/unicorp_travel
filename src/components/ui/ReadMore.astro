@@ -1,0 +1,130 @@
+---
+/**
+ * A paragraph that shows its first lines on phones, with a "Read more" toggle (aria-expanded).
+ * The whole text is always in the DOM. From 768 px, and without JavaScript, the text shows in
+ * full. The toggle stays hidden when the text already fits.
+ */
+interface Props {
+  id: string;
+  /** Lines shown while folded on phones. */
+  lines?: number;
+  class?: string;
+}
+
+const { id, lines = 3, class: className } = Astro.props;
+---
+
+<div class="rm" data-readmore style={`--rm-lines: ${lines}`}>
+  <p class:list={['rm-text', className]} id={id}>
+    <slot />
+  </p>
+  <button
+    type="button"
+    class="rm-toggle"
+    aria-expanded="false"
+    aria-controls={id}
+    data-readmore-toggle
+    data-needs-js
+  >
+    Read more
+  </button>
+  <noscript>
+    <style is:inline>
+      .rm-text {
+        display: block !important;
+        -webkit-line-clamp: unset !important;
+      }
+    </style>
+  </noscript>
+</div>
+
+<style>
+  .rm {
+    display: contents;
+  }
+
+  .rm-toggle {
+    display: none;
+  }
+
+  @media (max-width: 767.98px) {
+    .rm {
+      display: grid;
+      justify-items: start;
+      gap: var(--space-1);
+      min-width: 0;
+    }
+
+    .rm-text {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: var(--rm-lines);
+      overflow: hidden;
+    }
+
+    .rm.is-open .rm-text {
+      display: block;
+      -webkit-line-clamp: unset;
+    }
+
+    .rm-toggle {
+      display: inline-flex;
+      align-items: center;
+      min-height: var(--tap);
+      padding: 0;
+      border: 0;
+      background: none;
+      color: var(--text);
+      font: inherit;
+      font-weight: var(--weight-bold);
+      text-decoration: underline;
+      text-decoration-color: var(--accent);
+      text-decoration-thickness: 2px;
+      text-underline-offset: 0.25em;
+      cursor: pointer;
+    }
+
+    .rm-toggle[hidden] {
+      display: none;
+    }
+
+    .rm-toggle:focus-visible {
+      outline: 3px solid var(--focus);
+      outline-offset: 3px;
+    }
+  }
+</style>
+
+<script>
+  const phone = window.matchMedia('(max-width: 767.98px)');
+
+  function measure(root: HTMLElement): void {
+    const text = root.querySelector<HTMLElement>('.rm-text');
+    const toggle = root.querySelector<HTMLButtonElement>('[data-readmore-toggle]');
+    if (!text || !toggle) return;
+    if (root.classList.contains('is-open')) return;
+    toggle.hidden = !phone.matches || text.scrollHeight <= text.clientHeight + 1;
+  }
+
+  function bind(root: HTMLElement): void {
+    if (root.dataset['bound']) return;
+    root.dataset['bound'] = 'true';
+    const text = root.querySelector<HTMLElement>('.rm-text');
+    const toggle = root.querySelector<HTMLButtonElement>('[data-readmore-toggle]');
+    if (!text || !toggle) return;
+    toggle.addEventListener('click', () => {
+      const open = toggle.getAttribute('aria-expanded') !== 'true';
+      toggle.setAttribute('aria-expanded', String(open));
+      toggle.textContent = open ? 'Read less' : 'Read more';
+      root.classList.toggle('is-open', open);
+    });
+    window.addEventListener('resize', () => measure(root));
+  }
+
+  document.addEventListener('astro:page-load', () => {
+    document.querySelectorAll<HTMLElement>('[data-readmore]').forEach((root) => {
+      bind(root);
+      measure(root);
+    });
+  });
+</script>

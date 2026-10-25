@@ -3,6 +3,7 @@
  * Numbered steps of the enquiry-led process (you tell us, we propose, we arrange). The numbers
  * are decorative: an ordered list already gives the order to assistive tech. From 1024 px, where
  * the steps sit in one row, a route line draws across them on scroll; the steps reveal in turn.
+ * `swipe`: on phones the steps become one scroll-snap row of cards, the next card peeking.
  */
 import RouteLine from '../motion/RouteLine.astro';
 import Stagger from '../motion/Stagger.astro';
@@ -15,14 +16,15 @@ interface Step {
 interface Props {
   steps: readonly Step[];
   headingLevel?: 3 | 4;
+  swipe?: boolean;
   class?: string;
 }
 
-const { steps, headingLevel = 3, class: className } = Astro.props;
+const { steps, headingLevel = 3, swipe = false, class: className } = Astro.props;
 const Heading = `h${headingLevel}` as 'h3' | 'h4';
 ---
 
-<div class:list={['steps-wrap', className]}>
+<div class:list={['steps-wrap', swipe && 'steps-swipe', className]}>
   <RouteLine
     class="steps-route"
     d="M0 20 C120 2 230 38 350 20 S580 2 700 20 S930 38 1050 20 S1170 8 1200 14"
@@ -31,7 +33,7 @@ const Heading = `h${headingLevel}` as 'h3' | 'h4';
     draw="scroll"
     strokeWidth={3}
   />
-  <Stagger as="ol" class="steps">
+  <Stagger as="ol" class="steps" {...(swipe ? { 'data-swipe': '', 'aria-label': 'Steps' } : {})}>
     {steps.map((step, index) => (
       <li class="step">
         <span class="step-num" aria-hidden="true">
@@ -101,4 +103,54 @@ const Heading = `h${headingLevel}` as 'h3' | 'h4';
   .step-text {
     color: var(--text-muted);
   }
+
+  @media (max-width: 767.98px) {
+    .steps-swipe .steps {
+      display: flex;
+      gap: var(--space-3);
+      margin-inline: calc(var(--gutter) * -1);
+      padding: 0 var(--gutter) var(--space-1);
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      scroll-snap-type: x mandatory;
+      scroll-padding-inline: var(--gutter);
+      scrollbar-width: none;
+    }
+
+    .steps-swipe .steps::-webkit-scrollbar {
+      display: none;
+    }
+
+    .steps-swipe .steps:focus-visible {
+      outline: 3px solid var(--focus);
+      outline-offset: -3px;
+    }
+
+    .steps-swipe .step {
+      flex: 0 0 min(17rem, 78vw);
+      padding: var(--space-5);
+      scroll-snap-align: start;
+    }
+
+    /* The cards sit side by side, so none of them waits for a scroll to appear. */
+    .steps-swipe .step.reveal-armed {
+      opacity: 1;
+      transform: none;
+    }
+  }
 </style>
+
+<script>
+  // A scroll row has to be reachable from the keyboard when it holds nothing focusable.
+  const phone = window.matchMedia('(max-width: 767.98px)');
+
+  function sync(): void {
+    document.querySelectorAll<HTMLElement>('[data-swipe]').forEach((row) => {
+      if (phone.matches) row.setAttribute('tabindex', '0');
+      else row.removeAttribute('tabindex');
+    });
+  }
+
+  document.addEventListener('astro:page-load', sync);
+  phone.addEventListener('change', sync);
+</script>

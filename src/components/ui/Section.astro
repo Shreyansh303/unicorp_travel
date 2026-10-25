@@ -71,6 +71,13 @@ const isRounded = rounded ?? false;
     padding-block: calc(var(--space-section) / 2);
   }
 
+  /* Inner pages on phones: 48px above and below (add the class `sec-compact`). */
+  @media (max-width: 767.98px) {
+    .section-default.sec-compact {
+      padding-block: var(--space-12);
+    }
+  }
+
   .section-rounded {
     border-radius: var(--section-radius, var(--radius-xl) var(--radius-xl) 0 0);
   }

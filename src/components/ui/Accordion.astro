@@ -2,7 +2,9 @@
 /**
  * Accordion (F-10): each question is a heading containing a button with aria-expanded that
  * controls a labelled region. Panels start closed; `open` lists the indexes to start open.
- * Without JavaScript every panel is shown.
+ * Without JavaScript every panel is shown. `phoneRows` restyles the rows for phones (60px
+ * tap rows in the display face) and keeps one panel open at a time there; from 768 px the
+ * accordion behaves as before.
  */
 import Icon from './Icon.astro';
 
@@ -17,14 +19,19 @@ interface Props {
   items: Item[];
   open?: number[];
   headingLevel?: 2 | 3 | 4;
+  phoneRows?: boolean;
   class?: string;
 }
 
-const { id, items, open = [], headingLevel = 3, class: className } = Astro.props;
+const { id, items, open = [], headingLevel = 3, phoneRows = false, class: className } = Astro.props;
 const Heading = `h${headingLevel}` as 'h2' | 'h3' | 'h4';
 ---
 
-<div class:list={['accordion', className]} data-accordion>
+<div
+  class:list={['accordion', phoneRows && 'acc-phone-rows', className]}
+  data-accordion
+  data-single-on-phone={phoneRows ? 'true' : undefined}
+>
   {items.map((item, index) => {
     const isOpen = open.includes(index);
     const buttonId = `${id}-button-${index}`;
@@ -127,6 +134,19 @@ const Heading = `h${headingLevel}` as 'h2' | 'h3' | 'h4';
     animation: acc-in var(--duration-base) var(--ease-out);
   }
 
+  @media (max-width: 767.98px) {
+    .acc-phone-rows .acc-heading {
+      font-family: var(--font-display);
+      font-size: 1.1875rem;
+      line-height: 1.25;
+      letter-spacing: -0.01em;
+    }
+
+    .acc-phone-rows .acc-button {
+      min-height: 3.75rem;
+    }
+  }
+
   @keyframes acc-in {
     from {
       opacity: 0;
@@ -141,15 +161,26 @@ const Heading = `h${headingLevel}` as 'h2' | 'h3' | 'h4';
 </style>
 
 <script>
+  const phone = window.matchMedia('(max-width: 767.98px)');
+
   function bind(root: HTMLElement): void {
     if (root.dataset['bound']) return;
     root.dataset['bound'] = 'true';
-    root.querySelectorAll<HTMLButtonElement>('[data-accordion-button]').forEach((button) => {
+    const buttons = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-accordion-button]'));
+    const set = (button: HTMLButtonElement, open: boolean): void => {
+      const panel = document.getElementById(button.getAttribute('aria-controls') ?? '');
+      button.setAttribute('aria-expanded', String(open));
+      if (panel) panel.hidden = !open;
+    };
+    buttons.forEach((button) => {
       button.addEventListener('click', () => {
-        const panel = document.getElementById(button.getAttribute('aria-controls') ?? '');
         const open = button.getAttribute('aria-expanded') !== 'true';
-        button.setAttribute('aria-expanded', String(open));
-        if (panel) panel.hidden = !open;
+        if (open && root.dataset['singleOnPhone'] && phone.matches) {
+          buttons.forEach((other) => {
+            if (other !== button) set(other, false);
+          });
+        }
+        set(button, open);
       });
     });
   }

@@ -266,6 +266,9 @@ test.describe('mobile', () => {
       test.setTimeout(120_000);
       await page.goto(path);
       await page.locator('form[data-bound]').first().waitFor({ state: 'attached' });
+      // Pages that fold their forms on phones: open each fold first.
+      const folds = page.locator('[data-fold-button]:visible');
+      while ((await folds.count()) > 0) await folds.first().click();
       for (const id of ['enquiry', 'callback']) {
         await page.locator(`#${id} button[type="submit"]`).click();
         await expect(page.locator(`#${id} [data-error-summary]`)).toBeFocused();

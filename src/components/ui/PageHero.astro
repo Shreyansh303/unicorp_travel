@@ -5,11 +5,12 @@
  * follows. The photo is the likely LCP element, so it loads eagerly with high priority and is
  * never animated.
  */
-import { Picture } from 'astro:assets';
+import { getImage, Picture } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 import Section, { type Tone } from './Section.astro';
 import Breadcrumbs from './Breadcrumbs.astro';
 import HeroCrossfade from './HeroCrossfade.astro';
+import ReadMore from './ReadMore.astro';
 import type { Crumb } from './types';
 
 interface Props {
@@ -26,6 +27,12 @@ interface Props {
   tone?: Tone;
   /** `display` for the big holiday headline, `page` for long or corporate titles. */
   size?: 'display' | 'page';
+  /**
+   * Phones: the compact page header (cream, no photo, no eyebrow, lede folded to two lines with
+   * "Read more"; the page's actions are left to the bottom bar). The photo stays from 768 px up
+   * and is not fetched on phones. Only for pages that take a single `image`.
+   */
+  compact?: boolean;
 }
 
 const {
@@ -39,7 +46,26 @@ const {
   mood = 'holiday',
   tone,
   size = 'page',
+  compact = false,
 } = Astro.props;
+
+// Compact: the photo's sources match only from 768 px up and the phone fallback is an empty
+// pixel, so a phone has no reason to fetch a photo that is hidden there.
+const photoSizes = '(min-width: 1366px) 520px, (min-width: 1024px) 38vw, calc(100vw - 2rem)';
+const photoWidths = [400, 640, 960, 1280];
+const compactPhoto =
+  compact && image && !(photos && photos.length > 1)
+    ? {
+        sources: await Promise.all(
+          (['avif', 'webp'] as const).map(async (format) => {
+            const result = await getImage({ src: image.src, format, widths: photoWidths });
+            return { type: `image/${format}`, srcset: result.srcSet.attribute };
+          }),
+        ),
+        fallback: await getImage({ src: image.src, widths: photoWidths }),
+      }
+    : null;
+const emptyPixel = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
 ---
 
 <Section
@@ -47,7 +73,7 @@ const {
   mood={mood}
   spacing="none"
   aria-labelledby="page-title"
-  class="page-hero"
+  class:list={['page-hero', compact && 'ph-compact']}
 >
   <div class:list={['ph-grid', (image || photos) && 'ph-with-image']}>
     <div class="ph-copy">
@@ -58,11 +84,42 @@ const {
         {accent && ' '}
         {accent && <span class="t-accent">{accent}</span>}
       </h1>
-      {lede && <p class="t-lede hero-enter">{lede}</p>}
+      {lede && compact && (
+        <ReadMore id="page-lede" lines={2} class="t-lede hero-enter">
+          {lede}
+        </ReadMore>
+      )}
+      {lede && !compact && <p class="t-lede hero-enter">{lede}</p>}
       <slot />
     </div>
     {photos && photos.length > 1 ? (
       <HeroCrossfade photos={photos} />
+    ) : compactPhoto && image ? (
+      <figure
+        class:list={[
+          'ph-photo',
+          'ph-photo-desktop',
+          mood === 'corporate' ? 'ph-photo-square' : 'arch',
+        ]}
+      >
+        <picture>
+          <source media="(max-width: 767.98px)" srcset={emptyPixel} />
+          {compactPhoto.sources.map((source) => (
+            <source type={source.type} srcset={source.srcset} sizes={photoSizes} />
+          ))}
+          <img
+            src={compactPhoto.fallback.src}
+            srcset={compactPhoto.fallback.srcSet.attribute}
+            sizes={photoSizes}
+            alt={image.alt}
+            width={compactPhoto.fallback.attributes['width']}
+            height={compactPhoto.fallback.attributes['height']}
+            loading="eager"
+            fetchpriority="high"
+            decoding="async"
+          />
+        </picture>
+      </figure>
     ) : (
       image && (
         <figure class:list={['ph-photo', mood === 'corporate' ? 'ph-photo-square' : 'arch']}>
@@ -70,8 +127,8 @@ const {
             src={image.src}
             alt={image.alt}
             formats={['avif', 'webp']}
-            widths={[400, 640, 960, 1280]}
-            sizes="(min-width: 1366px) 520px, (min-width: 1024px) 38vw, calc(100vw - 2rem)"
+            widths={photoWidths}
+            sizes={photoSizes}
             loading="eager"
             fetchpriority="high"
           />
@@ -135,6 +192,44 @@ const {
     width: 100%;
     height: 100%;
     object-fit: cover;
+  }
+
+  /* Compact page header on phones: cream, one column, no photo, 220 to 300px tall. */
+  @media (max-width: 767.98px) {
+    :global(.page-hero.ph-compact) {
+      --bg: var(--paper);
+      --route-halo: var(--paper);
+    }
+
+    .ph-compact .ph-grid {
+      gap: 0;
+      min-height: 13.75rem;
+      padding-block: var(--space-6) var(--space-4);
+    }
+
+    .ph-compact .ph-copy {
+      gap: var(--space-2);
+    }
+
+    /* The crumbs already name the page; the actions are in the sticky bottom bar. */
+    .ph-compact .t-eyebrow {
+      display: none;
+    }
+
+    .ph-compact .ph-title {
+      font-size: 2.5rem;
+      letter-spacing: -0.04em;
+      line-height: 1;
+    }
+
+    .ph-compact .ph-copy :global(.t-lede) {
+      font-size: 1.0625rem;
+      line-height: 1.5;
+    }
+
+    .ph-compact .ph-photo-desktop {
+      display: none;
+    }
   }
 
   @media (min-width: 1024px) {
