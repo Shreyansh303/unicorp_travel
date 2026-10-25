@@ -5,7 +5,6 @@ import PageHero from '../components/ui/PageHero.astro';
 import Section from '../components/ui/Section.astro';
 import Button from '../components/ui/Button.astro';
 import Link from '../components/ui/Link.astro';
-import SampleLabel from '../components/ui/SampleLabel.astro';
 import TickList from '../components/ui/TickList.astro';
 import HowItWorks from '../components/ui/HowItWorks.astro';
 import Accordion from '../components/ui/Accordion.astro';
@@ -22,7 +21,6 @@ const { service, faqs } = entry;
 const data = service.data;
 const topic = 'corporate travel for my company';
 const mailHref = emailFor('Corporate travel enquiry');
-const sampleFaqs = faqs.some((faq) => faq.data.demo);
 ---
 
 <PageLayout
@@ -47,7 +45,6 @@ const sampleFaqs = faqs.some((faq) => faq.data.demo);
     mood="corporate"
     compact
   >
-    {data.demo && <SampleLabel />}
     <div class="hero-actions">
       {mobile && (
         <Button href={whatsappFor(topic)} size="lg" iconStart="whatsapp" external>
@@ -75,7 +72,7 @@ const sampleFaqs = faqs.some((faq) => faq.data.demo);
           What we handle
         </h2>
         <p class="t-muted">
-          {data.summary} {data.demo && <SampleLabel />}
+          {data.summary}
         </p>
       </div>
       <TickList items={data.whatWeHandle} class="handle-list" />
@@ -104,7 +101,6 @@ const sampleFaqs = faqs.some((faq) => faq.data.demo);
               <li>{item}</li>
             ))}
           </ul>
-          {data.demo && <SampleLabel />}
         </div>
       </div>
     </Section>
@@ -115,7 +111,7 @@ const sampleFaqs = faqs.some((faq) => faq.data.demo);
       <h2 id="how-title" class="t-h2">
         How it works
       </h2>
-      <p>From the first call to the trips themselves. {data.demo && <SampleLabel />}</p>
+      <p>From the first call to the trips themselves.</p>
     </div>
     <HowItWorks steps={data.howItWorks} swipe />
   </Section>
@@ -127,8 +123,7 @@ const sampleFaqs = faqs.some((faq) => faq.data.demo);
           Questions from companies
         </h2>
         <p>
-          <Link href={`${routes.faqs}#faq-corporate`}>See all FAQs</Link>.{' '}
-          {sampleFaqs && <SampleLabel />}
+          <Link href={`${routes.faqs}#faq-corporate`}>See all FAQs</Link>.
         </p>
       </div>
       <Accordion

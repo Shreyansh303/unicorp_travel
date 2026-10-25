@@ -10,7 +10,6 @@ import Section from '../../components/ui/Section.astro';
 import Button from '../../components/ui/Button.astro';
 import Link from '../../components/ui/Link.astro';
 import PackageCard from '../../components/ui/PackageCard.astro';
-import SampleLabel from '../../components/ui/SampleLabel.astro';
 import HowItWorks from '../../components/ui/HowItWorks.astro';
 import Stagger from '../../components/motion/Stagger.astro';
 import HolidayFilters from '../../components/holidays/HolidayFilters.astro';
@@ -29,7 +28,6 @@ import { greeting, whatsappFor } from '../../lib/enquiry';
 const leisure = await getEntry('services', 'leisure');
 if (!leisure) throw new Error('The leisure service entry is missing');
 const packages = await getPackages('featured');
-const hasSample = packages.some((item) => item.data.demo);
 /** Photos for the hero crossfade; the first one is the LCP image. */
 const heroPhotos = [
   { src: ladakh, alt: 'A turquoise lake ringed by bare mountains under a blue sky' },
@@ -79,11 +77,11 @@ const heroPhotos = [
   <Section tone="sand" rounded aria-labelledby="list-title" id="packages" class="sec-compact">
     <div data-reveal class="section-head">
       <h2 id="list-title" class="t-h2">
-        Sample <span class="t-accent">holidays</span>
+        Our <span class="t-accent">holidays</span>
       </h2>
       <p>
         Trips in India and abroad to start from. Prices are indicative, per person, and valid until
-        the date shown on each trip. {hasSample && <SampleLabel />}
+        the date shown on each trip.
       </p>
     </div>
     <HolidayFilters packages={packages} />
@@ -108,7 +106,6 @@ const heroPhotos = [
             image={item.data.images.hero.src}
             alt={item.data.images.hero.alt}
             href={packageHref(item)}
-            demo={item.data.demo}
             headingLevel={3}
             sizes="(min-width: 1366px) 300px, (min-width: 1024px) 22vw, (min-width: 768px) 45vw, calc(100vw - 2rem)"
           />
@@ -204,11 +201,6 @@ const heroPhotos = [
 
     .list-grid {
       gap: var(--space-6);
-    }
-
-    /* The heading above the list carries the "Sample content" label for every card. */
-    .list-grid :global(.sample-label) {
-      display: none;
     }
 
     .list-grid > :global(li.is-folded) {

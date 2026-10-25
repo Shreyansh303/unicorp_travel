@@ -34,7 +34,6 @@ for (const route of routes) {
       await expect(page.locator('.pk-stats')).toContainText('From');
       await expect(page.locator('.pk-stats')).toContainText('Valid until');
       await expect(page.locator('h1')).toHaveCount(1);
-      await expect(page.locator('.pk-sample')).toBeVisible();
     });
 
     test('the button stays above the bar on a 375x667 phone', async ({ page }) => {

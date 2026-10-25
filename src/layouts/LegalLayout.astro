@@ -1,14 +1,13 @@
 ---
 /**
  * Page for a legal draft from the `legal` collection (F-14). The text is sample content pending
- * legal review, so the page says so and carries the "Sample content" label. The company it
+ * legal review, so the page says so. The company it
  * speaks for is named from site.ts, never in the Markdown.
  */
 import { render } from 'astro:content';
 import PageLayout from './PageLayout.astro';
 import PageHero from '../components/ui/PageHero.astro';
 import Section from '../components/ui/Section.astro';
-import SampleLabel from '../components/ui/SampleLabel.astro';
 import FactsBlock from '../components/ui/FactsBlock.astro';
 import Icon from '../components/ui/Icon.astro';
 import { getLegal } from '../lib/content';
@@ -53,7 +52,6 @@ const sections = headings.filter((heading) => heading.depth === 2);
           <span>Draft, pending legal review</span>
         </p>
       )}
-      {entry.data.demo && <SampleLabel />}
     </div>
     <p class="legal-updated">
       Last updated{' '}

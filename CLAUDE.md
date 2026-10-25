@@ -35,7 +35,7 @@ Every fact (names, address, phones, email, hours, social profiles, services) com
 Section 5, content:
 
 - No placeholder text and no theme demo content.
-- Sample content (packages, prices, FAQ answers, legal text) is allowed only with `demo: true` in its content-collection entry and a visible "Sample content" label. A `DEMO=false` build must fail if any `demo: true` content exists.
+- Sample content (packages, prices, FAQ answers, legal text) is allowed only with `demo: true` in its content-collection entry. It is not labelled on the page (user decision, 2026-10-25); a `DEMO=false` build must fail if any `demo: true` content exists.
 - Write all copy fresh in plain Indian English, one brand name, no unverifiable claims (awards, counts, ratings, "best").
 - Photography is licensed, downloaded and optimised, never hot-linked, and credited in `docs/image-credits.md`.
 - No live map iframe on load.
@@ -51,7 +51,7 @@ Section 6, design and motion:
 
 Section 9, do not repeat the old site's mistakes:
 
-- No theme demo or filler content; samples labelled and blocked from production.
+- No theme demo or filler content; samples blocked from production by the `DEMO=false` build failure (no on-page label, user decision 2026-10-25).
 - Show only facts the client can document (no unsourced counters, no unconfirmed founding year).
 - Maps use the verified Noida address only.
 - No dead buttons or `#` links; no icon without a real destination.

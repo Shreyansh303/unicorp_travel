@@ -19,7 +19,6 @@ import FilterChips from '../components/ui/FilterChips.astro';
 import Dialog from '../components/ui/Dialog.astro';
 import Toast from '../components/ui/Toast.astro';
 import Breadcrumbs from '../components/ui/Breadcrumbs.astro';
-import SampleLabel from '../components/ui/SampleLabel.astro';
 import FactsBlock from '../components/ui/FactsBlock.astro';
 import FloatingContact from '../components/ui/FloatingContact.astro';
 import Icon from '../components/ui/Icon.astro';
@@ -107,7 +106,6 @@ const pairings: { fg: string; bg: string; use: Use; where: string }[] = [
   { fg: 'red-700', bg: 'sand-100', use: 'body', where: 'Small red text on sand' },
   { fg: 'red-700', bg: 'red-50', use: 'body', where: 'Text on the red tint' },
   { fg: 'ink', bg: 'red-50', use: 'body', where: 'Submenu and drawer hover' },
-  { fg: 'red-600', bg: 'white', use: 'body', where: 'Sample label on red sections' },
   { fg: 'red-600', bg: 'paper', use: 'large', where: 'Red headline words on paper' },
   { fg: 'red-600', bg: 'sand-100', use: 'large', where: 'Red headline words on sand' },
   { fg: 'white', bg: 'red-600', use: 'body', where: 'Primary buttons, red sections, WhatsApp bar' },
@@ -272,7 +270,7 @@ const toc = [
   ['progress', 'Stepper'],
   ['disclosure', 'Accordion and filter chips'],
   ['overlays', 'Dialog, drawer and toast'],
-  ['wayfinding', 'Breadcrumbs and labels'],
+  ['wayfinding', 'Breadcrumbs'],
   ['facts', 'Facts, footer and contact'],
 ];
 const stepLabel = (index: number) => `Step ${index + 1}`;
@@ -722,7 +720,7 @@ const facebook = shown(site.social.facebook);
           </li>
           <li>
             <Button href={kerala?.href ?? routes.holidays} iconEnd="arrow-right">
-              See a sample trip
+              See a trip
             </Button>
             <span class="sg-caption">Link as button, icon end</span>
           </li>
@@ -758,8 +756,8 @@ const facebook = shown(site.social.facebook);
         <h3 class="t-h4">Links</h3>
         <p class="sg-prose">
           Inline links are always underlined, as in this link to the
-          <Link href={kerala?.href ?? routes.holidays}>sample Kerala itinerary</Link> and these
-          forced states:
+          <Link href={kerala?.href ?? routes.holidays}>Kerala itinerary</Link> and these forced
+          states:
           <Link href={routes.holidays} state="hover">
             hover
           </Link>
@@ -801,10 +799,7 @@ const facebook = shown(site.social.facebook);
         <h2 id="cards" class="t-h2">
           Cards
         </h2>
-        <p>
-          Service cards in red, ink and white. Package cards with an arched photo; demo data shows
-          the label.
-        </p>
+        <p>Service cards in red, ink and white. Package cards with an arched photo.</p>
       </div>
       <ul class="sg-cards">
         {leisure && (
@@ -877,7 +872,6 @@ const facebook = shown(site.social.facebook);
               image={kerala.image}
               alt={kerala.alt}
               href={kerala?.href ?? routes.holidays}
-              demo
             />
             <span class="sg-caption">Default, with link</span>
           </li>
@@ -893,7 +887,6 @@ const facebook = shown(site.social.facebook);
               image={andaman.image}
               alt={andaman.alt}
               href={kerala?.href ?? routes.holidays}
-              demo
               state="hover"
             />
             <span class="sg-caption">Hover</span>
@@ -910,7 +903,6 @@ const facebook = shown(site.social.facebook);
               image={kerala.image}
               alt={kerala.alt}
               href={kerala?.href ?? routes.holidays}
-              demo
               state="focus"
             />
             <span class="sg-caption">Focus</span>
@@ -1307,13 +1299,13 @@ const facebook = shown(site.social.facebook);
       </Dialog>
     </Section>
 
-    <!-- Breadcrumbs and labels -->
+    <!-- Breadcrumbs -->
     <Section tone="paper" aria-labelledby="wayfinding">
       <div class="section-head">
         <h2 id="wayfinding" class="t-h2">
-          Breadcrumbs and labels
+          Breadcrumbs
         </h2>
-        <p>The last crumb is the current page. The sample label marks every piece of demo data.</p>
+        <p>The last crumb is the current page.</p>
       </div>
       <div class="sg-stack">
         <Breadcrumbs
@@ -1323,17 +1315,6 @@ const facebook = shown(site.social.facebook);
             { label: 'Kerala backwaters and hills' },
           ]}
         />
-        <div class="sg-row">
-          <span class="sg-label-demo tone-paper">
-            <SampleLabel />
-          </span>
-          <span class="sg-label-demo tone-ink">
-            <SampleLabel />
-          </span>
-          <span class="sg-label-demo tone-red">
-            <SampleLabel />
-          </span>
-        </div>
       </div>
     </Section>
 
@@ -1961,13 +1942,6 @@ const facebook = shown(site.social.facebook);
 
   .sg-toasts :global(.toast) {
     animation: none;
-  }
-
-  .sg-label-demo {
-    display: inline-flex;
-    padding: var(--space-4) var(--space-6);
-    border-radius: var(--radius-md);
-    background: var(--bg);
   }
 </style>
 

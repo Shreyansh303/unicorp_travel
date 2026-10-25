@@ -2,12 +2,10 @@
 /**
  * Service card: a rounded colour block with a heading, a line of copy and the services as pills.
  * With `href` the whole card is one link (the heading link stretches over the card).
- * With `demo` the card carries the visible "Sample content" label (roadmap section 5).
  * With `fold` (Home) the card becomes a numbered accordion row at every width: the description,
- * items, label and link sit in one panel, and a script turns the title into the toggle (see below).
+ * items and link sit in one panel, and a script turns the title into the toggle (see below).
  */
 import Icon from './Icon.astro';
-import SampleLabel from './SampleLabel.astro';
 
 interface Props {
   title: string;
@@ -15,10 +13,9 @@ interface Props {
   items?: readonly string[];
   href?: string | undefined;
   tone?: 'red' | 'ink' | 'white';
-  demo?: boolean;
   /** Accordion row (Home). Needs a `data-fold-group` ancestor to close its siblings. */
   fold?: boolean;
-  /** Text of the link to the group's page inside an open row, e.g. "See sample trips". */
+  /** Text of the link to the group's page inside an open row, e.g. "See holidays". */
   linkLabel?: string | undefined;
   headingLevel?: 2 | 3 | 4;
   state?: 'hover' | 'focus';
@@ -31,7 +28,6 @@ const {
   items = [],
   href,
   tone = 'white',
-  demo = false,
   fold = false,
   linkLabel,
   headingLevel = 3,
@@ -82,7 +78,6 @@ const bodyProps = fold
         ))}
       </ul>
     )}
-    {demo && <SampleLabel class="svc-sample" />}
   </Body>
 </article>
 
@@ -183,11 +178,6 @@ const bodyProps = fold
     font-weight: var(--weight-medium);
   }
 
-  .svc-card :global(.svc-sample) {
-    justify-self: start;
-    margin-top: var(--space-2);
-  }
-
   .tone-red .svc-items li {
     border-color: rgb(255 255 255 / 0.6);
   }
@@ -265,12 +255,6 @@ const bodyProps = fold
       border-color: var(--stone-300);
       font-size: 0.9375rem;
       font-weight: 600;
-    }
-
-    /* The label inverts the card colours; the row's background is transparent, so give it paper. */
-    .svc-fold :global(.svc-sample) {
-      --bg: var(--paper);
-      margin-top: 0;
     }
 
     /* The link to the group's page, moved here by the script. */
@@ -432,8 +416,7 @@ const bodyProps = fold
     }
 
     .svc-fold .svc-items,
-    .svc-fold :global(.svc-go),
-    .svc-fold :global(.svc-sample) {
+    .svc-fold :global(.svc-go) {
       grid-column: 2;
       justify-self: start;
     }
@@ -523,7 +506,7 @@ const bodyProps = fold
     panel.setAttribute('role', 'region');
     panel.setAttribute('aria-labelledby', button.id);
     link.classList.add('svc-go');
-    panel.insertBefore(link, panel.querySelector('.svc-sample'));
+    panel.append(link);
     heading.replaceChildren(button);
     card.dataset['foldActive'] = 'true';
     toggle(card, !phone.matches && index === 0);

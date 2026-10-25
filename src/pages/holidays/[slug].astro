@@ -6,7 +6,6 @@ import Section from '../../components/ui/Section.astro';
 import Button from '../../components/ui/Button.astro';
 import Link from '../../components/ui/Link.astro';
 import Breadcrumbs from '../../components/ui/Breadcrumbs.astro';
-import SampleLabel from '../../components/ui/SampleLabel.astro';
 import TickList from '../../components/ui/TickList.astro';
 import RouteLine from '../../components/motion/RouteLine.astro';
 import Stagger from '../../components/motion/Stagger.astro';
@@ -87,7 +86,6 @@ const priceRows = [
             { label: data.title },
           ]}
         />
-        {data.demo && <SampleLabel class="pk-sample" />}
         <h1 id="page-title" class="t-display pk-title">
           {data.title}
         </h1>
@@ -181,7 +179,7 @@ const priceRows = [
       </h2>
       <p>
         What this trip is built around, from {first}
-        {last && last !== first ? ` to ${last}` : ''}. {data.demo && <SampleLabel />}
+        {last && last !== first ? ` to ${last}` : ''}.
       </p>
     </div>
     <Stagger as="ul" class="hl-grid">
@@ -203,7 +201,7 @@ const priceRows = [
           Day by day
         </h2>
         <p class="t-muted">
-          Follow the line through {route}. {data.demo && <SampleLabel />}
+          Follow the line through {route}.
         </p>
         {gallery && (
           <Parallax class="itin-photo">
@@ -267,8 +265,7 @@ const priceRows = [
         What the price covers
       </h2>
       <p>
-        The indicative price is {data.priceBasis}. We confirm everything in writing before you book.{' '}
-        {data.demo && <SampleLabel />}
+        The indicative price is {data.priceBasis}. We confirm everything in writing before you book.
       </p>
     </div>
     <div class="inc-grid">
@@ -586,11 +583,6 @@ const priceRows = [
       padding: 2rem 1.25rem;
       border-radius: 2rem 2rem 0 0;
       background: var(--paper);
-    }
-
-    .pk-copy > :global(.pk-sample) {
-      order: 0;
-      align-self: flex-start;
     }
 
     .pk-title {

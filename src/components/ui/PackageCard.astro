@@ -2,14 +2,12 @@
 /**
  * Holiday package card: arched photo, region and length, name, indicative "from" price and
  * what that price covers (the entry's priceBasis).
- * With `demo` it carries the visible "Sample content" label (roadmap section 5).
  * With `href` the whole card is one link.
  * With `fold` (Home) the card is a 380px photo card on phones, with the details on a white inset
- * panel; the per-card label and "Valid to" line step aside there (the section carries both).
+ * panel; the "Valid to" line steps aside there (the section carries it).
  */
 import { Picture } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
-import SampleLabel from './SampleLabel.astro';
 import { formatINR } from '../../lib/format';
 
 interface Props {
@@ -24,7 +22,6 @@ interface Props {
   image: ImageMetadata;
   alt: string;
   href?: string | undefined;
-  demo?: boolean;
   /** Phone photo-card layout (Home pager). */
   fold?: boolean;
   headingLevel?: 2 | 3 | 4;
@@ -44,7 +41,6 @@ const {
   image,
   alt,
   href,
-  demo = false,
   fold = false,
   headingLevel = 3,
   sizes = '(min-width: 1024px) 22vw, (min-width: 768px) 45vw, 100vw',
@@ -87,7 +83,6 @@ const Heading = `h${headingLevel}` as 'h2' | 'h3' | 'h4';
     </p>
     {priceBasis && <p class="pkg-basis">{priceBasis}</p>}
     {validTo && <p class="pkg-valid">Valid to {validTo}</p>}
-    {demo && <SampleLabel />}
   </div>
 </article>
 
@@ -255,8 +250,7 @@ const Heading = `h${headingLevel}` as 'h2' | 'h3' | 'h4';
       color: var(--stone-600);
     }
 
-    .pkg-fold .pkg-valid,
-    .pkg-fold :global(.sample-label) {
+    .pkg-fold .pkg-valid {
       display: none;
     }
 

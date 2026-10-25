@@ -111,7 +111,6 @@ test.describe('phone corporate band at 390x844', () => {
     expect(await link.evaluate((el) => getComputedStyle(el).textDecorationLine)).toBe('underline');
     // DOM order, so focus order matches: the text link, then the outlined button.
     expect((await link.boundingBox())?.y ?? 0).toBeLessThan((await desk.boundingBox())?.y ?? 0);
-    await expect(corp(page).locator('.sample-label').first()).toBeVisible();
   });
 
   test('both links have the same hrefs as at 1366, and the photo is not fetched there', async ({

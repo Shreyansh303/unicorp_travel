@@ -56,7 +56,7 @@ test.describe('phone Services accordion at 390x844', () => {
     await expect(rows(page).nth(1)).toHaveAttribute('aria-expanded', 'false');
   });
 
-  test('an open panel holds the description, wrapped chips, the link and the sample label', async ({
+  test('an open panel holds the description, wrapped chips, and the link', async ({
     page,
   }) => {
     await page.goto('/');
@@ -74,7 +74,6 @@ test.describe('phone Services accordion at 390x844', () => {
     expect(chip.border).toBe('rgb(207, 199, 189)');
     expect(chip.radius).toBeGreaterThan(15);
     await expect(panel.locator('a.svc-go')).toHaveAttribute('href', '/corporate-travel');
-    await expect(panel.locator('.sample-label')).toBeVisible();
     // The lede above the rows is hidden; the heading stays.
     await expect(page.locator('#services .svc-head > p')).toBeHidden();
     await expect(page.getByRole('heading', { name: /Holidays first/ })).toBeVisible();
@@ -137,7 +136,7 @@ test.describe('phone Trips pager at 390x844', () => {
     await expect(photo).toHaveAttribute('alt', /.+/);
   });
 
-  test('the white panel carries region, name, price and note; label and valid-to are hidden', async ({
+  test('the white panel carries region, name, price and note; valid-to is hidden', async ({
     page,
   }) => {
     await page.goto('/');
@@ -147,7 +146,6 @@ test.describe('phone Trips pager at 390x844', () => {
     await expect(card.locator('.pkg-price')).toContainText('from');
     await expect(card.locator('.pkg-basis')).toBeVisible();
     await expect(card.locator('.pkg-valid')).toBeHidden();
-    await expect(card.locator('.sample-label')).toBeHidden();
     const panel = await card.locator('.pkg-body').evaluate((el) => {
       const css = getComputedStyle(el);
       return { bg: css.backgroundColor, radius: css.borderTopLeftRadius, pad: css.paddingTop };
@@ -202,12 +200,11 @@ test.describe('phone Trips pager at 390x844', () => {
     expect(await tripHrefs(page)).toEqual(phoneHrefs);
   });
 
-  test('the footnote carries the sample label; See all holidays follows', async ({ page }) => {
+  test('the footnote notes indicative prices; See all holidays follows', async ({ page }) => {
     await page.goto('/');
     const note = page.locator('#packages .pkg-note');
     await expect(note).toBeVisible();
-    await expect(note.locator('.sample-label')).toBeVisible();
-    await expect(note).toContainText('Sample trips to show the idea');
+    await expect(note).toContainText('Prices are indicative');
     await expect(page.locator('#packages .pkg-head > p')).toBeHidden();
     await expect(page.locator('#packages .pkg-route')).toBeHidden();
     const noteBox = await note.boundingBox();
@@ -254,25 +251,16 @@ test.describe('Home sections at 1366x900', () => {
     await expect(rows(page).nth(0)).toHaveAccessibleName('Leisure travel');
     await expect(page.locator('#services [data-fold-body]:visible')).toHaveCount(1);
     const open = page.locator('#services [data-fold-body]').nth(0);
-    await expect(open.locator('a.svc-go')).toHaveText(/See sample trips/);
+    await expect(open.locator('a.svc-go')).toHaveText(/See holidays/);
     await expect(open.locator('a.svc-go')).toHaveAttribute('href', '/holidays');
     // Description on the left, chips on the right.
     const text = await open.locator('.svc-text').boundingBox();
     const chips = await open.locator('.svc-items').boundingBox();
     expect((chips?.x ?? 0) > (text?.x ?? 0) + (text?.width ?? 0)).toBe(true);
-    // The corporate row's sample label stays readable (its text is not transparent).
-    await rows(page).nth(1).click();
-    const label = page.locator('#services [data-fold-body]').nth(1).locator('.sample-label');
-    await expect(label).toBeVisible();
-    expect(await label.evaluate((el) => getComputedStyle(el).color)).not.toBe('rgba(0, 0, 0, 0)');
     await expect(page.locator('[data-pager-controls]')).toBeHidden();
     await expect(page.locator('#services .svc-head > p')).toBeVisible();
     await expect(page.locator('#packages .pkg-head > p')).toBeVisible();
     await expect(page.locator('#packages .pkg-note')).toBeHidden();
-    await expect(page.locator('#packages .pkg-cell .sample-label')).toHaveCount(4);
-    for (const label of await page.locator('#packages .pkg-cell .sample-label').all()) {
-      await expect(label).toBeVisible();
-    }
     const inView = await page
       .locator('#packages .pkg-cell')
       .evaluateAll((items) => items.map((el) => el.getBoundingClientRect().right <= 1366));

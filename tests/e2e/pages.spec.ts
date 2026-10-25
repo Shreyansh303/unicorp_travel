@@ -2,11 +2,8 @@ import { expect, test } from '@playwright/test';
 import { shown, site } from '../../src/config/site';
 import {
   allRoutes,
-  corporateDemo,
   demoLegalRoutes,
-  packageDemo,
   packageRoutes,
-  sampleRoutes,
 } from '../routes';
 
 // astro.config.mjs reads SITE_URL; without it pages must not invent canonical or OG URLs.
@@ -96,34 +93,9 @@ test.describe('every page', () => {
       // Floating WhatsApp and call buttons (F-02).
       await expect(page.locator('.floating-fixed a[href^="https://wa.me/"]')).toHaveCount(1);
 
-      // Sample content carries the visible label (pages derived from the collections in routes.ts).
-      if (sampleRoutes.includes(path)) {
-        await expect(page.locator('main .sample-label:visible').first()).toBeVisible();
-      }
-      // Every sample package card has its own label.
-      for (const card of await page.locator('main .pkg-card').all()) {
-        const href = (await card.locator('a').first().getAttribute('href')) ?? '';
-        if (packageDemo.get(href.split('/').pop() ?? '')) {
-          await expect(card.locator('.sample-label')).toBeVisible();
-        }
-      }
-      // While the corporate offer is sample content, every card that summarises it is labelled.
-      if (corporateDemo) {
-        for (const card of await page
-          .locator('main .svc-card')
-          .filter({ has: page.locator('a[href="/corporate-travel"]') })
-          .all()) {
-          // A closed accordion row hides the offer and its label together; open it to check.
-          const toggle = card.locator('.svc-fold-btn');
-          if (
-            (await toggle.count()) > 0 &&
-            (await toggle.getAttribute('aria-expanded')) === 'false'
-          ) {
-            await toggle.click();
-          }
-          await expect(card.locator('.sample-label')).toBeVisible();
-        }
-      }
+      // Sample content is blocked from production by the build, not labelled on the page.
+      await expect(page.locator('body')).not.toContainText('Sample content');
+
       if (demoLegalRoutes.includes(path)) {
         await expect(page.locator('main')).toContainText('Draft, pending legal review');
       }

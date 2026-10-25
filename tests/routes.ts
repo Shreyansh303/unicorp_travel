@@ -1,5 +1,5 @@
 /**
- * Every public route and every page that shows sample content, derived from the files on disk
+ * Every public route, derived from the files on disk
  * (src/pages and the content collections), so new pages and entries are covered by the page
  * tests without editing a list. Mirrors src/lib/routes.ts: corporate and leisure have their own
  * routes; related services live under /services.
@@ -51,16 +51,7 @@ const isDemo = (entry: Entry) => field(entry, 'demo') === 'true';
 
 const packages = entries('packages');
 const services = entries('services');
-const faqs = entries('faqs');
 const legal = entries('legal');
-
-/** Page for a service entry: corporate and leisure have their own routes. */
-function serviceRoute(entry: Entry): string {
-  const category = field(entry, 'category');
-  if (category === 'corporate') return '/corporate-travel';
-  if (category === 'leisure') return '/holidays';
-  return `/services/${slugOf(entry)}`;
-}
 
 export const packageRoutes = packages.map((entry) => `/holidays/${slugOf(entry)}`);
 
@@ -94,40 +85,6 @@ export const allRoutes = [
   ...new Set([...staticRoutes, ...packageRoutes, ...serviceRoutes, ...legalRoutes]),
 ];
 
-/** Slug to demo flag for every package, so tests can check each package card's label. */
-export const packageDemo = new Map(packages.map((entry) => [slugOf(entry), isDemo(entry)]));
-
-const corporate = services.find((entry) => field(entry, 'category') === 'corporate');
-/** True while the corporate offer is sample content (it then needs a label wherever it shows). */
-export const corporateDemo = corporate ? isDemo(corporate) : false;
-
-/** Pages that show sample content, so each must carry the visible "Sample content" label. */
-function samplePages(): string[] {
-  const pages = new Set<string>();
-  for (const entry of packages.filter(isDemo)) {
-    pages.add(`/holidays/${slugOf(entry)}`);
-    pages.add('/holidays');
-    if (field(entry, 'featured') === 'true') pages.add('/');
-  }
-  for (const entry of services.filter(isDemo)) {
-    pages.add(serviceRoute(entry));
-    // The corporate offer is summarised on the home, about and services pages.
-    if (field(entry, 'category') === 'corporate')
-      ['/', '/about', '/services'].forEach((p) => pages.add(p));
-  }
-  for (const entry of faqs.filter(isDemo)) {
-    pages.add('/faqs');
-    // FAQs are shown on related service pages and the corporate page (leisure FAQs only on /faqs).
-    for (const id of listField(entry, 'services')) {
-      const service = services.find((item) => slugOf(item) === id);
-      if (service && field(service, 'category') !== 'leisure') pages.add(serviceRoute(service));
-    }
-  }
-  for (const entry of legal.filter(isDemo)) pages.add(`/${entry.id}`);
-  return [...pages].sort();
-}
-
-export const sampleRoutes = samplePages();
 export const demoLegalRoutes = legal.filter(isDemo).map((entry) => `/${entry.id}`);
 
 /** Facts the holiday filters (F-04) work on, read from each package file. */

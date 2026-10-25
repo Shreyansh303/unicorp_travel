@@ -17,12 +17,11 @@ import { routes, serviceHref, serviceLabel } from '../../lib/routes';
 
 const grouped = await getServicesGrouped();
 const related = grouped.related;
-// Each card shows its entry's summary; sample entries (corporate, for now) carry the label.
+// Each card shows its entry's summary.
 const others = [...grouped.leisure, ...grouped.corporate].map((service) => ({
   title: service.data.title,
   text: service.data.summary,
   href: serviceHref(service),
-  demo: service.data.demo,
 }));
 /** Photos for the hero crossfade; the first one is the LCP image. */
 const heroPhotos = [
@@ -108,7 +107,6 @@ const heroPhotos = [
             text={card.text}
             href={card.href}
             tone={index === 0 ? 'red' : 'ink'}
-            demo={card.demo}
           />
         </li>
       ))}

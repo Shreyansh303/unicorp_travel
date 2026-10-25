@@ -295,7 +295,7 @@ export default function PlanMyTrip({ regions, themes, budgets, privacyHref }: Pr
               <ChipGroup
                 id="plan-regions"
                 label="Or pick regions"
-                hint="Regions our sample holidays cover. Choose as many as you like."
+                hint="Regions our holidays cover. Choose as many as you like."
                 options={regions}
                 values={values.regions}
                 onToggle={(value) => toggle('regions', value)}

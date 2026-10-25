@@ -5,7 +5,6 @@ import PageHero from '../../components/ui/PageHero.astro';
 import Section from '../../components/ui/Section.astro';
 import Button from '../../components/ui/Button.astro';
 import Link from '../../components/ui/Link.astro';
-import SampleLabel from '../../components/ui/SampleLabel.astro';
 import TickList from '../../components/ui/TickList.astro';
 import HowItWorks from '../../components/ui/HowItWorks.astro';
 import Accordion from '../../components/ui/Accordion.astro';
@@ -40,7 +39,6 @@ const data = service.data;
 const label = serviceLabel(service);
 const topic = midSentence(data.title);
 const topicShort = midSentence(label);
-const sampleFaqs = faqs.some((faq) => faq.data.demo);
 const otherServices = all.filter((item) => item.id !== service.id);
 ---
 
@@ -95,7 +93,6 @@ const otherServices = all.filter((item) => item.id !== service.id);
         <h2 id="handle-title" class="t-h2">
           What we handle
         </h2>
-        {data.demo && <SampleLabel />}
       </div>
       <TickList items={data.whatWeHandle} class="handle-list" />
     </div>
@@ -128,8 +125,7 @@ const otherServices = all.filter((item) => item.id !== service.id);
           Questions
         </h2>
         <p>
-          Short answers to common questions. <Link href={routes.faqs}>See all FAQs</Link>.{' '}
-          {sampleFaqs && <SampleLabel />}
+          Short answers to common questions. <Link href={routes.faqs}>See all FAQs</Link>.
         </p>
       </div>
       <Accordion

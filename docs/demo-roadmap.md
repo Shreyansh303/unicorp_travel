@@ -19,6 +19,7 @@ Confirmed with the user on 2026-10-18 (M0).
 | Visual direction (M2) | Mock C "Monsoon" (warm, expressive, holiday-first; Bricolage Grotesque and Figtree; route line looping through arched photos), recoloured to Unicorp's brand colours: mainly red, black and white. The reference red is `#ED0000`, the dominant colour on the old site. Chosen by the user on 2026-10-18. |
 | Hero photos (after M6) | /holidays, /services and /plan-my-trip get a slow crossfade of photos in the hero, about 5 s per photo, without a pause button (the user removed it on 2026-10-19, accepting that this falls short of WCAG 2.2.2). This is the only exception to the no-carousel rule in section 6. Requested by the user on 2026-10-19. |
 | Home hero photos (mobile redesign) | Home gets the same crossfade at every width: Udaipur, Kerala backwaters, Tegalalang (Bali), Marina Bay (Singapore) and the Swiss Alps, each with a destination chip that changes with the photo. Only photos whose location the credits confirm are captioned. Requested by the user on 2026-10-21. |
+| Sample content labels | Sample content (`demo: true`) is no longer labelled on the page (user decision, 2026-10-25). It stays blocked from production by the `DEMO=false` build failure. |
 | Preview hosting | Vercel. `X-Robots-Tag` set in `vercel.json`, driven by the `DEMO` flag. The user signs in to the Vercel CLI; deploys happen only with the user's approval. |
 
 ---
@@ -110,7 +111,7 @@ Services, as listed on the old site (rewrite all copy; P-04, P-07):
 |---|---|---|---|
 | F-01 | Service-specific enquiry forms | One form component, configured per service (field sets for visa, hotel, MICE, corporate account and so on). Fields: name, phone, email, travel dates, travellers, budget band, message; GSTIN and company name on corporate forms. | Every field has a visible label and error message; phone accepts Indian formats; submit works by keyboard; success state shown. |
 | F-02 | Callback request, WhatsApp, click-to-call, business hours | Callback form (name, phone, preferred time, topic) on every service and package page. Floating WhatsApp and call buttons that never cover content (P-21). Hours from the site config. | `tel:+91...` links; `https://wa.me/919891677321?text=...` with a page-specific pre-filled message; buttons stay clear of text at 375 px width. |
-| F-03 | Holiday package pages | Listing plus one detail page per package: hero, highlights, day-wise itinerary, inclusions and exclusions, an indicative "from" price with a validity date, and an enquiry form pre-filled with the package. No booking button. | 6 to 8 sample packages (mix of domestic and international); every sample visibly labelled as demo data (section 5). |
+| F-03 | Holiday package pages | Listing plus one detail page per package: hero, highlights, day-wise itinerary, inclusions and exclusions, an indicative "from" price with a validity date, and an enquiry form pre-filled with the package. No booking button. | 6 to 8 sample packages (mix of domestic and international); every sample marked `demo: true` and blocked from production (section 5). |
 | F-04 | Package search and filters | Client-side filtering by destination type (domestic or international), region, duration, budget band and theme (honeymoon, family, adventure, wildlife and so on). | Filters sync to the URL query string (shareable, back button works); result count announced to screen readers; empty state with a "Plan my trip" link. |
 | F-09 | Company facts and credentials block | A block on About and Contact (and in the footer, condensed): legal name, CIN, GSTIN, offices. Membership badges render only when the config has proof data. | Nothing renders for a missing fact (no blanks, no "#" links). |
 | F-10 | FAQs | Short FAQ section on each service page plus an `/faqs` page that aggregates them. | Accessible accordion (button, `aria-expanded`, keyboard); FAQ text written as demo copy and marked for client review; FAQPage structured data only after the client approves the answers. |
@@ -127,7 +128,7 @@ Services, as listed on the old site (rewrite all copy; P-04, P-07):
 - **No placeholder text and no theme demo content anywhere** (the old site's biggest problem: P-01, P-09).
 - Sample content that the client must replace (packages, prices, FAQ answers, legal text) is allowed in the demo only if:
   1. it lives in the content collections with `demo: true` in its front matter, and
-  2. the page shows a small, visible "Sample content" label on it.
+  2. (Changed 2026-10-25, user decision) the page no longer shows a "Sample content" label; the build check below is what keeps samples out of production.
 - Add a build check: a production build (`DEMO=false`) fails if any content has `demo: true`. This stops sample data from reaching the launch.
 - Write all copy fresh in plain Indian English. One brand name everywhere. No unverifiable claims (no awards, counts, ratings or "best" claims).
 - Images: use licensed photography (for example Unsplash or Pexels, both free for commercial use under their own licences). Download and optimise the files; never hot-link. Record each image's source and licence in `docs/image-credits.md`. Avoid third-party brand signage (P-10).
@@ -142,7 +143,7 @@ Services, as listed on the old site (rewrite all copy; P-04, P-07):
 **Design system (build before pages):**
 - Tokens as CSS variables: colour (brand, neutrals, semantic), type scale, spacing, radii, shadows, and **motion tokens** (durations, easings, stagger).
 - Typography: one display face and one text face, self-hosted, `font-display: swap`, subset to Latin (P-31).
-- Components: Button, Link, Section, Card (service, package), Header and Nav (keyboard-operable submenu, P-40), Footer, Form fields (label, hint, error), Stepper, Accordion, Filter chips, Drawer or Dialog, Toast, Breadcrumbs, "Sample content" label, Facts block.
+- Components: Button, Link, Section, Card (service, package), Header and Nav (keyboard-operable submenu, P-40), Footer, Form fields (label, hint, error), Stepper, Accordion, Filter chips, Drawer or Dialog, Toast, Breadcrumbs, Facts block.
 - A `/styleguide` route in the demo that shows every token and component in every state.
 
 **Motion rules (non-negotiable):**
@@ -227,7 +228,7 @@ Site map:
 | Weight | Home page under 1 MB transferred on first load; images AVIF or WebP at displayed size with `srcset` (P-29) |
 | Accessibility | axe: zero violations on every page; WCAG 2.2 AA contrast (4.5:1 body text); full keyboard path through nav, forms, filters and planner (P-40 to P-44) |
 | SEO basics | Unique titles and descriptions, one H1, OG tags, TravelAgency JSON-LD from the site config, XML sitemap generated; `noindex` stays on for the demo |
-| Content | No lorem ipsum, no theme leftovers, every sample item labelled; spell-check the copy (P-07) |
+| Content | No lorem ipsum, no theme leftovers, every sample item marked `demo: true`; spell-check the copy (P-07) |
 | Links | Zero broken links and zero `#` hrefs |
 | Browsers | Latest Chrome, Firefox, Safari (iOS if available) and Edge |
 
@@ -255,7 +256,7 @@ Site map:
 
 | Old problem | Rule for the new site |
 |---|---|
-| Theme demo pages and filler text published (P-01, P-09) | No placeholder content; samples labelled and blocked from production builds. |
+| Theme demo pages and filler text published (P-01, P-09) | No placeholder content; samples marked `demo: true` and blocked from production builds (not labelled on the page, user decision 2026-10-25). |
 | Unsourced counters, wrong founding year (P-02, P-03) | Show only facts the client can document. |
 | US map on the Contact page (P-12) | Map from the verified Noida address only. |
 | Dead buttons and `#` links (P-08, P-14, P-18) | Link checker in CI; no icon without a real destination. |

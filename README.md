@@ -2,7 +2,7 @@
 
 Demo website for Unicorp Travel, a corporate and leisure travel agency in Noida. It is an information site for two audiences: corporate travel buyers (HR, admin and finance teams) and leisure travellers in Delhi NCR. Every page leads to an enquiry by form, callback, WhatsApp or phone. There is no booking, payment or login.
 
-> **Demo build.** Search engines are told not to index it (`noindex`), and sample content (packages, prices, FAQ answers, legal text) is labelled on the page. Production builds refuse sample content.
+> **Demo build.** Search engines are told not to index it (`noindex`), and sample content (packages, prices, FAQ answers, legal text) is not labelled on the page (user decision, 2026-10-25). Production builds refuse sample content.
 
 This repository is private.
 
@@ -107,7 +107,7 @@ All scripts are defined in `package.json`.
 **End-to-end tests** (`tests/e2e/`):
 
 - `smoke.spec.ts`: the home page has one `h1`, `lang="en-IN"`, and a robots meta tag that follows the `DEMO` flag.
-- `pages.spec.ts`: every route (the list is derived from the content collections in `tests/routes.ts`) returns 200 and has one `h1`, a title ending in the brand, a description, Open Graph tags, breadcrumbs on inner pages, an enquiry band with working WhatsApp and call links as the last thing in `main`, the "Sample content" label where sample content appears, and footer address and phones equal to `site.ts` (F-15). Titles and descriptions are unique across all routes. An unknown path returns the 404 page. Canonical, `og:url` and `og:image` are checked when `SITE_URL` is set and must be absent when it is not.
+- `pages.spec.ts`: every route (the list is derived from the content collections in `tests/routes.ts`) returns 200 and has one `h1`, a title ending in the brand, a description, Open Graph tags, breadcrumbs on inner pages, an enquiry band with working WhatsApp and call links as the last thing in `main`, no "Sample content" text on any page, and footer address and phones equal to `site.ts` (F-15). Titles and descriptions are unique across all routes. An unknown path returns the 404 page. Canonical, `og:url` and `og:image` are checked when `SITE_URL` is set and must be absent when it is not.
 - `components.spec.ts`: a keyboard pass over the styleguide, with a visible focus ring on every interactive component. It also covers the navigation submenu (Enter, Space and Escape), the dialog (focus trap, Escape, focus returned to the trigger), accordions, filter chips and the mobile drawer. At 375 px it checks that the floating contact buttons never cover focus or content on `/`, a package page, `/styleguide`, a service page, `/corporate-travel`, `/contact`, `/holidays` and `/plan-my-trip`, and never cover a form control while errors show. Under reduced motion it checks that nothing moves on `/`, a package page and `/styleguide`, and that hover and press states do not move. It also checks that every header link is reachable on a phone without JavaScript.
 - `forms.spec.ts` (F-01, F-02, F-14): table-driven phone (valid and invalid Indian formats), email and GSTIN rules; on every form page, visible labels, an unticked opt-in and a purpose notice tied to the submit button; each service page uses its service's form type. Submitting empty shows each error (`aria-invalid`, `aria-describedby`) and focuses the summary; invalid phone and email are rejected in the browser and valid formats accepted; the corporate GSTIN is checked only when filled; dates may not be in the past. A keyboard-only run fills and submits the visa form and checks that the decoded wa.me and mailto links hold the answers and the page; the package form carries the package name and reference; no network request is made and nothing is stored on submit. The callback form is run by keyboard on a service page and a package page. FAQ accordions on pages with forms work by keyboard. Without JavaScript the forms are hidden and the direct routes remain.
 - `filters.spec.ts` (F-04): every chip narrows the list to the packages the content files say match; choices combine (any within a group, all across groups); the query string follows the filters; a shared link, a reload, and back and forward restore them without reloading the page; the live region counts the results; the empty state links to Plan my trip; chips work by keyboard; the phone toggle; without JavaScript every package is listed.
@@ -198,7 +198,7 @@ Link helpers in the same file:
 
 - Navigation and layout: `Header`, `Footer`, `Breadcrumbs`, `FloatingContact`, `Section`, `Link`.
 - Actions and feedback: `Button`, `Dialog`, `Toast` (with `toast.ts`), `Stepper`, `Accordion`, `FilterChips`.
-- Content: `ServiceCard`, `PackageCard`, `FactsBlock`, `SampleLabel` (the visible "Sample content" label), `Icon`. Icons are inline line icons based on the Lucide set (ISC licence).
+- Content: `ServiceCard`, `PackageCard`, `FactsBlock`, `Icon`. Icons are inline line icons based on the Lucide set (ISC licence).
 - Page building blocks: `PageHero` (breadcrumbs, the H1, lede and optional photo), `EnquiryBand` (the closing enquiry option on every page, marked `data-enquiry`), `HowItWorks` (numbered steps), `TickList` (inclusions and what we handle) and `MapPanel` (an illustrated office panel with an "Open in Google Maps" link; no map loads on the page).
 - Forms in `src/components/ui/form/`: `Input`, `Textarea`, `Select`, `Checkbox`, `RadioGroup`, `FieldMessage`. Each field has a visible label, a hint and an error message, wired with `aria-describedby`. Their look is in `field.css`; buttons, chips and the stepper also keep their look in plain CSS files (`button.css`, `chips.css`, `stepper.css`), so the React planner shares it.
 
@@ -313,7 +313,7 @@ unicorp_travel/
 The full rules are in sections 5 and 9 of [`docs/demo-roadmap.md`](docs/demo-roadmap.md). In short:
 
 - No placeholder text, lorem ipsum or theme demo content.
-- Sample content (packages, prices, FAQ answers, legal text) is allowed only in a content entry marked `demo: true`, and the page shows the "Sample content" label.
+- Sample content (packages, prices, FAQ answers, legal text) is allowed only in a content entry marked `demo: true`. The page does not label it; the `DEMO=false` build failure keeps it out of production.
 - Copy is written fresh in plain Indian English, with one brand name, "Unicorp Travel". No unverifiable claims: no awards, counts, ratings or "best".
 - Photos are licensed, downloaded and optimised, never hot-linked, and credited in `docs/image-credits.md`.
 - No live map on page load. The map uses the verified Noida address only.

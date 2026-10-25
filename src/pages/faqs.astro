@@ -3,14 +3,12 @@ import PageLayout from '../layouts/PageLayout.astro';
 import PageHero from '../components/ui/PageHero.astro';
 import Section from '../components/ui/Section.astro';
 import Link from '../components/ui/Link.astro';
-import SampleLabel from '../components/ui/SampleLabel.astro';
 import Accordion from '../components/ui/Accordion.astro';
 import { getFaqsGroupedByService } from '../lib/content';
 import { greeting } from '../lib/enquiry';
 import { midSentence, routes, serviceHref, serviceLabel } from '../lib/routes';
 
 const groups = await getFaqsGroupedByService();
-const hasSample = groups.some((group) => group.faqs.some((faq) => faq.data.demo));
 ---
 
 <PageLayout
@@ -34,7 +32,6 @@ const hasSample = groups.some((group) => group.faqs.some((faq) => faq.data.demo)
     mood="corporate"
     compact
   >
-    {hasSample && <SampleLabel />}
     <nav class="jump" aria-label="FAQ topics">
       <ul>
         {groups.map((group) => (
@@ -65,7 +62,6 @@ const hasSample = groups.some((group) => group.faqs.some((faq) => faq.data.demo)
               ? 'See holidays'
               : `More on ${midSentence(serviceLabel(group.service))}`}
           </Link>
-          {group.faqs.some((faq) => faq.data.demo) && <SampleLabel />}
         </div>
         <Accordion
           id={`faqs-${group.service.id}`}
@@ -141,7 +137,7 @@ const hasSample = groups.some((group) => group.faqs.some((faq) => faq.data.demo)
       gap: var(--space-3);
     }
 
-    /* Title on its own line, then the group link and the sample label side by side. */
+    /* Title on its own line, then the group link. */
     .group-grid .group-head {
       display: flex;
       flex-wrap: wrap;
