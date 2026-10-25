@@ -20,10 +20,12 @@ interface Props {
   open?: number[];
   headingLevel?: 2 | 3 | 4;
   phoneRows?: boolean;
+  /** With `phoneRows`: accordions sharing this name keep one panel open between them (FAQs). */
+  singleGroup?: string;
   class?: string;
 }
 
-const { id, items, open = [], headingLevel = 3, phoneRows = false, class: className } = Astro.props;
+const { id, items, open = [], headingLevel = 3, phoneRows = false, singleGroup, class: className } = Astro.props;
 const Heading = `h${headingLevel}` as 'h2' | 'h3' | 'h4';
 ---
 
@@ -31,6 +33,7 @@ const Heading = `h${headingLevel}` as 'h2' | 'h3' | 'h4';
   class:list={['accordion', phoneRows && 'acc-phone-rows', className]}
   data-accordion
   data-single-on-phone={phoneRows ? 'true' : undefined}
+  data-single-group={phoneRows ? singleGroup : undefined}
 >
   {items.map((item, index) => {
     const isOpen = open.includes(index);
@@ -176,7 +179,15 @@ const Heading = `h${headingLevel}` as 'h2' | 'h3' | 'h4';
       button.addEventListener('click', () => {
         const open = button.getAttribute('aria-expanded') !== 'true';
         if (open && root.dataset['singleOnPhone'] && phone.matches) {
-          buttons.forEach((other) => {
+          const group = root.dataset['singleGroup'];
+          const scope = group
+            ? Array.from(
+                document.querySelectorAll<HTMLButtonElement>(
+                  `[data-single-group="${group}"] [data-accordion-button]`,
+                ),
+              )
+            : buttons;
+          scope.forEach((other) => {
             if (other !== button) set(other, false);
           });
         }

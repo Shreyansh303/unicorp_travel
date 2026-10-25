@@ -16,18 +16,27 @@ interface Props {
   inline?: boolean;
   /** Phones: the left button reads "Enquire" and opens the page's folded form (trip pages). */
   enquire?: boolean;
+  /** Phones: no bottom bar (the contact page is the contact surface). From 768 px nothing changes. */
+  phoneHidden?: boolean;
 }
 
 const {
   message = `Hello ${site.displayName}, I would like help planning a trip.`,
   inline = false,
   enquire = false,
+  phoneHidden = false,
 } = Astro.props;
 const mobile = shown(site.phones.mobile);
 ---
 
 {mobile && (
-  <div class:list={['floating', inline ? 'floating-inline' : 'floating-fixed']}>
+  <div
+    class:list={[
+      'floating',
+      inline ? 'floating-inline' : 'floating-fixed',
+      phoneHidden && 'floating-phone-hidden',
+    ]}
+  >
     {enquire && (
       <button
         type="button"
@@ -184,6 +193,20 @@ const mobile = shown(site.phones.mobile);
       scroll-padding-bottom: calc(4.3125rem + env(safe-area-inset-bottom, 0px) + 1rem);
     }
 
+    /* The contact page has no bar: nothing is reserved for it either. */
+    .floating-fixed.floating-phone-hidden {
+      display: none;
+    }
+
+    :global(body:has(.floating-fixed.floating-phone-hidden)) {
+      padding-bottom: 0;
+      --floating-bar-height: 0px;
+    }
+
+    :global(html:has(.floating-fixed.floating-phone-hidden)) {
+      scroll-padding-bottom: 0;
+    }
+
     .floating-fixed[data-away],
     :global(html[data-menu-open]) .floating-fixed {
       opacity: 0;
@@ -324,6 +347,7 @@ const mobile = shown(site.phones.mobile);
     const target = event.target as HTMLElement | null;
     // A bar that has stepped aside (phones) covers nothing.
     if (bar && getComputedStyle(bar).visibility === 'hidden') return;
+    if (bar && getComputedStyle(bar).display === 'none') return;
     if (!bar || !target || bar.contains(target) || getComputedStyle(bar).position !== 'fixed') {
       return;
     }

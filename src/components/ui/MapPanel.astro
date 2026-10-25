@@ -9,14 +9,23 @@ import { mapsHref, type PostalAddress } from '../../config/site';
 
 interface Props {
   address: PostalAddress;
+  /** Phones: a short strip of the drawing above the address. From 768 px nothing changes. */
+  compact?: boolean;
   class?: string;
 }
 
-const { address, class: className } = Astro.props;
+const { address, compact = false, class: className } = Astro.props;
 ---
 
-<div class:list={['map-panel', 'tone-ink', className]}>
-  <svg class="map-art" viewBox="0 0 600 360" fill="none" aria-hidden="true" focusable="false">
+<div class:list={['map-panel', 'tone-ink', compact && 'map-compact', className]}>
+  <svg
+    class="map-art"
+    viewBox="0 0 600 360"
+    preserveAspectRatio="xMidYMid slice"
+    fill="none"
+    aria-hidden="true"
+    focusable="false"
+  >
     <g class="map-roads">
       <path d="M-20 250 C120 230 220 260 330 210 S520 120 640 140" />
       <path d="M90 -20 C110 90 150 180 140 380" />
@@ -60,6 +69,21 @@ const { address, class: className } = Astro.props;
     width: 100%;
     height: auto;
     aspect-ratio: 600 / 360;
+  }
+
+  @media (max-width: 767.98px) {
+    .map-compact .map-art {
+      aspect-ratio: 600 / 170;
+    }
+
+    .map-compact .map-copy {
+      gap: var(--space-2);
+      padding: var(--space-5);
+    }
+
+    .map-compact .map-place {
+      font-size: var(--text-xl);
+    }
   }
 
   .map-roads path {

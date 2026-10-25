@@ -80,6 +80,8 @@ async function focusCoveredByBar(page: Page): Promise<string[]> {
       const el = document.activeElement as HTMLElement | null;
       const bar = document.querySelector('.floating-fixed');
       if (!el || el === document.body || !bar || bar.contains(el)) return null;
+      // The contact page has no bottom bar on phones.
+      if (getComputedStyle(bar).display === 'none') return null;
       const rect = el.getBoundingClientRect();
       const barTop = bar.getBoundingClientRect().top;
       return rect.bottom > barTop + 0.5
@@ -253,6 +255,12 @@ test.describe('mobile', () => {
           scrollWidth: document.documentElement.scrollWidth,
         };
       });
+      // The contact page has no bottom bar on phones.
+      if (path === '/contact') {
+        await expect(page.locator('.floating-fixed')).toBeHidden();
+        expect(scrollWidth).toBeLessThanOrEqual(375);
+        return;
+      }
       expect(barTop).toBeGreaterThan(0);
       expect(contentBottom).toBeLessThanOrEqual(barTop + 1);
       expect(scrollWidth).toBeLessThanOrEqual(375);

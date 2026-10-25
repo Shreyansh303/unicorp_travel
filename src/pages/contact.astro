@@ -48,6 +48,7 @@ const hourRows = hours
   topic="a trip"
   message={message}
   mood="corporate"
+  noPhoneBar
   enquiry={{
     title: 'Not sure where',
     accent: 'to start?',
@@ -60,9 +61,15 @@ const hourRows = hours
     lede="Message us on WhatsApp, call, email or visit the office. Tell us a little about the trip and we will take it from there."
     crumbs={[{ label: 'Home', href: routes.home }, { label: 'Contact' }]}
     mood="corporate"
+    compact
   />
 
-  <Section tone="sand" mood="corporate" aria-labelledby="ways-title">
+  <Section
+    tone="sand"
+    mood="corporate"
+    aria-labelledby="ways-title"
+    class="sec-compact ways-section"
+  >
     <h2 id="ways-title" class="sr-only">
       Ways to reach us
     </h2>
@@ -86,7 +93,7 @@ const hourRows = hours
           </li>
         )}
         {phones.length > 0 && (
-          <li class="way">
+          <li class="way way-phone">
             <span class="way-icon" aria-hidden="true">
               <Icon name="phone" size={24} />
             </span>
@@ -94,6 +101,9 @@ const hourRows = hours
             <dl class="way-phones">
               {phones.map((entry) => (
                 <div>
+                  <span class="way-icon way-icon-row" aria-hidden="true">
+                    <Icon name="phone" size={20} />
+                  </span>
                   <dt>{entry.label}</dt>
                   <dd>
                     <a class="way-link" href={telHref(entry.phone)}>
@@ -106,7 +116,7 @@ const hourRows = hours
           </li>
         )}
         {email && mailHref && (
-          <li class="way">
+          <li class="way way-mail">
             <span class="way-icon" aria-hidden="true">
               <Icon name="mail" size={24} />
             </span>
@@ -118,7 +128,7 @@ const hourRows = hours
           </li>
         )}
         {hourRows.length > 0 && (
-          <li class="way">
+          <li class="way way-hoursrow">
             <h3 class="t-h4">Office hours</h3>
             <dl class="way-hours">
               {hourRows.map((row) => (
@@ -136,7 +146,7 @@ const hourRows = hours
       {office && (
         <div class="visit">
           <h3 class="t-h4 visit-title">Visit the office</h3>
-          <MapPanel address={office} />
+          <MapPanel address={office} compact />
         </div>
       )}
     </div>
@@ -153,7 +163,7 @@ const hourRows = hours
     mood="corporate"
   />
 
-  <Section tone="white" mood="corporate" aria-labelledby="facts-title">
+  <Section tone="white" mood="corporate" aria-labelledby="facts-title" class="sec-compact">
     <div class="facts-grid">
       <h2 id="facts-title" class="t-h2">
         Company details
@@ -247,6 +257,203 @@ const hourRows = hours
   .facts-grid {
     display: grid;
     gap: var(--space-8);
+  }
+
+  .way-icon-row {
+    display: none;
+  }
+
+  /*
+   * Phones: the ways to reach us are 64px rows with hairlines and an arrow; the whole row is the
+   * link. Visit comes after Email, the hours follow as a small list. Colour and radius as before.
+   */
+  @media (max-width: 767.98px) {
+    .contact-grid {
+      gap: 0;
+    }
+
+    .ways {
+      display: contents;
+    }
+
+    .way {
+      position: relative;
+      order: 1;
+      display: grid;
+      grid-template-columns: 2.5rem minmax(0, 1fr);
+      column-gap: var(--space-4);
+      align-items: center;
+      align-content: center;
+      min-height: 4rem;
+      padding: var(--space-2) 2rem var(--space-2) 0;
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+      border-top: 1px solid var(--stone-300);
+    }
+
+    .way-phone {
+      order: 2;
+      display: block;
+      padding: 0;
+      border-top: 0;
+    }
+
+    .way-mail {
+      order: 3;
+    }
+
+    .visit {
+      order: 4;
+    }
+
+    .way-hoursrow {
+      order: 5;
+    }
+
+    .way .way-icon {
+      grid-row: 1 / span 2;
+      width: 2.5rem;
+      height: 2.5rem;
+      margin: 0;
+      border-radius: 50%;
+    }
+
+    .way-phone > .way-icon {
+      display: none;
+    }
+
+    /* Each number is its own row, so the "Phone" heading is read out but not shown. */
+    .way-phone > .t-h4 {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+
+    .way-icon-row {
+      display: grid;
+    }
+
+    .way > .t-h4,
+    .way-phones dt {
+      grid-column: 2;
+      font-family: var(--font-text);
+      font-size: var(--text-sm);
+      font-weight: var(--weight-medium);
+      letter-spacing: 0;
+      line-height: 1.2;
+      color: var(--stone-600);
+    }
+
+    .way > .t-muted {
+      display: none;
+    }
+
+    .way-link {
+      grid-column: 2;
+      min-height: 0;
+      font-size: 1.0625rem;
+      line-height: 1.3;
+      text-decoration: none;
+    }
+
+    /* The link covers the row; the arrow is a drawn chevron at its right edge. */
+    .way-link::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+    }
+
+    .way-link::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      right: 0.375rem;
+      width: 0.625rem;
+      height: 0.625rem;
+      border-top: 2px solid var(--ink);
+      border-right: 2px solid var(--ink);
+      transform: translateY(-50%) rotate(45deg);
+    }
+
+    .way-link:focus-visible {
+      outline: none;
+    }
+
+    .way-link:focus-visible::before {
+      outline: 3px solid var(--ink);
+      outline-offset: -3px;
+    }
+
+    .way-phones {
+      width: 100%;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0;
+    }
+
+    .way-phones > div {
+      position: relative;
+      display: grid;
+      grid-template-columns: 2.5rem minmax(0, 1fr);
+      column-gap: var(--space-4);
+      align-items: center;
+      align-content: center;
+      min-height: 4rem;
+      padding: var(--space-2) 2rem var(--space-2) 0;
+      border-top: 1px solid var(--stone-300);
+    }
+
+    .way-phones .way-icon-row {
+      grid-row: 1 / span 2;
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 50%;
+    }
+
+    .way-phones dt,
+    .way-phones dd {
+      grid-column: 2;
+    }
+
+    .visit {
+      gap: var(--space-3);
+      padding-block: var(--space-4);
+      border-top: 1px solid var(--stone-300);
+    }
+
+    .visit-title {
+      font-family: var(--font-text);
+      font-size: var(--text-sm);
+      font-weight: var(--weight-medium);
+      letter-spacing: 0;
+      color: var(--stone-600);
+    }
+
+    /* Office hours: a small two-column list under the rows. */
+    .way-hoursrow {
+      display: block;
+      min-height: 0;
+      padding: var(--space-4) 0 0;
+      border-top: 1px solid var(--stone-300);
+    }
+
+    .way-hoursrow > .t-h4 {
+      margin-bottom: var(--space-2);
+    }
+
+    .way-hours {
+      gap: var(--space-1);
+      font-size: var(--text-sm);
+    }
+
+    .way-hours > div {
+      display: flex;
+      justify-content: space-between;
+      gap: var(--space-4);
+    }
   }
 
   @media (min-width: 1024px) {

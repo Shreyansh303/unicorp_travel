@@ -76,13 +76,14 @@ const steps = [
     crumbs={[{ label: 'Home', href: routes.home }, { label: 'About' }]}
     image={{ src: indiaGate, alt: 'India Gate in New Delhi against a pink and purple sky' }}
     mood="corporate"
+    compact
   >
-    <Button href={routes.contact} size="lg" iconEnd="arrow-right">
+    <Button href={routes.contact} size="lg" iconEnd="arrow-right" class="hero-contact">
       Contact us
     </Button>
   </PageHero>
 
-  <Section tone="sand" mood="corporate" aria-labelledby="what-title">
+  <Section tone="sand" mood="corporate" aria-labelledby="what-title" class="sec-compact">
     <div data-reveal class="section-head">
       <h2 id="what-title" class="t-h2">
         What we do
@@ -107,17 +108,17 @@ const steps = [
     </ul>
   </Section>
 
-  <Section tone="white" mood="corporate" aria-labelledby="how-title">
+  <Section tone="white" mood="corporate" aria-labelledby="how-title" class="sec-compact">
     <div data-reveal class="section-head">
       <h2 id="how-title" class="t-h2">
         How we work
       </h2>
       <p>The same four steps, whether it is a weekend away or a year of business trips.</p>
     </div>
-    <HowItWorks steps={steps} />
+    <HowItWorks steps={steps} list />
   </Section>
 
-  <Section tone="paper" mood="corporate" aria-labelledby="facts-title">
+  <Section tone="paper" mood="corporate" aria-labelledby="facts-title" class="sec-compact">
     <div class="facts-grid">
       <div class="facts-head">
         <h2 id="facts-title" class="t-h2">
@@ -145,6 +146,26 @@ const steps = [
 
   .what-grid li {
     display: grid;
+  }
+
+  /* Phones: the contact link is in the bottom bar and the band; the cards are tighter. */
+  @media (max-width: 767.98px) {
+    :global(.hero-contact) {
+      display: none;
+    }
+
+    .what-grid {
+      gap: var(--space-3);
+    }
+
+    .what-grid :global(.svc-card) {
+      gap: var(--space-2);
+      padding: var(--space-5);
+    }
+
+    .what-grid :global(.svc-title) {
+      font-size: var(--text-xl);
+    }
   }
 
   .facts-grid {

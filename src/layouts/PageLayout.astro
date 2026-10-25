@@ -41,6 +41,8 @@ interface Props {
   overlayHeader?: boolean;
   /** Phones: the bottom bar's left button opens the page's enquiry form instead of WhatsApp. */
   enquireBar?: boolean;
+  /** Phones: no bottom bar on this page (contact). */
+  noPhoneBar?: boolean;
 }
 
 const {
@@ -56,6 +58,7 @@ const {
   canonical,
   overlayHeader = false,
   enquireBar = false,
+  noPhoneBar = false,
 } = Astro.props;
 
 const nav = await getMainNav();
@@ -86,7 +89,7 @@ const message = customMessage ?? enquiryMessage(topic);
     <EnquiryBand {...enquiry} mood={mood} message={message} {...(topic ? { topic } : {})} />
   </main>
   <Footer homeHref={routes.home} groups={footerGroups} />
-  <FloatingContact message={message} enquire={enquireBar} />
+  <FloatingContact message={message} enquire={enquireBar} phoneHidden={noPhoneBar} />
 </BaseLayout>
 
 <style>

@@ -32,6 +32,7 @@ const hasSample = groups.some((group) => group.faqs.some((faq) => faq.data.demo)
     lede="Short answers to the questions we hear most often, grouped by service. Each group links to the full service page."
     crumbs={[{ label: 'Home', href: routes.home }, { label: 'FAQs' }]}
     mood="corporate"
+    compact
   >
     {hasSample && <SampleLabel />}
     <nav class="jump" aria-label="FAQ topics">
@@ -68,6 +69,8 @@ const hasSample = groups.some((group) => group.faqs.some((faq) => faq.data.demo)
         </div>
         <Accordion
           id={`faqs-${group.service.id}`}
+          phoneRows
+          singleGroup="faqs"
           items={group.faqs.map((faq) => ({
             title: faq.data.question,
             body: faq.rendered?.html ?? '',
@@ -96,6 +99,63 @@ const hasSample = groups.some((group) => group.faqs.some((faq) => faq.data.demo)
     font-weight: var(--weight-bold);
     text-decoration: none;
     box-shadow: inset 0 0 0 1.5px var(--text);
+  }
+
+  /* Phones: one scrolling row of chips that bleeds to the screen edges. */
+  @media (max-width: 767.98px) {
+    .jump {
+      width: 100vw;
+      max-width: 100vw;
+      margin-inline: calc(-1 * var(--gutter));
+      margin-top: var(--space-3);
+    }
+
+    .jump ul {
+      flex-wrap: nowrap;
+      gap: var(--space-2);
+      padding-inline: var(--gutter);
+      overflow-x: auto;
+      scroll-snap-type: x proximity;
+      scroll-padding-inline: var(--gutter);
+      scrollbar-width: none;
+    }
+
+    .jump ul::-webkit-scrollbar {
+      display: none;
+    }
+
+    .jump li {
+      flex: none;
+      scroll-snap-align: start;
+    }
+
+    .jump a {
+      border: 1.5px solid var(--stone-300);
+      box-shadow: none;
+      font-size: 0.9375rem;
+      font-weight: var(--weight-bold);
+      white-space: nowrap;
+    }
+
+    .faq-group .group-grid {
+      gap: var(--space-3);
+    }
+
+    /* Title on its own line, then the group link and the sample label side by side. */
+    .group-grid .group-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-1) var(--space-4);
+    }
+
+    .group-grid .group-head h2 {
+      flex: 0 0 100%;
+    }
+
+    :global(section.faq-group) {
+      scroll-margin-top: var(--space-16);
+    }
   }
 
   .jump a:hover {
