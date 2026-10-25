@@ -14,19 +14,33 @@ interface Props {
   message?: string;
   /** Styleguide only: render in place instead of fixed to the screen. */
   inline?: boolean;
+  /** Phones: the left button reads "Enquire" and opens the page's folded form (trip pages). */
+  enquire?: boolean;
 }
 
 const {
   message = `Hello ${site.displayName}, I would like help planning a trip.`,
   inline = false,
+  enquire = false,
 } = Astro.props;
 const mobile = shown(site.phones.mobile);
 ---
 
 {mobile && (
   <div class:list={['floating', inline ? 'floating-inline' : 'floating-fixed']}>
+    {enquire && (
+      <button
+        type="button"
+        class="floating-btn floating-wa floating-enquire"
+        aria-controls="enquiry-fold"
+        data-open-enquiry
+        data-needs-js
+      >
+        <span class="floating-text">Enquire</span>
+      </button>
+    )}
     <a
-      class="floating-btn floating-wa"
+      class:list={['floating-btn', 'floating-wa', 'floating-wa-link']}
       href={whatsappHref(message)}
       target="_blank"
       rel="noopener noreferrer"
@@ -106,6 +120,14 @@ const mobile = shown(site.phones.mobile);
     background: var(--red-700);
   }
 
+  /* Trip pages: the Enquire button is for phones; from 768 px the WhatsApp button stays. */
+  .floating-btn.floating-enquire {
+    display: none;
+    border: 0;
+    font-family: inherit;
+    cursor: pointer;
+  }
+
   .floating-call {
     background: var(--ink);
     color: var(--white);
@@ -183,6 +205,14 @@ const mobile = shown(site.phones.mobile);
 
     .floating-fixed .floating-wa {
       flex: 1.4 1 0;
+    }
+
+    .floating-fixed .floating-btn.floating-enquire {
+      display: inline-flex;
+    }
+
+    .floating-fixed:has(.floating-enquire) .floating-wa-link {
+      display: none;
     }
 
     .floating-fixed .floating-call {
@@ -306,6 +336,26 @@ const mobile = shown(site.phones.mobile);
     if (overlap > 0 && rect.height < barTop) {
       window.scrollBy({ top: overlap + 16, behavior: 'instant' });
     }
+  });
+</script>
+
+<script>
+  /*
+   * Trip pages: any [data-open-enquiry] button opens the folded enquiry form (the same fold
+   * button the form uses), brings the form's section to the top and puts focus in its first field.
+   */
+  document.addEventListener('click', (event) => {
+    const trigger = (event.target as HTMLElement | null)?.closest('[data-open-enquiry]');
+    if (!trigger) return;
+    const fold = document.getElementById('enquiry-fold')?.closest<HTMLElement>('[data-fold]');
+    const foldButton = fold?.querySelector<HTMLButtonElement>('[data-fold-button]');
+    if (foldButton && !foldButton.hidden) foldButton.click();
+    else {
+      document
+        .querySelector<HTMLElement>('#enquiry input:not([type="hidden"]), #enquiry select')
+        ?.focus();
+    }
+    document.getElementById('enquire')?.scrollIntoView({ block: 'start', behavior: 'instant' });
   });
 </script>
 

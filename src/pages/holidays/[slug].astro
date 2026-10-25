@@ -12,6 +12,7 @@ import RouteLine from '../../components/motion/RouteLine.astro';
 import Stagger from '../../components/motion/Stagger.astro';
 import Reveal from '../../components/motion/Reveal.astro';
 import Parallax from '../../components/motion/Parallax.astro';
+import Accordion from '../../components/ui/Accordion.astro';
 import EnquirySection from '../../components/forms/EnquirySection.astro';
 import { getPackages, type PackageEntry } from '../../lib/content';
 import { callHref, mobile, whatsappFor } from '../../lib/enquiry';
@@ -36,6 +37,7 @@ const first = data.destinations[0];
 const last = data.destinations.at(-1);
 const route = data.destinations.join(' · ');
 const gallery = data.images.gallery[0];
+const photos = data.images.gallery;
 const validUntil = formatDate(data.priceValidUntil);
 
 // One wave per day, so the line has a bend beside each stop.
@@ -46,12 +48,27 @@ const itineraryPath = Array.from({ length: days }, (_, index) => {
   const bend = index % 2 === 0 ? 36 : 4;
   return `S${bend} ${(y - segment / 2).toFixed(0)} 20 ${y.toFixed(0)}`;
 }).join(' ');
+
+// Phones: the itinerary and the price list become accordion rows (the markup below stays for 768 px+).
+const esc = (text: string) => text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const dayRows = data.itinerary.map((stop) => ({
+  title: `Day ${stop.day}: ${stop.title}`,
+  body: `<p>${esc(stop.description)}</p>`,
+}));
+const listBody = (items: readonly string[]) =>
+  `<ul class="inc-list">${items.map((item) => `<li>${esc(item)}</li>`).join('')}</ul>`;
+const priceRows = [
+  { title: 'Included', body: listBody(data.inclusions) },
+  { title: 'Not included', body: listBody(data.exclusions) },
+];
 ---
 
 <PageLayout
   title={data.seo.title}
   description={data.seo.description}
   topic={topic}
+  overlayHeader
+  enquireBar
   image={data.images.hero}
   enquiry={{
     title: 'Like the look of',
@@ -63,13 +80,14 @@ const itineraryPath = Array.from({ length: days }, (_, index) => {
     <div class="pk-grid">
       <div class="pk-copy">
         <Breadcrumbs
+          class="pk-crumbs"
           items={[
             { label: 'Home', href: routes.home },
             { label: 'Holidays', href: routes.holidays },
             { label: data.title },
           ]}
         />
-        {data.demo && <SampleLabel />}
+        {data.demo && <SampleLabel class="pk-sample" />}
         <h1 id="page-title" class="t-display pk-title">
           {data.title}
         </h1>
@@ -107,9 +125,40 @@ const itineraryPath = Array.from({ length: days }, (_, index) => {
             </Button>
           )}
         </div>
-        <Link href="#enquire" variant="standalone">
-          Or send your dates with the form
-        </Link>
+        <div class="pk-formlink">
+          <Link href="#enquire" variant="standalone">
+            Or send your dates with the form
+          </Link>
+        </div>
+        <div class="pk-strip">
+          <dl class="pk-stats">
+            <div>
+              <dt>Duration</dt>
+              <dd>{data.duration.days} days</dd>
+              <dd class="pk-sub">{data.duration.nights} nights</dd>
+            </div>
+            <div>
+              <dt>From</dt>
+              <dd>{formatINR(data.fromPrice)}</dd>
+            </div>
+            <div>
+              <dt>Valid until</dt>
+              <dd>
+                <time datetime={isoDate(data.priceValidUntil)}>{validUntil}</time>
+              </dd>
+            </div>
+          </dl>
+          <p class="pk-strip-basis">Indicative price, {data.priceBasis}</p>
+        </div>
+        <Button
+          size="lg"
+          class="pk-enquire"
+          data-open-enquiry
+          data-needs-js
+          aria-controls="enquiry-fold"
+        >
+          Enquire about this trip
+        </Button>
       </div>
       <figure class="arch pk-arch">
         <Picture
@@ -117,7 +166,7 @@ const itineraryPath = Array.from({ length: days }, (_, index) => {
           alt={data.images.hero.alt}
           formats={['avif', 'webp']}
           widths={[400, 640, 960, 1280]}
-          sizes="(min-width: 1366px) 520px, (min-width: 1024px) 38vw, calc(100vw - 2rem)"
+          sizes="(min-width: 1366px) 520px, (min-width: 1024px) 38vw, (min-width: 768px) calc(100vw - 2rem), 100vw"
           loading="eager"
           fetchpriority="high"
         />
@@ -125,7 +174,7 @@ const itineraryPath = Array.from({ length: days }, (_, index) => {
     </div>
   </Section>
 
-  <Section tone="sand" rounded aria-labelledby="highlights-title">
+  <Section tone="sand" rounded aria-labelledby="highlights-title" class="sec-compact">
     <div data-reveal class="section-head">
       <h2 id="highlights-title" class="t-h2">
         The good <span class="t-accent">bits</span>
@@ -147,7 +196,7 @@ const itineraryPath = Array.from({ length: days }, (_, index) => {
     </Stagger>
   </Section>
 
-  <Section tone="paper" aria-labelledby="itinerary-title">
+  <Section tone="paper" aria-labelledby="itinerary-title" class="sec-compact">
     <div class="itin-grid">
       <div class="itin-head">
         <h2 id="itinerary-title" class="t-h2">
@@ -190,10 +239,29 @@ const itineraryPath = Array.from({ length: days }, (_, index) => {
           ))}
         </ol>
       </div>
+      <div class="pk-phone">
+        <Accordion id="day-acc" items={dayRows} open={[0]} phoneRows />
+        <div class="pk-gallery" role="region" aria-label="Photos from this trip">
+          <ul>
+            {photos.map((photo) => (
+              <li>
+                <Picture
+                  src={photo.src}
+                  alt={photo.alt}
+                  formats={['avif', 'webp']}
+                  widths={[400, 640, 960]}
+                  sizes="calc(100vw - 2.5rem)"
+                  loading="lazy"
+                />
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
     </div>
   </Section>
 
-  <Section tone="white" aria-labelledby="included-title">
+  <Section tone="white" aria-labelledby="included-title" class="sec-compact">
     <div data-reveal class="section-head">
       <h2 id="included-title" class="t-h2">
         What the price covers
@@ -213,6 +281,9 @@ const itineraryPath = Array.from({ length: days }, (_, index) => {
         <TickList items={data.exclusions} mark="close" />
       </div>
     </div>
+    <div class="pk-phone inc-acc">
+      <Accordion id="price-acc" items={priceRows} phoneRows />
+    </div>
     <p class="inc-more">
       <Link href={routes.holidays} variant="standalone">
         See all holidays
@@ -229,6 +300,8 @@ const itineraryPath = Array.from({ length: days }, (_, index) => {
     formTitle="Your trip details"
     prefill={{ holiday: data.title }}
     packageRef={pkg.id}
+    foldLabel="Enquire about this trip"
+    class="sec-compact"
     rounded
   />
 </PageLayout>
@@ -475,5 +548,231 @@ const itineraryPath = Array.from({ length: days }, (_, index) => {
 
   .inc-more {
     margin-top: var(--space-10);
+  }
+
+  /* Desktop: the phone-only pieces stay out. */
+  .pk-strip,
+  .pk-copy :global(.pk-enquire),
+  .pk-phone {
+    display: none;
+  }
+
+  /* Phones: full-bleed photo, then a cream sheet with the title, the facts and one button. */
+  @media (max-width: 767.98px) {
+    .pk-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      padding-block: 0;
+      margin-inline: calc(-1 * var(--gutter));
+    }
+
+    .pk-arch {
+      order: -1;
+      width: 100%;
+      height: 20rem;
+      aspect-ratio: auto;
+      border-radius: 0;
+    }
+
+    .pk-copy {
+      position: relative;
+      z-index: var(--z-raised);
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: var(--space-4);
+      margin-top: -2rem;
+      padding: 2rem 1.25rem;
+      border-radius: 2rem 2rem 0 0;
+      background: var(--paper);
+    }
+
+    .pk-copy > :global(.pk-sample) {
+      order: 0;
+      align-self: flex-start;
+    }
+
+    .pk-title {
+      order: 1;
+      font-size: 2.5rem;
+      line-height: 1;
+      letter-spacing: -0.04em;
+    }
+
+    .pk-strip {
+      order: 2;
+      display: grid;
+      gap: var(--space-2);
+    }
+
+    .pk-copy :global(.pk-enquire) {
+      order: 3;
+      display: inline-flex;
+      width: 100%;
+      min-height: 3.5rem;
+      font-size: 1.0625rem;
+    }
+
+    .pk-chips {
+      order: 4;
+    }
+
+    .pk-copy > .t-lede {
+      order: 5;
+      font-size: 1.0625rem;
+      line-height: 1.55;
+      color: var(--stone-600);
+    }
+
+    .pk-copy > :global(.pk-crumbs) {
+      order: 6;
+    }
+
+    .pk-chip-red,
+    .pk-price,
+    .pk-actions,
+    .pk-formlink {
+      display: none;
+    }
+
+    .pk-stats {
+      display: grid;
+      grid-template-columns: 0.8fr 1fr 1.2fr;
+      margin: 0;
+    }
+
+    .pk-stats > div {
+      display: grid;
+      align-content: start;
+      padding-inline: var(--space-3);
+      border-left: 1px solid var(--sand-200);
+    }
+
+    .pk-stats > div:first-child {
+      padding-left: 0;
+      border-left: 0;
+    }
+
+    .pk-stats dt {
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+    }
+
+    .pk-stats dd {
+      margin: 0;
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: var(--weight-bold);
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+
+    .pk-stats dd.pk-sub {
+      font-family: var(--font-text);
+      font-size: 0.8125rem;
+      font-weight: var(--weight-medium);
+      letter-spacing: 0;
+      color: var(--text-muted);
+    }
+
+    .pk-strip-basis {
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+    }
+
+    .pk-phone {
+      display: block;
+    }
+
+    /* Highlights: a compact numbered list. */
+    .hl-grid {
+      gap: 0;
+      border-top: 1px solid var(--sand-200);
+    }
+
+    .hl-card,
+    .hl-card.tone-white {
+      grid-template-columns: 2.25rem 1fr;
+      align-items: baseline;
+      gap: var(--space-2);
+      min-height: 0;
+      padding: var(--space-4) 0;
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+      color: var(--ink);
+      border-bottom: 1px solid var(--sand-200);
+    }
+
+    .hl-num {
+      font-size: var(--text-lg);
+      color: var(--red-700);
+    }
+
+    .hl-text {
+      font-size: 1.1875rem;
+    }
+
+    /* Day by day */
+    .itin-grid {
+      gap: var(--space-4);
+    }
+
+    .itin {
+      display: none;
+    }
+
+    .pk-gallery {
+      margin-top: var(--space-6);
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+    }
+
+    .pk-gallery::-webkit-scrollbar {
+      display: none;
+    }
+
+    .pk-gallery ul {
+      display: flex;
+      gap: var(--space-3);
+    }
+
+    .pk-gallery li {
+      flex: 0 0 100%;
+      scroll-snap-align: start;
+    }
+
+    .pk-gallery :global(img) {
+      display: block;
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      object-fit: cover;
+      border-radius: var(--radius-lg);
+    }
+
+    /* What the price covers */
+    .inc-grid {
+      display: none;
+    }
+
+    .inc-more {
+      margin-top: var(--space-4);
+    }
+
+    .inc-acc :global(.inc-list) {
+      display: grid;
+      gap: var(--space-2);
+      padding-left: var(--space-5);
+      list-style: disc;
+    }
+  }
+
+  /* Short phones (e.g. 375x667): a shorter photo keeps the button above the bottom bar. */
+  @media (max-width: 767.98px) and (max-height: 700px) {
+    .pk-arch {
+      height: 13.5rem;
+    }
   }
 </style>
