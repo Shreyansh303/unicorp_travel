@@ -35,14 +35,15 @@ const regionOptions = regionIds.map((id) => ({ value: id, label: regionLabels[id
 const themeOptions = themeIds.map((id) => ({ value: id, label: themeLabels[id] }));
 const mailHref = emailFor('Plan my trip', template);
 /** Photos for the hero crossfade; the first one is the LCP image. */
+// Singapore leads: the lightest of the four on phones, so the first photo (the LCP image) paints in budget.
 const heroPhotos = [
+  { src: singapore, alt: 'Aerial view of the Marina Bay waterfront in Singapore at dusk' },
   { src: journey, alt: 'A winding road snaking through green mountain valleys, seen from above' },
   { src: bali, alt: 'Green rice terraces among palm trees in Tegalalang, Bali' },
   {
     src: dubai,
     alt: 'The Dubai skyline in silhouette at sunset with the Burj Khalifa rising above it',
   },
-  { src: singapore, alt: 'Aerial view of the Marina Bay waterfront in Singapore at dusk' },
 ];
 ---
 

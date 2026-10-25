@@ -41,7 +41,7 @@ if (photos.some((photo) => Boolean(photo.caption) !== Boolean(first.caption))) {
   throw new Error('HeroCrossfade: give every photo a caption, or none');
 }
 
-const widths = [400, 640, 960, 1280];
+const widths = [400, 640, 800, 960, 1280];
 
 const slides = await Promise.all(
   others.map(async (photo) => {
