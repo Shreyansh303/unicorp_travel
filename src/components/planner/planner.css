@@ -113,3 +113,195 @@
 .plan-cleared {
   color: var(--text-muted);
 }
+
+/* The phone progress bar is only for phones. */
+.plan-progress {
+  display: none;
+}
+
+/*
+ * Phones: "Step n of 5" (the heading) with a 4px bar above it, large tap cards for choices, 56px
+ * fields (field.css) and a Next/Back bar stuck to the bottom of the screen in place of the
+ * WhatsApp and Call bar. The bar is in the page flow (sticky), so it never hides a field or a
+ * message, and scroll padding keeps a focused field clear of it.
+ */
+@media (max-width: 767.98px) {
+  html:has(.plan-form) {
+    scroll-padding-bottom: 7rem;
+  }
+
+  .plan {
+    gap: var(--space-4);
+    max-width: none;
+  }
+
+  .plan .plan-stepper {
+    display: none;
+  }
+
+  .plan-progress {
+    display: block;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--sand-200);
+    overflow: hidden;
+  }
+
+  .plan-progress > span {
+    display: block;
+    height: 100%;
+    background: var(--accent);
+    transform-origin: left;
+    transition: transform var(--duration-base) var(--ease-out);
+  }
+
+  .plan-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    /* One question fills the screen, so the Next bar always rests at the bottom of it. */
+    min-height: calc(100svh - 3rem);
+    padding: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .plan-panel {
+    gap: var(--space-5);
+  }
+
+  .plan-title {
+    font-size: 1.75rem;
+    line-height: 1.1;
+  }
+
+  .plan-row-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-3);
+  }
+
+  .plan-actions {
+    display: contents;
+  }
+
+  .plan-actions .form-notice {
+    order: 1;
+  }
+
+  .plan-buttons {
+    order: 2;
+    margin-top: auto;
+    position: sticky;
+    bottom: 0;
+    z-index: var(--z-raised);
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: var(--space-3);
+    margin-inline: calc(-1 * var(--gutter));
+    padding: 10px 20px calc(10px + env(safe-area-inset-bottom, 0px));
+    background: var(--paper);
+    border-top: 1px solid var(--sand-200);
+  }
+
+  .plan-buttons .btn-primary {
+    flex: 1 1 auto;
+    justify-content: center;
+    min-height: 3.5rem;
+    font-size: 1.0625rem;
+  }
+
+  .plan-buttons .btn-secondary {
+    flex: none;
+    min-height: 3rem;
+    padding-inline: var(--space-2);
+    background: transparent;
+    box-shadow: none;
+    transform: none;
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 4px;
+  }
+
+  /* Single-choice questions are large tap cards; the chosen one has a 2px ink border and a tick.
+     The input covers the whole card, so the whole card is the tap target. */
+  .plan .radios-options {
+    gap: var(--space-3);
+  }
+
+  .plan .radios > .field-error {
+    order: -1;
+  }
+
+  .plan .radio-row {
+    position: relative;
+    min-height: 4rem;
+    padding-inline: var(--space-4);
+    border-radius: var(--radius-md);
+    background: var(--white);
+  }
+
+  .plan .radio-input {
+    appearance: none;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: var(--radius-md);
+    background: transparent;
+    box-shadow: inset 0 0 0 1.5px var(--border-strong);
+  }
+
+  .plan .radio-input:checked {
+    box-shadow: inset 0 0 0 2px var(--ink);
+  }
+
+  .plan .radio-input:focus-visible {
+    outline: 3px solid var(--focus);
+    outline-offset: 2px;
+  }
+
+  .plan .radios[aria-invalid='true'] .radio-input:not(:focus-visible) {
+    outline: none;
+    box-shadow: inset 0 0 0 2px var(--error-700);
+  }
+
+  .plan .radio-label {
+    position: relative;
+    display: flex;
+    flex: 1;
+    align-items: center;
+    min-height: 4rem;
+    padding-left: 2.25rem;
+    font-weight: var(--weight-bold);
+    pointer-events: none;
+  }
+
+  .plan .radio-label::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 1.5rem;
+    height: 1.5rem;
+    translate: 0 -50%;
+    border-radius: 50%;
+    background-color: var(--white);
+    box-shadow: inset 0 0 0 2px var(--border-strong);
+  }
+
+  .plan .radio-input:checked + .radio-label::before {
+    background: var(--ink)
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7'/%3E%3C/svg%3E")
+      center / 1rem no-repeat;
+    box-shadow: none;
+  }
+
+  .plan .form-edit {
+    min-height: 2.75rem;
+  }
+
+  .plan-summary-group {
+    padding: var(--space-4);
+  }
+}

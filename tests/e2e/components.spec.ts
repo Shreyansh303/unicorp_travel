@@ -255,8 +255,8 @@ test.describe('mobile', () => {
           scrollWidth: document.documentElement.scrollWidth,
         };
       });
-      // The contact page has no bottom bar on phones.
-      if (path === '/contact') {
+      // The contact page and the planner have no WhatsApp and Call bar on phones.
+      if (path === '/contact' || path === '/plan-my-trip') {
         await expect(page.locator('.floating-fixed')).toBeHidden();
         expect(scrollWidth).toBeLessThanOrEqual(375);
         return;

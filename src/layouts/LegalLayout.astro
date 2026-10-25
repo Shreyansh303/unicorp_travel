@@ -21,7 +21,8 @@ interface Props {
 
 const { id } = Astro.props;
 const entry = await getLegal(id);
-const { Content } = await render(entry);
+const { Content, headings } = await render(entry);
+const sections = headings.filter((heading) => heading.depth === 2);
 ---
 
 <PageLayout
@@ -30,6 +31,7 @@ const { Content } = await render(entry);
   topic={`your ${midSentence(entry.data.title)}`}
   mood="corporate"
   ogType="article"
+  noPhoneBar
   enquiry={{
     title: 'Questions about',
     accent: 'this page?',
@@ -42,6 +44,7 @@ const { Content } = await render(entry);
     lede={entry.data.summary}
     crumbs={[{ label: 'Home', href: routes.home }, { label: entry.data.title }]}
     mood="corporate"
+    compact
   >
     <div class="legal-status">
       {entry.data.demo && (
@@ -59,6 +62,20 @@ const { Content } = await render(entry);
   </PageHero>
 
   <Section tone="white" mood="corporate" class="legal-body" aria-label={`${entry.data.title} text`}>
+    {sections.length > 1 && (
+      <nav class="legal-jump" aria-label="Jump to">
+        <p class="legal-jump-label">Jump to</p>
+        <ul class="legal-jump-list">
+          {sections.map((heading) => (
+            <li>
+              <a class="legal-chip" href={`#${heading.slug}`}>
+                {heading.text}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    )}
     <div class="legal-grid">
       <article class="prose">
         <Content />
@@ -105,6 +122,76 @@ const { Content } = await render(entry);
   .legal-updated {
     font-size: var(--text-sm);
     color: var(--text-muted);
+  }
+
+  /* The "Jump to" chips are for phones; from 768 px the page is as before. */
+  .legal-jump {
+    display: none;
+  }
+
+  @media (max-width: 767.98px) {
+    :global(.section.legal-body > .wrap) {
+      padding-inline: 1.25rem;
+    }
+
+    .legal-jump {
+      display: grid;
+      gap: var(--space-2);
+      margin-block: var(--space-6) var(--space-8);
+    }
+
+    .legal-jump-label {
+      font-size: 0.75rem;
+      font-weight: var(--weight-black);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .legal-jump-list {
+      display: flex;
+      gap: var(--space-2);
+      margin-inline: -1.25rem;
+      padding: 2px 1.25rem;
+      overflow-x: auto;
+      scrollbar-width: none;
+      scroll-padding-inline: 1.25rem;
+      scroll-snap-type: x proximity;
+    }
+
+    .legal-jump-list::-webkit-scrollbar {
+      display: none;
+    }
+
+    .legal-chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 2.75rem;
+      padding: 0 var(--space-4);
+      border-radius: var(--radius-pill);
+      box-shadow: inset 0 0 0 1.5px #cfc7bd;
+      color: var(--ink);
+      font-size: 0.9375rem;
+      font-weight: 600;
+      text-decoration: none;
+      white-space: nowrap;
+      scroll-snap-align: start;
+    }
+
+    .legal-chip:focus-visible {
+      outline: 3px solid var(--focus);
+      outline-offset: 2px;
+    }
+
+    .prose {
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+
+    .prose :global(h2) {
+      scroll-margin-top: 5rem;
+      margin-top: var(--space-8);
+    }
   }
 
   .legal-grid {

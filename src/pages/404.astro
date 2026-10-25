@@ -33,21 +33,23 @@ const links = [
   description="This page does not exist. Find holidays, travel services, corporate travel or our contact details from here."
   message={greeting('I could not find a page on your website. Can you help?')}
   canonical={false}
+  noPhoneBar
 >
   <PageHero
     title="This page took"
     accent="a wrong turn."
     lede="The address may be mistyped, or the page may have moved. These links will get you back on the road."
     size="display"
+    compact
   />
-  <Section tone="sand" rounded aria-labelledby="links-title">
+  <Section tone="sand" rounded aria-labelledby="links-title" class="sec-compact nf-links">
     <h2 id="links-title" class="t-h3 links-title">
       Where would you like to go?
     </h2>
     <ul class="links">
       {links.map((link) => (
         <li>
-          <a class="link-tile" href={link.href}>
+          <a class:list={['link-tile', link.href === routes.home && 'link-home']} href={link.href}>
             <span class="link-title">
               {link.title}
               <Icon name="arrow-right" size={22} class="tile-arrow" />
@@ -132,5 +134,79 @@ const links = [
 
   .link-text {
     color: var(--stone-600);
+  }
+
+  /* Phones: a compact list of rows; the way home is the one red action, at the end. */
+  @media (max-width: 767.98px) {
+    /* Do not tuck under the short header: its "Read more" stays clear. */
+    :global(.section-rounded.nf-links:not(:first-child)) {
+      margin-top: 0;
+    }
+
+    .links {
+      gap: 0;
+    }
+
+    .links-title {
+      margin-bottom: var(--space-3);
+    }
+
+    .links li {
+      border-top: 1px solid var(--sand-200);
+    }
+
+    .link-tile {
+      gap: 2px;
+      min-height: 4rem;
+      padding: var(--space-3) 0;
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+      align-content: center;
+    }
+
+    .link-tile:hover,
+    .link-tile:active {
+      transform: none;
+      box-shadow: none;
+    }
+
+    .link-tile:focus-visible {
+      box-shadow: none;
+      outline-offset: 2px;
+    }
+
+    .link-title {
+      justify-content: space-between;
+      font-size: 1.1875rem;
+    }
+
+    .link-text {
+      font-size: 0.9375rem;
+    }
+
+    .links li:last-child {
+      margin-top: var(--space-5);
+      border-top: 0;
+    }
+
+    .link-tile.link-home {
+      min-height: 3.5rem;
+      padding: var(--space-3) var(--space-5);
+      border-radius: var(--radius-pill);
+      background: var(--accent);
+      color: var(--on-accent);
+      justify-items: center;
+      text-align: center;
+    }
+
+    .link-home .link-title {
+      justify-content: center;
+    }
+
+    .link-home :global(.tile-arrow),
+    .link-home .link-text {
+      color: var(--on-accent);
+    }
   }
 </style>

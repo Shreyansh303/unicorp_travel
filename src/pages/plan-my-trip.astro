@@ -50,6 +50,7 @@ const heroPhotos = [
   title="Plan my trip"
   description="Tell us the trip type, destinations, dates, travellers and budget, and we will plan the trip with you. Send it by WhatsApp, phone or email."
   topic="planning a trip"
+  noPhoneBar
   message={greeting('I would like to plan a trip with you.')}
   enquiry={{
     title: 'Rather just',
@@ -65,7 +66,21 @@ const heroPhotos = [
     lede="Answer five quick questions, check them, then send them to us on WhatsApp or by email. We reply with ideas, a day-wise plan and a price to talk through. Nothing is booked until you agree."
     crumbs={[{ label: 'Home', href: routes.home }, { label: 'Plan my trip' }]}
     size="display"
+    sheet
   >
+    <noscript>
+      <style is:inline>
+        @media (max-width: 767.98px) {
+          .hero-actions {
+            display: flex !important;
+            flex-direction: column;
+          }
+          .hero-note {
+            display: block !important;
+          }
+        }
+      </style>
+    </noscript>
     <div class="hero-actions">
       {waHref && (
         <Button href={waHref} size="lg" iconStart="whatsapp" external>
@@ -81,12 +96,21 @@ const heroPhotos = [
     <p class="hero-note">
       The WhatsApp message opens with the five questions ready for your answers.
     </p>
-    <Link href="#planner" variant="standalone" data-needs-js>
-      Or answer them step by step here
-    </Link>
+    <div class="hero-start">
+      <Link href="#planner" variant="standalone" data-needs-js>
+        Or answer them step by step here
+      </Link>
+    </div>
   </PageHero>
 
-  <Section tone="sand" rounded aria-labelledby="plan-step-title" id="planner" data-needs-js>
+  <Section
+    tone="sand"
+    rounded
+    aria-labelledby="plan-step-title"
+    id="planner"
+    class="sec-compact plan-section"
+    data-needs-js
+  >
     <PlanMyTrip
       client:visible
       regions={regionOptions}
@@ -96,7 +120,7 @@ const heroPhotos = [
     />
   </Section>
 
-  <Section tone="paper" aria-labelledby="send-title">
+  <Section tone="paper" aria-labelledby="send-title" class="sec-compact">
     <div class="send-grid">
       <div class="send-head">
         <h2 id="send-title" class="t-h2">
@@ -197,5 +221,52 @@ const heroPhotos = [
     border-radius: var(--radius-lg);
     background: var(--white);
     box-shadow: inset 0 0 0 1px var(--sand-200);
+  }
+
+  /* Phones: the one hero action starts the planner (the WhatsApp and call links are in "Send it
+     your way" below); "Send it your way" becomes plain rows. */
+  @media (max-width: 767.98px) {
+    .hero-actions,
+    .hero-note {
+      display: none;
+    }
+
+    .hero-start :global(.link) {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      min-height: 3.5rem;
+      border-radius: var(--radius-pill);
+      background: var(--accent);
+      color: var(--on-accent);
+      font-size: 1.0625rem;
+      text-decoration: none;
+    }
+
+    .hero-start :global(.link .link-arrow) {
+      display: none;
+    }
+
+    .send-grid {
+      gap: var(--space-6);
+    }
+
+    .send-list {
+      gap: 0;
+    }
+
+    .send-list li {
+      gap: var(--space-1);
+      padding: var(--space-4) 0;
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+      border-top: 1px solid var(--sand-200);
+    }
+
+    .send-list li:last-child {
+      border-bottom: 1px solid var(--sand-200);
+    }
   }
 </style>

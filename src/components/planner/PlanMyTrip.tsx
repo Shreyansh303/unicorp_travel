@@ -249,6 +249,9 @@ export default function PlanMyTrip({ regions, themes, budgets, privacyHref }: Pr
           })}
         </ol>
       </nav>
+      <div className="plan-progress" aria-hidden="true">
+        <span style={{ transform: `scaleX(${Math.min(1, (step + 1) / steps.length)})` }} />
+      </div>
 
       <form className="plan-form" noValidate onSubmit={next} aria-labelledby={headingId}>
         <div className="plan-panel" ref={panelRef}>
