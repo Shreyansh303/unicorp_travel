@@ -272,6 +272,8 @@ const route =
     img.src = data.src;
     img.alt = data.alt;
     img.decoding = 'async';
+    // Needed seconds later, so it never competes with the first photo for bandwidth.
+    img.fetchPriority = 'low';
     picture.append(img);
     slide.append(picture);
     return slide;
@@ -394,7 +396,8 @@ const route =
       window.removeEventListener('load', afterLoad);
     }
 
-    // The other photos come in after the page has loaded.
+    // The other photos come in well after the page has loaded (the first fade is ~5 s away), so
+    // they never slow the first photo, which is the LCP image.
     const load = () => {
       if (destroyed) return;
       const sizes = root.dataset['sizes'] ?? '';
@@ -412,7 +415,7 @@ const route =
       sync();
     };
     function afterLoad() {
-      loader = window.setTimeout(load, 300);
+      loader = window.setTimeout(load, 1500);
     }
 
     hero.addEventListener('focusin', onFocusIn);
