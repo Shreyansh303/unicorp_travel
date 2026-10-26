@@ -70,7 +70,7 @@ for (const width of widths) {
       await page.setViewportSize({ width, height: 900 });
       await page.emulateMedia({ reducedMotion: 'no-preference' });
       await page.goto(path);
-      await expect(page.locator('[data-hero-fade] [data-slide]')).toHaveCount(path === '/' ? 5 : 4);
+      await expect(page.locator('[data-hero-fade] [data-slide]')).toHaveCount(path === '/' ? 7 : 4);
       const results = await new AxeBuilder({ page }).withTags(tags).analyze();
       expect(summarise(results.violations)).toEqual([]);
     });

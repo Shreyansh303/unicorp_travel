@@ -26,7 +26,7 @@ whoItsFor:
 formType: 'transport'
 image:
   src: '../../assets/photos/service-car-coach.jpg'
-  alt: 'A car following a truck on a misty winding hill road in the Western Ghats'
+  alt: 'A black executive sedan parked on a tree-lined street in the sun'
 seo:
   title: 'Car and coach rentals'
   description: 'Car and coach hire with drivers for transfers, outstation trips and groups. Send an enquiry.'

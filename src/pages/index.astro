@@ -16,11 +16,13 @@ import { whatsappFor } from '../lib/enquiry';
 import { formatDate } from '../lib/format';
 import { regionLabels } from '../lib/packages';
 import { packageHref, routes } from '../lib/routes';
-import udaipur from '../assets/photos/rajasthan-1.jpg';
-import kerala from '../assets/photos/kerala-backwaters-1.jpg';
-import bali from '../assets/photos/bali-1.jpg';
-import singapore from '../assets/photos/singapore-1.jpg';
-import switzerland from '../assets/photos/switzerland-1.jpg';
+import taj from '../assets/photos/hero-taj-mahal.jpg';
+import greatWall from '../assets/photos/hero-great-wall.jpg';
+import petra from '../assets/photos/hero-petra.jpg';
+import colosseum from '../assets/photos/hero-colosseum.jpg';
+import chichen from '../assets/photos/hero-chichen-itza.jpg';
+import machu from '../assets/photos/hero-machu-picchu.jpg';
+import christ from '../assets/photos/hero-christ-redeemer.jpg';
 import airport from '../assets/photos/corporate-airport.jpg';
 import { getImage } from 'astro:assets';
 
@@ -95,29 +97,39 @@ const reasons: { icon: IconName; title: string; text: string }[] = [
 /** Photos for the hero crossfade; the first is the LCP image. Each caption names its photo. */
 const heroPhotos = [
   {
-    src: udaipur,
-    alt: 'The City Palace complex in Udaipur rising above the lake under a clear blue sky',
-    caption: 'Udaipur, Rajasthan',
+    src: taj,
+    alt: 'The Taj Mahal in Agra, its white marble dome and minarets reflected in the long pool under a clear sky',
+    caption: 'Taj Mahal, Agra',
   },
   {
-    src: kerala,
-    alt: 'A traditional houseboat gliding along a palm-lined backwater in Kerala',
-    caption: 'Kerala backwaters',
+    src: greatWall,
+    alt: 'The Great Wall of China winding along a green mountain ridge under a blue sky',
+    caption: 'Great Wall of China',
   },
   {
-    src: bali,
-    alt: 'Green rice terraces among palm trees in Tegalalang, Bali',
-    caption: 'Tegalalang, Bali',
+    src: petra,
+    alt: 'The rock-cut facade of the Treasury at Petra in Jordan, glowing in red sandstone cliffs',
+    caption: 'Petra, Jordan',
   },
   {
-    src: singapore,
-    alt: 'Aerial view of the Marina Bay waterfront in Singapore at dusk',
-    caption: 'Marina Bay, Singapore',
+    src: colosseum,
+    alt: 'The Colosseum in Rome under a bright blue sky with white clouds',
+    caption: 'Colosseum, Rome',
   },
   {
-    src: switzerland,
-    alt: 'A still alpine lake below snow-capped Swiss peaks',
-    caption: 'Swiss Alps',
+    src: chichen,
+    alt: 'The stepped El Castillo pyramid at Chichen Itza, Mexico, rising above a grassy plain',
+    caption: 'Chichen Itza, Mexico',
+  },
+  {
+    src: machu,
+    alt: 'The ruins of Machu Picchu on a green Andean ridge beneath steep mountain peaks',
+    caption: 'Machu Picchu, Peru',
+  },
+  {
+    src: christ,
+    alt: 'The Christ the Redeemer statue in Rio de Janeiro with arms outstretched against a blue sky',
+    caption: 'Christ the Redeemer, Rio',
   },
 ];
 const heroSizes =
@@ -155,8 +167,8 @@ const emptyPixel = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAA
           Pack light. <span class="t-accent">We’ll plan</span> the rest.
         </h1>
         <p class="t-lede hero-enter">
-          Backwaters, deserts, islands or the Alps: tell us who is travelling and what you love, and
-          we plan the holiday day by day. Business travel too, from the same desk.
+          The Taj Mahal, Machu Picchu, the Colosseum: tell us which wonders of the world you want to
+          see, and we plan the holiday day by day. Business travel too, from the same desk.
         </p>
         <div class="hero-actions hero-enter" style="--enter-index: 2">
           <Button href={routes.planMyTrip} size="lg" iconEnd="arrow-right">
@@ -206,9 +218,7 @@ const emptyPixel = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAA
       <h2 id="packages-title" class="t-h2">
         Trips to start dreaming about
       </h2>
-      <p>
-        Trips to start from. We change the pace, the hotels and the length to suit you.
-      </p>
+      <p>Trips to start from. We change the pace, the hotels and the length to suit you.</p>
     </div>
     <div class="pkg-wrap" data-pager>
       <RouteLine
@@ -405,8 +415,8 @@ const emptyPixel = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAA
     }
 
     .hero-copy .t-lede {
-      font-size: 1.0625rem;
-      line-height: 1.55;
+      font-size: 1rem;
+      line-height: 1.5;
       color: var(--stone-600);
       margin-top: -0.625rem;
     }

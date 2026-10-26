@@ -11,7 +11,7 @@ async function boxOf(locator: Locator) {
   return box;
 }
 
-const ALT = 'The City Palace complex in Udaipur rising above the lake under a clear blue sky';
+const ALT = 'The Taj Mahal in Agra, its white marble dome and minarets reflected in the long pool under a clear sky';
 
 test.describe('phone Home hero at 390x844', () => {
   test.use({ viewport: { width: 390, height: 844 } });
@@ -38,8 +38,8 @@ test.describe('phone Home hero at 390x844', () => {
     expect(style.radius).toBe('0px');
     // One request for the hero photo, and it is sized for a phone.
     const src = await photo.evaluate((el: HTMLImageElement) => el.currentSrc);
-    expect(src).toContain('rajasthan-1');
-    expect(await page.locator('main img[alt^="The City Palace"]').count()).toBe(1);
+    expect(src).toContain('hero-taj-mahal');
+    expect(await page.locator('main img[alt^="The Taj Mahal"]').count()).toBe(1);
   });
 
   test('the logo sits over the photo on a cream chip', async ({ page }) => {

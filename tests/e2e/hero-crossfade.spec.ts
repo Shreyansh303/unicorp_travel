@@ -140,11 +140,13 @@ test.describe('hero crossfade under reduced motion', () => {
 });
 
 const homeCaptions = [
-  'Udaipur, Rajasthan',
-  'Kerala backwaters',
-  'Tegalalang, Bali',
-  'Marina Bay, Singapore',
-  'Swiss Alps',
+  'Taj Mahal, Agra',
+  'Great Wall of China',
+  'Petra, Jordan',
+  'Colosseum, Rome',
+  'Chichen Itza, Mexico',
+  'Machu Picchu, Peru',
+  'Christ the Redeemer, Rio',
 ];
 
 for (const width of [1366, 390]) {
@@ -161,17 +163,17 @@ for (const width of [1366, 390]) {
       expect(figure.match(/<img /g) ?? []).toHaveLength(1);
       expect(figure).toContain('fetchpriority="high"');
       expect(figure).toContain('loading="eager"');
-      expect(figure).toContain('rajasthan-1');
+      expect(figure).toContain('hero-taj-mahal');
       const chips = hero.slice(
         hero.indexOf('data-chips'),
         hero.indexOf('</div>', hero.indexOf('data-chips')),
       );
       expect(chips.match(/data-chip/g) ?? []).toHaveLength(2); // the container and the one chip
-      expect(chips).toContain('Udaipur, Rajasthan');
+      expect(chips).toContain('Taj Mahal, Agra');
       for (const caption of homeCaptions.slice(1)) expect(chips).not.toContain(caption);
 
       await page.goto('/', { waitUntil: 'load' });
-      await expect(page.locator('[data-hero-fade] [data-slide]')).toHaveCount(5);
+      await expect(page.locator('[data-hero-fade] [data-slide]')).toHaveCount(7);
       await expect(page.locator('[data-hero-fade] [data-chip]')).toHaveText(homeCaptions);
       await expect(page.locator('[data-hero-fade] button')).toHaveCount(0);
       // The other photos are sized for the frame: on a phone no 960 or 1280 px file is fetched.
@@ -188,7 +190,7 @@ for (const width of [1366, 390]) {
     }) => {
       await speedUp(page);
       await page.goto('/', { waitUntil: 'load' });
-      await expect(page.locator('[data-hero-fade] [data-slide]')).toHaveCount(5);
+      await expect(page.locator('[data-hero-fade] [data-slide]')).toHaveCount(7);
       // Record the hero at every change for a few seconds.
       const seen = await page.locator('[data-hero-fade]').evaluate(
         (root) =>
@@ -241,7 +243,7 @@ test.describe('Home hero crossfade, other checks', () => {
   test('no sideways overflow at 320px with every photo and chip loaded', async ({ page }) => {
     await page.setViewportSize({ width: 320, height: 640 });
     await page.goto('/', { waitUntil: 'load' });
-    await expect(page.locator('[data-hero-fade] [data-slide]')).toHaveCount(5);
+    await expect(page.locator('[data-hero-fade] [data-slide]')).toHaveCount(7);
     expect(
       await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
     ).toBe(true);
@@ -251,7 +253,7 @@ test.describe('Home hero crossfade, other checks', () => {
     test.use({ reducedMotion: 'reduce' });
 
     for (const width of [1366, 390]) {
-      test(`keeps the Udaipur photo and chip at ${width}px`, async ({ page }) => {
+      test(`keeps the Taj Mahal photo and chip at ${width}px`, async ({ page }) => {
         await speedUp(page);
         await page.setViewportSize({ width, height: 900 });
         await page.goto('/', { waitUntil: 'load' });
@@ -259,7 +261,7 @@ test.describe('Home hero crossfade, other checks', () => {
         await expect(page.locator('[data-hero-fade] [data-slide]')).toHaveCount(1);
         await expect(page.locator('[data-hero-fade] img')).toHaveCount(1);
         await expect(page.locator('[data-hero-fade] [data-chip]')).toHaveText([
-          'Udaipur, Rajasthan',
+          'Taj Mahal, Agra',
         ]);
         expect(await index(page)).toBe('0');
       });
