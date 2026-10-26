@@ -87,11 +87,12 @@ Put every fact below in **one** file (for example `src/config/site.ts`) and read
 | Office (operating) | 16th Floor Office No.7, A Silver Wing, Wave one Noida, Plot No L-2A, Sector 18, Noida, Uttar Pradesh 201301 | Google Maps listing (located in Wave Mall); client confirmed Noida on 2026-10-18 | **Confirm** the exact formatting. |
 | Registered office | Bhikaji Cama Place, New Delhi | Company registry | **Confirm** whether to show it. |
 | Phone (mobile, also WhatsApp) | +91 98916 77321 | Old site and Google listing | Consistent in both sources. |
-| Phone (landline) | +91 120 4201591 | Old site (listed with the old Ghaziabad address) | **Confirm** it still works at Noida. |
-| Phone (second mobile) | +91 98100 82665 | Old site | **Confirm.** |
+| Phone (office landline) | +91 120 5109212 | Client, 2026-10-26 | Verified. |
+| Phone (second mobile, also WhatsApp) | +91 88262 06177 | Client, 2026-10-26 | Verified; secondary WhatsApp number. |
+| Phone (third mobile, calls only) | +91 88004 34190 | Client, 2026-10-26 | Verified; not on WhatsApp. |
 | Email | info@unicorptravel.com | Old site | **Confirm.** |
 | Hours | Saturday 10 am to 7 pm; opens 10 am Monday. Other days unknown. | Google listing, viewed 2026-10-17 | **Client to supply** the full week. |
-| Social profiles | Facebook page exists (facebook.com/unicorptravel); no others known | Facebook | **Client to supply.** Show no icon for a profile that is not supplied. |
+| Social profiles | Facebook page (facebook.com/unicorptravel); Instagram; YouTube (youtube.com/@UnicorpHolidaysBusinessTravelP, verified 2026-10-26) | Facebook, client | **Client to supply** any others. Show no icon for a profile that is not supplied. |
 | Founding year | Unknown: registry says incorporated 9 Oct 2014; old site said "Established in 2024" | Registry vs old site | **Do not show** until confirmed (P-03). |
 | Memberships (IATA, TAAI and so on) | None verified | n/a | **Do not show** badges until the client supplies proof (P-50). |
 | Counters ("48+ Google Review" and others) | Unsourced | Old site | **Do not use** (P-02). |

@@ -109,7 +109,7 @@ test.describe('phone /plan-my-trip', () => {
     await page.locator('#plan-budget').selectOption({ index: 1 });
     await submit(page).click();
     await page.locator('#plan-name').fill('Neha Kapoor');
-    await page.locator('#plan-phone').fill('+91 98100 82665');
+    await page.locator('#plan-phone').fill('+91 88262 06177');
     await page.locator('#plan-email').fill('neha@example.com');
     await page.locator('#plan-consent').check();
     await expect(submit(page)).toHaveText(/Check my answers/);

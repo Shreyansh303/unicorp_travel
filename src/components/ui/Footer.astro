@@ -9,6 +9,7 @@ import FactsBlock from './FactsBlock.astro';
 import { generalEnquiryMessage } from '../../lib/enquiry';
 import type { NavLink } from './types';
 import {
+  listedPhones,
   mailtoHref,
   shown,
   site,
@@ -29,11 +30,7 @@ interface Props {
 const { homeHref, groups = [], asDemo = false } = Astro.props;
 const Tag = asDemo ? 'div' : 'footer';
 
-const phones = [
-  { label: 'Mobile and WhatsApp', phone: shown(site.phones.mobile) },
-  { label: 'Office', phone: shown(site.phones.landline) },
-  { label: 'Mobile', phone: shown(site.phones.secondMobile) },
-].filter((entry) => entry.phone !== null);
+const phones = listedPhones();
 const mobile = shown(site.phones.mobile);
 const email = shown(site.email);
 const office = shown(site.offices.operating);
@@ -87,6 +84,7 @@ const columns = (phones.length > 0 || email ? 1 : 0) + (office ? 1 : 0) + groups
               <a href={entry.href} target="_blank" rel="noopener noreferrer">
                 {entry.key === 'facebook' && <Icon name="facebook" size={18} />}
                 {entry.key === 'instagram' && <Icon name="instagram" size={18} />}
+                {entry.key === 'youtube' && <Icon name="youtube" size={18} />}
                 {entry.label}
                 <span class="sr-only"> (opens in a new tab)</span>
               </a>

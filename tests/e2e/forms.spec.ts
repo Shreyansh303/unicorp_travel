@@ -30,9 +30,9 @@ const validPhones = [
   '91 98916 77321',
   '098916 77321',
   '6123456789',
-  '0120 4201591',
-  '0120-420-1591',
-  '+91 120 4201591',
+  '0120 5109212',
+  '0120-510-9212',
+  '+91 120 5109212',
   '011 2345 6789',
   '(011) 2345-6789',
 ];
@@ -40,7 +40,7 @@ const validPhones = [
 const invalidPhones = [
   '98916 7732',
   '989167732112',
-  '4201591',
+  '5109212',
   '0000000000',
   '+1 415 555 0100',
   '+44 20 7946 0958',
@@ -69,7 +69,7 @@ test.describe('phone, email and GSTIN rules', () => {
 
   test('normalises numbers to E.164 with +91', () => {
     expect(parseIndianPhone('098916 77321')?.e164).toBe('+919891677321');
-    expect(parseIndianPhone('0120-420-1591')?.e164).toBe('+911204201591');
+    expect(parseIndianPhone('0120-510-9212')?.e164).toBe('+911205109212');
     expect(parseIndianPhone('98916 77321')?.display).toBe('+91 98916 77321');
   });
 
@@ -215,7 +215,7 @@ test.describe('enquiry form', () => {
     test.setTimeout(120_000);
     // Each invalid value starts from a freshly loaded form, so a submit-time error cannot be
     // left over from the value before it.
-    for (const value of ['4201591', '98916 7732', '+1 415 555 0100', '1234567890']) {
+    for (const value of ['5109212', '98916 7732', '+1 415 555 0100', '1234567890']) {
       await open(page, '/contact');
       const invalid = page.locator('#enquiry');
       await invalid.locator('[name="name"]').fill('Asha Verma');
@@ -237,7 +237,7 @@ test.describe('enquiry form', () => {
     await form.locator('[name="name"]').fill('Asha Verma');
     await form.locator('[name="message"]').fill('A weekend trip to Jaipur for four.');
     const phone = form.locator('[name="phone"]');
-    for (const value of ['+91 98916 77321', '0120-420-1591', '098916 77321']) {
+    for (const value of ['+91 98916 77321', '0120-510-9212', '098916 77321']) {
       await phone.fill(value);
       await form.locator('button[type="submit"]').click();
       await expect(page.locator('#enquiry-success'), value).toBeVisible();
@@ -266,7 +266,7 @@ test.describe('enquiry form', () => {
     await open(page, '/corporate-travel');
     const form = page.locator('#enquiry');
     await form.locator('[name="name"]').fill('Rohan Mehta');
-    await form.locator('[name="phone"]').fill('+91 98100 82665');
+    await form.locator('[name="phone"]').fill('+91 88262 06177');
     await form.locator('[name="company"]').fill('Example Systems Pvt Ltd');
     const gstin = form.locator('[name="gstin"]');
     await gstin.fill('09AAACU1234');
@@ -390,7 +390,7 @@ test.describe('enquiry form', () => {
     await expect(form.locator('[name="holiday"]')).toHaveValue(pkg.title);
     await expect(form.locator('input[type="hidden"][name="packageRef"]')).toHaveValue(pkg.slug);
     await form.locator('[name="name"]').fill('Meera Iyer');
-    await form.locator('[name="phone"]').fill('9810082665');
+    await form.locator('[name="phone"]').fill('8826206177');
     await form.locator('[name="adults"]').fill('2');
     await form.locator('[data-optin]').check();
     await form.locator('button[type="submit"]').click();

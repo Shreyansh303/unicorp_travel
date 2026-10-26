@@ -6,7 +6,7 @@ import Icon from '../components/ui/Icon.astro';
 import FactsBlock from '../components/ui/FactsBlock.astro';
 import MapPanel from '../components/ui/MapPanel.astro';
 import EnquirySection from '../components/forms/EnquirySection.astro';
-import { shown, site, telHref, weekdays, whatsappHref, type Weekday } from '../config/site';
+import { listedPhones, shown, site, telHref, weekdays, whatsappHref, type Weekday } from '../config/site';
 import { emailFor, greeting, mobile } from '../lib/enquiry';
 import { routes } from '../lib/routes';
 
@@ -15,14 +15,7 @@ const message = greeting('I would like to get in touch about a trip.');
 const officeIn = office ? ` in ${office.locality}` : '';
 const email = shown(site.email);
 const mailHref = emailFor('Travel enquiry');
-const phones = [
-  { label: 'Mobile and WhatsApp', phone: shown(site.phones.mobile) },
-  { label: 'Office', phone: shown(site.phones.landline) },
-  { label: 'Mobile', phone: shown(site.phones.secondMobile) },
-].filter(
-  (entry): entry is { label: string; phone: NonNullable<typeof entry.phone> } =>
-    entry.phone !== null,
-);
+const phones = listedPhones();
 
 // Hours render only when site.ts allows them to be shown, and only for days with both times.
 const hours = shown(site.hours);

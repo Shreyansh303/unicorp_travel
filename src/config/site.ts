@@ -26,6 +26,8 @@ export interface Phone {
   e164: string;
   /** Human-readable form. */
   display: string;
+  /** True when the number is also on WhatsApp. */
+  whatsapp: boolean;
 }
 
 export interface PostalAddress {
@@ -77,6 +79,11 @@ export const site = {
     status: 'confirm',
     value: 'Unicorp Holidays & Business Travel Private Limited',
   } satisfies Fact<string>,
+  /** The name Google shows for the agency's Maps listing. */
+  mapsListingName: {
+    status: 'verified',
+    value: 'Unicorp Holidays & Business Travel',
+  } satisfies Fact<string>,
   cin: { status: 'confirm', value: 'U74140DL2014PTC272416' } satisfies Fact<string>,
   gstin: { status: 'clientToSupply', value: null } satisfies Fact<string>,
   /** Do not show until confirmed: registry says incorporated 2014, old site said 2024. */
@@ -106,19 +113,25 @@ export const site = {
     } satisfies Fact<{ lines: string[] }>,
   },
 
+  /** Order here is the order shown. `mobile` is the primary: all Call and WhatsApp buttons use it. */
   phones: {
-    /** Also the WhatsApp number. */
     mobile: {
       status: 'verified',
-      value: { e164: '+919891677321', display: '+91 98916 77321' },
+      value: { e164: '+919891677321', display: '+91 98916 77321', whatsapp: true },
     } satisfies Fact<Phone>,
     landline: {
-      status: 'confirm',
-      value: { e164: '+911204201591', display: '+91 120 4201591' },
+      status: 'verified',
+      value: { e164: '+911205109212', display: '+91 120 5109212', whatsapp: false },
     } satisfies Fact<Phone>,
+    /** Secondary WhatsApp number. */
     secondMobile: {
-      status: 'confirm',
-      value: { e164: '+919810082665', display: '+91 98100 82665' },
+      status: 'verified',
+      value: { e164: '+918826206177', display: '+91 88262 06177', whatsapp: true },
+    } satisfies Fact<Phone>,
+    /** Calls only, not on WhatsApp. */
+    thirdMobile: {
+      status: 'verified',
+      value: { e164: '+918800434190', display: '+91 88004 34190', whatsapp: false },
     } satisfies Fact<Phone>,
   },
 
@@ -147,7 +160,10 @@ export const site = {
     instagram: { status: 'verified', value: 'https://www.instagram.com/unicorptravel/' },
     linkedin: { status: 'clientToSupply', value: null },
     x: { status: 'clientToSupply', value: null },
-    youtube: { status: 'clientToSupply', value: null },
+    youtube: {
+      status: 'verified',
+      value: 'https://www.youtube.com/@UnicorpHolidaysBusinessTravelP',
+    },
   } satisfies Record<string, Fact<string>>,
 
   /** Not verified: render nothing while empty. Badges need proof from the client. */
@@ -208,6 +224,21 @@ export const site = {
 
 export type Site = typeof site;
 
+const phoneLabels: [keyof Site['phones'], (phone: Phone) => string][] = [
+  ['mobile', (p) => (p.whatsapp ? 'Mobile and WhatsApp' : 'Mobile')],
+  ['landline', () => 'Office'],
+  ['secondMobile', (p) => (p.whatsapp ? 'Mobile and WhatsApp' : 'Mobile')],
+  ['thirdMobile', (p) => (p.whatsapp ? 'Mobile and WhatsApp' : 'Mobile')],
+];
+
+/** Phones that may be shown, in display order, with their labels. */
+export function listedPhones(): { label: string; phone: Phone }[] {
+  return phoneLabels.flatMap(([key, label]) => {
+    const phone = shown<Phone>(site.phones[key]);
+    return phone ? [{ label: label(phone), phone }] : [];
+  });
+}
+
 /** `tel:` href for an E.164 number, e.g. `tel:+919891677321`. */
 export function telHref(phone: Phone): string {
   return `tel:${phone.e164}`;
@@ -225,11 +256,18 @@ export function whatsappHref(message?: string, phone?: Phone | null): string {
 }
 
 /**
- * "Open in Google Maps" link for a postal address: a plain search URL, so no map loads on the
- * page, no API key is needed and the destination is the verified address itself.
+ * "Open in Google Maps" link: the Maps URLs API search for the listing name plus the address,
+ * so Google opens the agency's own listing. No map loads on the page and no API key is needed.
  */
 export function mapsHref(address: PostalAddress): string {
-  const query = [address.streetAddress, address.locality, address.region, address.postalCode]
+  const query = [
+    shown(site.mapsListingName),
+    address.streetAddress,
+    address.locality,
+    address.region,
+    address.postalCode,
+  ]
+    .filter((part): part is string => Boolean(part))
     .concat(address.country)
     .join(', ');
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;

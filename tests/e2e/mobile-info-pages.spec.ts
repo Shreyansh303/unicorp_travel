@@ -5,7 +5,7 @@
  */
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
-import { shown, site, telHref } from '../../src/config/site';
+import { listedPhones, shown, site, telHref } from '../../src/config/site';
 
 const hrefs = (page: Page, selector: string) =>
   page.evaluate(
@@ -41,9 +41,8 @@ test.describe('phone /contact', () => {
     if (mobile) {
       expect(actual.some((value) => value.startsWith('https://wa.me/'))).toBe(true);
     }
-    for (const entry of [site.phones.mobile, site.phones.landline, site.phones.secondMobile]) {
-      const number = shown(entry);
-      if (number) expect(actual).toContain(telHref(number));
+    for (const entry of listedPhones().map((entry) => entry.phone)) {
+      expect(actual).toContain(telHref(entry));
     }
     const email = shown(site.email);
     if (email) expect(actual.some((value) => value.startsWith(`mailto:${email}`))).toBe(true);

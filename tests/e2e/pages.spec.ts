@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { shown, site } from '../../src/config/site';
+import { listedPhones, shown, site } from '../../src/config/site';
 import {
   allRoutes,
   demoLegalRoutes,
@@ -10,11 +10,7 @@ import {
 const siteUrl = process.env['SITE_URL']?.trim() || null;
 const mobile = shown(site.phones.mobile);
 const office = shown(site.offices.operating);
-const footerPhones = [
-  shown(site.phones.mobile),
-  shown(site.phones.landline),
-  shown(site.phones.secondMobile),
-].filter((phone) => phone !== null);
+const footerPhones = listedPhones().map((entry) => entry.phone);
 
 test.describe('every page', () => {
   for (const path of allRoutes) {

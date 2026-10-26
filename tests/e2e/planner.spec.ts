@@ -82,7 +82,7 @@ test('keyboard only: all five steps, the summary and the hand-off', async ({ pag
   await tabTo(page, '#plan-name');
   await page.keyboard.type('Neha Kapoor');
   await page.keyboard.press('Tab');
-  await page.keyboard.type('+91 98100 82665');
+  await page.keyboard.type('+91 88262 06177');
   await page.keyboard.press('Tab');
   await page.keyboard.type('neha@example.com');
   await page.keyboard.press('Tab');
@@ -112,7 +112,7 @@ test('keyboard only: all five steps, the summary and the hand-off', async ({ pag
     'Under ₹40,000 per person',
     'Family',
     'Neha Kapoor',
-    '+91 98100 82665',
+    '+91 88262 06177',
     'neha@example.com',
   ]) {
     await expect(summary).toContainText(text);
@@ -134,7 +134,7 @@ test('keyboard only: all five steps, the summary and the hand-off', async ({ pag
   const expected = [
     'Hello Unicorp Travel, I would like to plan a trip.',
     'Name: Neha Kapoor',
-    'Phone: +91 98100 82665',
+    'Phone: +91 88262 06177',
     'Email: neha@example.com',
     'Trip type: A holiday',
     'Destination ideas: Kerala and Coorg',
@@ -235,7 +235,7 @@ test('each step blocks Next until it is valid and focuses the first problem', as
   await expect(page.locator('#plan-phone')).toBeFocused();
   await expect(page.locator('#plan-phone-error')).toContainText('10-digit mobile');
   await expect(page.locator('#plan-email-error')).toContainText('email address');
-  await page.locator('#plan-phone').fill('0120 4201591');
+  await page.locator('#plan-phone').fill('0120 5109212');
   await page.locator('#plan-email').fill('kabir@example.com');
   await next(page).click();
   await expect(page.locator('#plan-consent')).toBeFocused();
