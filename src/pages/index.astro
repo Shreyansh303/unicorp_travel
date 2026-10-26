@@ -464,6 +464,13 @@ const emptyPixel = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAA
     }
   }
 
+  /* Tablet and up: the Services heading sits close under the hero, so it shows on the first screen. */
+  @media (min-width: 768px) {
+    #services {
+      padding-top: var(--space-12);
+    }
+  }
+
   /* Phones: the Services and Trips sections use a 20px gutter and 48px of air. */
   @media (max-width: 767.98px) {
     .fold-section {
