@@ -161,8 +161,8 @@ const emptyPixel = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAA
 >
   <Section tone="paper" spacing="none" aria-labelledby="page-title" class="hero">
     <div class="hero-grid">
+      <p class="hero-tag hero-pop">Holidays and Business Travel Pvt Ltd</p>
       <div class="hero-copy">
-        <p class="hero-tag hero-pop">Holidays and Business Travel Pvt Ltd</p>
         <h1 id="page-title" class="t-display">
           Pack light. <span class="t-accent">We’ll plan</span> the rest.
         </h1>
@@ -363,6 +363,7 @@ const emptyPixel = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAA
   }
 
   .hero-tag {
+    justify-self: start;
     padding: var(--space-1) var(--space-3);
     border-radius: var(--radius-pill);
     background: var(--ink);
@@ -449,11 +450,29 @@ const emptyPixel = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAA
     }
   }
 
+  /* Tablet, single column: the tag sits 24px above the headline, not a full grid gap. */
+  @media (min-width: 768px) and (max-width: 1023.98px) {
+    .hero-tag {
+      margin-bottom: calc(var(--space-6) - var(--space-12));
+    }
+  }
+
+  /* Desktop: the tag stays under the logo; the copy and photo fill the rest of the first screen
+     (the 72px header is in flow here; the rounded section below overlaps by 40px), so the next
+     section starts below the fold. */
   @media (min-width: 1024px) {
     .hero-grid {
       grid-template-columns: 1.15fr 1fr;
-      gap: var(--space-16);
+      grid-template-rows: auto 1fr;
+      align-items: center;
+      column-gap: var(--space-16);
+      row-gap: var(--space-6);
+      min-height: calc(100svh - 4.5rem + 2.5rem);
       padding-block: var(--space-2) var(--space-12);
+    }
+
+    .hero-tag {
+      grid-column: 1 / -1;
     }
   }
 
