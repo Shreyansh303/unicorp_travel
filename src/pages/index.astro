@@ -7,6 +7,7 @@ import ServiceCard from '../components/ui/ServiceCard.astro';
 import PackageCard from '../components/ui/PackageCard.astro';
 import Icon, { type IconName } from '../components/ui/Icon.astro';
 import HeroCrossfade from '../components/ui/HeroCrossfade.astro';
+import LogoStrip from '../components/ui/LogoStrip.astro';
 import RouteLine from '../components/motion/RouteLine.astro';
 import Stagger from '../components/motion/Stagger.astro';
 import Reveal from '../components/motion/Reveal.astro';
@@ -302,6 +303,8 @@ const emptyPixel = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAA
       ))}
     </Stagger>
   </Section>
+
+  <LogoStrip />
 
   <Section tone="ink" mood="corporate" aria-labelledby="corporate-title" class="corp-section">
     <Reveal class="corp">

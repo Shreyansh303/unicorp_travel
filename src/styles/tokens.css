@@ -133,6 +133,8 @@
   --duration-slow: 480ms;
   --duration-reveal: 700ms;
   --duration-route: 2800ms;
+  /* Client logo strip: one full loop of the row. Slow, continuous. */
+  --duration-marquee: 60s;
   /* Hero photo crossfade: the fade itself, and how long each photo holds. */
   --duration-photo-fade: 1200ms;
   /* Hold plus fade is 5 s per photo. */

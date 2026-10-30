@@ -1,0 +1,327 @@
+---
+/**
+ * "Companies we have worked with": one row of client logos that scrolls slowly and continuously
+ * (user decision, 2026-10-30; the second exception to the no-moving-carousel rule in roadmap
+ * section 6). The list lives in site.ts. The row is the set twice: the second copy is aria-hidden
+ * and only there so the loop is seamless (the track moves by exactly one copy).
+ *
+ * Only transform animates. The visible Pause/Play button covers WCAG 2.2.2; the row also pauses
+ * while the pointer is over it. With prefers-reduced-motion nothing moves: the row becomes a
+ * wrapped, static grid and the button is hidden.
+ */
+import type { ImageMetadata } from 'astro';
+import { getImage } from 'astro:assets';
+import { site } from '../../config/site';
+import Section, { type Tone } from './Section.astro';
+
+interface Props {
+  tone?: Tone;
+  class?: string;
+}
+
+const { tone = 'paper', class: className } = Astro.props;
+
+// PNG logos go through Astro's image service (one resized WebP each). SVG logos are used as they
+// are, never rewritten: the file's own viewBox gives the shape, and the URL comes from Vite.
+const pngs = import.meta.glob<{ default: ImageMetadata }>('../../assets/clients/*.png', {
+  eager: true,
+});
+const svgUrls = import.meta.glob<string>('../../assets/clients/*.svg', {
+  eager: true,
+  query: '?url',
+  import: 'default',
+});
+const svgText = import.meta.glob<string>('../../assets/clients/*.svg', {
+  eager: true,
+  query: '?raw',
+  import: 'default',
+});
+
+// Heights the logos are shown at: 56px on phones, 72px from 768px. Sources are delivered at 2x,
+// but never above their own size (Gateway Distriparks is only 166px tall).
+const deliveredHeight = 144;
+
+async function resolveLogo(name: string, file: string) {
+  const key = `../../assets/clients/${file}`;
+  if (file.endsWith('.svg')) {
+    const url = svgUrls[key];
+    const box = svgText[key]?.match(
+      /viewBox="\s*[-\d.]+[\s,]+[-\d.]+[\s,]+([\d.]+)[\s,]+([\d.]+)\s*"/,
+    );
+    if (!url || !box) return null;
+    const ratio = Number(box[1]) / Number(box[2]);
+    return {
+      name,
+      src: url,
+      ratio,
+      width: Math.round(deliveredHeight * ratio),
+      height: deliveredHeight,
+    };
+  }
+  const meta = pngs[key]?.default;
+  if (!meta) return null;
+  const height = Math.min(deliveredHeight, meta.height);
+  const image = await getImage({ src: meta, height, format: 'webp' });
+  return {
+    name,
+    src: image.src,
+    ratio: meta.width / meta.height,
+    width: Number(image.attributes['width']),
+    height: Number(image.attributes['height']),
+  };
+}
+
+const logos = (
+  await Promise.all(site.clients.map((client) => resolveLogo(client.name, client.logo)))
+).filter((logo) => logo !== null);
+---
+
+{logos.length > 0 && (
+  <Section
+    tone={tone}
+    mood="corporate"
+    aria-labelledby="clients-title"
+    class:list={['sec-compact', className]}
+  >
+    <div class="strip-wrap" data-strip-root>
+      <div class="strip-head">
+        <h2 id="clients-title" class="t-h2">
+          Companies we have worked with
+        </h2>
+        <button
+          type="button"
+          class="strip-toggle"
+          data-strip-toggle
+          aria-label="Pause moving logos"
+        >
+          <svg
+            class="icon-pause"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <rect x="6" y="5" width="4" height="14" rx="1" />
+            <rect x="14" y="5" width="4" height="14" rx="1" />
+          </svg>
+          <svg
+            class="icon-play"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5Z" />
+          </svg>
+          <span data-strip-label>Pause</span>
+        </button>
+      </div>
+
+      <div class="strip" data-strip>
+        <div class="strip-track">
+          <ul class="strip-set" aria-labelledby="clients-title">
+            {logos.map((logo) => (
+              <li class="strip-item">
+                <img
+                  class="strip-logo"
+                  src={logo.src}
+                  alt={logo.name}
+                  width={logo.width}
+                  height={logo.height}
+                  style={`--ar:${logo.ratio.toFixed(3)}`}
+                  loading="lazy"
+                  decoding="async"
+                />
+              </li>
+            ))}
+          </ul>
+          <ul class="strip-set strip-copy" aria-hidden="true">
+            {logos.map((logo) => (
+              <li class="strip-item">
+                <img
+                  class="strip-logo"
+                  src={logo.src}
+                  alt=""
+                  width={logo.width}
+                  height={logo.height}
+                  style={`--ar:${logo.ratio.toFixed(3)}`}
+                  loading="lazy"
+                  decoding="async"
+                />
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </Section>
+)}
+
+<style>
+  .strip-wrap {
+    --logo-h: 3.5rem;
+    --logo-gap: var(--space-12);
+  }
+
+  @media (min-width: 768px) {
+    .strip-wrap {
+      --logo-h: 4.5rem;
+      --logo-gap: var(--space-16);
+    }
+  }
+
+  .strip-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    margin-bottom: var(--space-8);
+  }
+
+  .strip-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: var(--tap);
+    padding: var(--space-2) var(--space-4);
+    border: 1px solid var(--text-muted);
+    border-radius: var(--radius-pill);
+    background: transparent;
+    color: var(--text);
+    font-family: var(--font-text);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-black);
+    line-height: 1.2;
+    cursor: pointer;
+  }
+
+  .strip-toggle .icon-play,
+  .strip-toggle[data-state='paused'] .icon-pause {
+    display: none;
+  }
+
+  .strip-toggle[data-state='paused'] .icon-play {
+    display: block;
+  }
+
+  /* The row bleeds to the edges of the section and fades out at both ends. */
+  .strip {
+    overflow: hidden;
+    margin-inline: calc(-1 * var(--gutter));
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+    mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+  }
+
+  .strip-track {
+    display: flex;
+    width: max-content;
+    animation: strip-scroll var(--duration-marquee) linear infinite;
+    will-change: transform;
+  }
+
+  .strip[data-paused='true'] .strip-track {
+    animation-play-state: paused;
+  }
+
+  @media (hover: hover) {
+    .strip:hover .strip-track {
+      animation-play-state: paused;
+    }
+  }
+
+  /* One copy is at least as wide as the screen; the track moves by exactly one copy. */
+  .strip-set {
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: space-around;
+    gap: var(--logo-gap);
+    min-width: 100vw;
+    margin: 0;
+    padding: 0 var(--logo-gap) 0 0;
+    list-style: none;
+  }
+
+  .strip-item {
+    flex: none;
+    display: flex;
+    align-items: center;
+  }
+
+  /* Same height for every logo; very wide wordmarks are capped in width. Grey at rest. */
+  .strip-logo {
+    display: block;
+    height: var(--logo-h);
+    width: calc(var(--logo-h) * min(var(--ar), 4.2));
+    max-width: none;
+    object-fit: contain;
+    filter: grayscale(1);
+    opacity: 0.85;
+  }
+
+  .strip:hover .strip-logo {
+    filter: none;
+    opacity: 1;
+  }
+
+  @keyframes strip-scroll {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  /* No movement: a static, wrapped grid; the second copy and the button are not needed. */
+  @media (prefers-reduced-motion: reduce) {
+    .strip {
+      margin-inline: 0;
+      -webkit-mask-image: none;
+      mask-image: none;
+    }
+
+    .strip-track {
+      width: auto;
+      animation: none;
+      will-change: auto;
+    }
+
+    .strip-set {
+      flex-wrap: wrap;
+      justify-content: center;
+      min-width: 0;
+      padding: 0;
+      row-gap: var(--space-8);
+    }
+
+    .strip-copy,
+    .strip-toggle {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  function bind(root: HTMLElement): void {
+    if (root.dataset['bound']) return;
+    root.dataset['bound'] = 'true';
+    const strip = root.querySelector<HTMLElement>('[data-strip]');
+    const button = root.querySelector<HTMLButtonElement>('[data-strip-toggle]');
+    const label = root.querySelector<HTMLElement>('[data-strip-label]');
+    if (!strip || !button || !label) return;
+    button.addEventListener('click', () => {
+      const pause = strip.dataset['paused'] !== 'true';
+      strip.dataset['paused'] = String(pause);
+      button.dataset['state'] = pause ? 'paused' : 'playing';
+      button.setAttribute('aria-label', pause ? 'Play moving logos' : 'Pause moving logos');
+      label.textContent = pause ? 'Play' : 'Pause';
+    });
+  }
+
+  document.addEventListener('astro:page-load', () => {
+    document.querySelectorAll<HTMLElement>('[data-strip-root]').forEach(bind);
+  });
+</script>

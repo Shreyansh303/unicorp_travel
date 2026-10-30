@@ -61,3 +61,19 @@ Supplied by the client (2026-10-19), not licensed from a third party.
 | src/assets/brand/logo.png | Header logo, high-resolution version supplied 2026-10-21 (transparent margins trimmed; Astro generates the delivered sizes) |
 | public/favicon.svg | Favicon, from the supplied vector mark (2026-10-21), filled in the logo red `#db2228` on a white disc |
 | public/favicon-32x32.png, public/apple-touch-icon.png | PNG fallback and home-screen icon, rendered from `public/favicon.svg` |
+
+## Client logos
+
+Files in `src/assets/clients/`, downloaded (not hot-linked) on 2026-10-30 from the company's own website or Wikimedia Commons, and kept unaltered (greyscale is applied in CSS only). They show the companies named in the client's own profile, under the client's stated business relationship. That is not a licence: every mark is a trademark of its owner, and the client must confirm the right to show each one before the production launch.
+
+| File | Company | Source | Licence or note |
+|---|---|---|---|
+| john-lewis.svg | John Lewis | https://commons.wikimedia.org/wiki/File:John_Lewis_%26_Partners_logo.svg | Public domain on Commons; trademark |
+| jcb-india.svg | JCB India | https://commons.wikimedia.org/wiki/File:JCB_(J.C._Bamford_Excavators_Limited)_logo.svg | Public domain on Commons; trademark |
+| williams-sonoma.svg | Williams-Sonoma | https://commons.wikimedia.org/wiki/File:Williams-Sonoma_logo.svg | Public domain on Commons; trademark |
+| save-the-children.svg | Save the Children | https://commons.wikimedia.org/wiki/File:Save_the_Children_Logo.svg | CC BY-SA 3.0 de (https://creativecommons.org/licenses/by-sa/3.0/de/deed.en). Attribution: logo of Save the Children, uploaded to Wikimedia Commons by the user "Savethechildren"; file unchanged. Trademark of Save the Children |
+| canpack-group.svg | Canpack Group | https://www.canpack.com/wp-content/themes/canpack-theme/dist/img/logo.svg | Company website; trademark |
+| gateway-distriparks.png | Gateway Distriparks | https://www.gatewaydistriparks.com/images/logo.png | Company website; trademark. Source is 180 x 166 px, so it is shown no larger than 83 px tall |
+| the-british-school-new-delhi.png | The British School New Delhi | https://www.british-school.org/wp-content/uploads/2024/12/01-TBS-Logo-Colour-PNG-Transparent-To-be-normally-used.png | School website; trademark |
+
+Not shown, no usable official logo found: Bluestem Global Sourcing and Laj Exports.

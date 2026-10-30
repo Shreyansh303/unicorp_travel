@@ -289,7 +289,20 @@ export const site = {
   counters: [] as readonly string[],
   /** Permission unknown: not used in the demo. */
   testimonials: [] as readonly string[],
-  clientLogos: [] as readonly string[],
+  /**
+   * Companies from the client's profile, shown as a logo strip. `logo` is a file name in
+   * src/assets/clients/. Shown under the client's stated business relationship; the client must
+   * confirm the right to show each mark before production (see docs/image-credits.md).
+   */
+  clients: [
+    { name: 'John Lewis', logo: 'john-lewis.svg' },
+    { name: 'JCB India', logo: 'jcb-india.svg' },
+    { name: 'Williams-Sonoma', logo: 'williams-sonoma.svg' },
+    { name: 'Save the Children', logo: 'save-the-children.svg' },
+    { name: 'Canpack Group', logo: 'canpack-group.svg' },
+    { name: 'Gateway Distriparks', logo: 'gateway-distriparks.png' },
+    { name: 'The British School New Delhi', logo: 'the-british-school-new-delhi.png' },
+  ] as readonly { readonly name: string; readonly logo: string }[],
 
   /** Service names as listed on the old site. All copy is written fresh elsewhere. */
   services: [

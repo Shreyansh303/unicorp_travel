@@ -8,6 +8,7 @@ import Link from '../components/ui/Link.astro';
 import TickList from '../components/ui/TickList.astro';
 import HowItWorks from '../components/ui/HowItWorks.astro';
 import Accordion from '../components/ui/Accordion.astro';
+import LogoStrip from '../components/ui/LogoStrip.astro';
 import Reveal from '../components/motion/Reveal.astro';
 import EnquirySection from '../components/forms/EnquirySection.astro';
 import { getServiceWithFaqs } from '../lib/content';
@@ -71,9 +72,7 @@ const mailHref = emailFor('Corporate travel enquiry');
         <h2 id="handle-title" class="t-h2">
           What we handle
         </h2>
-        <p class="t-muted">
-          {data.summary}
-        </p>
+        <p class="t-muted">{data.summary}</p>
       </div>
       <TickList items={data.whatWeHandle} class="handle-list" />
     </div>
@@ -115,6 +114,8 @@ const mailHref = emailFor('Corporate travel enquiry');
     </div>
     <HowItWorks steps={data.howItWorks} swipe />
   </Section>
+
+  <LogoStrip />
 
   {faqs.length > 0 && (
     <Section tone="white" mood="corporate" aria-labelledby="faq-title" class="sec-compact">
@@ -248,7 +249,6 @@ const mailHref = emailFor('Corporate travel enquiry');
     .who-copy {
       gap: var(--space-4);
     }
-
   }
 
   .who-list li {
