@@ -8,6 +8,7 @@ import Link from '../../components/ui/Link.astro';
 import TickList from '../../components/ui/TickList.astro';
 import HowItWorks from '../../components/ui/HowItWorks.astro';
 import Accordion from '../../components/ui/Accordion.astro';
+import ContactDesks from '../../components/ui/ContactDesks.astro';
 import EnquirySection from '../../components/forms/EnquirySection.astro';
 import {
   getFaqsForService,
@@ -15,6 +16,7 @@ import {
   type FaqEntry,
   type ServiceEntry,
 } from '../../lib/content';
+import { desksFor } from '../../config/site';
 import { callHref, mobile, whatsappFor } from '../../lib/enquiry';
 import { midSentence, routes, serviceHref, serviceLabel } from '../../lib/routes';
 
@@ -39,6 +41,8 @@ const data = service.data;
 const label = serviceLabel(service);
 const topic = midSentence(data.title);
 const topicShort = midSentence(label);
+// The visa desk shows on the visa service page only.
+const desks = service.id === 'visa-passport' ? desksFor('visa-passport') : [];
 const otherServices = all.filter((item) => item.id !== service.id);
 ---
 
@@ -136,6 +140,21 @@ const otherServices = all.filter((item) => item.id !== service.id);
     </Section>
   )}
 
+  {desks.length > 0 && (
+    <Section
+      tone="white"
+      mood="corporate"
+      spacing="tight"
+      aria-labelledby="visa-desk-title"
+      class="desk-section"
+    >
+      <h2 id="visa-desk-title" class="t-h4 desk-section-title">
+        Talk to the visa desk
+      </h2>
+      <ContactDesks desks={desks} headingLevel={4} class="visa-desk" />
+    </Section>
+  )}
+
   <EnquirySection
     title="Tell us what"
     accent="you need."
@@ -217,6 +236,10 @@ const otherServices = all.filter((item) => item.id !== service.id);
     background: var(--white);
     box-shadow: inset 0 0 0 1px var(--border-strong);
     font-weight: var(--weight-medium);
+  }
+
+  .desk-section-title {
+    margin-bottom: var(--space-4);
   }
 
   .more-title {

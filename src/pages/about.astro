@@ -10,6 +10,7 @@ import { shown, site } from '../config/site';
 import { routes } from '../lib/routes';
 import indiaGate from '../assets/photos/about-delhi-ncr.jpg';
 
+const directors = shown(site.directors) ?? [];
 const office = shown(site.offices.operating);
 const where = office ? ` in ${office.locality}` : '';
 
@@ -90,12 +91,7 @@ const steps = [
     <ul class="what-grid">
       {cards.map((card) => (
         <li>
-          <ServiceCard
-            title={card.title}
-            text={card.text}
-            href={card.href}
-            tone={card.tone}
-          />
+          <ServiceCard title={card.title} text={card.text} href={card.href} tone={card.tone} />
         </li>
       ))}
     </ul>
@@ -118,6 +114,18 @@ const steps = [
           Company details
         </h2>
         <p class="t-muted">The registered details of the company behind {site.displayName}.</p>
+        {directors.length > 0 && (
+          <div class="directors">
+            <h3 class="t-h4">Who runs it</h3>
+            <ul class="directors-list">
+              {directors.map((director) => (
+                <li>
+                  <span class="director-name">{director.name}</span>, {director.title}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
       <FactsBlock />
     </div>
@@ -170,6 +178,16 @@ const steps = [
     display: grid;
     gap: var(--space-4);
     align-content: start;
+  }
+
+  .directors {
+    display: grid;
+    gap: var(--space-2);
+    margin-top: var(--space-4);
+  }
+
+  .director-name {
+    font-weight: var(--weight-bold);
   }
 
   @media (min-width: 1024px) {

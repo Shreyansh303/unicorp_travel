@@ -56,6 +56,28 @@ export interface ServiceItem {
   status: FactStatus;
 }
 
+/** A person in the company, for the "Who to contact" and "Directors" displays. */
+export interface StaffContact {
+  name: string;
+  phone: Phone;
+  email: string;
+}
+
+export interface ContactDesk {
+  id: 'international' | 'domestic' | 'visa' | 'accounts';
+  /** Heading shown above the people on the desk. */
+  name: string;
+  /** Where the desk is shown: the Contact page, or only the visa service page. */
+  shownOn: 'contact' | 'visa-passport';
+  status: FactStatus;
+  people: StaffContact[];
+}
+
+export interface Director {
+  name: string;
+  title: string;
+}
+
 export interface ServiceGroup {
   id: 'corporate' | 'leisure' | 'related';
   name: string;
@@ -76,7 +98,7 @@ export const site = {
   displayName: 'Unicorp Travel',
   displayNameStatus: 'confirm' as FactStatus,
   legalName: {
-    status: 'confirm',
+    status: 'verified',
     value: 'Unicorp Holidays & Business Travel Private Limited',
   } satisfies Fact<string>,
   /** The name Google shows for the agency's Maps listing. */
@@ -137,6 +159,101 @@ export const site = {
 
   email: { status: 'confirm', value: 'info@unicorptravel.com' } satisfies Fact<string>,
 
+  /** Names and titles only: no phone or email is shown for a director. */
+  directors: {
+    status: 'verified',
+    value: [
+      { name: 'Vishal Tyagi', title: 'Managing Director' },
+      { name: 'Barkha Tyagi', title: 'Director' },
+    ],
+  } satisfies Fact<Director[]>,
+
+  /**
+   * Staff contacts by desk, from the client's company profile. International, domestic and
+   * accounts show on the Contact page; the visa desk shows only on the visa service page.
+   * Not used in the header, footer or the "Talk to us" list.
+   */
+  contactDesks: [
+    {
+      id: 'international',
+      name: 'International flight and hotel bookings',
+      shownOn: 'contact',
+      status: 'verified',
+      people: [
+        {
+          name: 'Prabhanshu Nirwan',
+          phone: { e164: '+918826206177', display: '+91 88262 06177', whatsapp: true },
+          email: 'prabhanshu@unicorptravel.com',
+        },
+        {
+          name: 'Vishal Tyagi',
+          phone: { e164: '+919891677321', display: '+91 98916 77321', whatsapp: true },
+          email: 'vishal@unicorptravel.com',
+        },
+      ],
+    },
+    {
+      id: 'domestic',
+      name: 'Domestic flight and hotel bookings',
+      shownOn: 'contact',
+      status: 'verified',
+      people: [
+        {
+          name: 'Sumit Sharma',
+          phone: { e164: '+919643509314', display: '+91 96435 09314', whatsapp: false },
+          email: 'domestic@unicorptravel.com',
+        },
+        {
+          name: 'Nalin Tyagi',
+          phone: { e164: '+918800434190', display: '+91 88004 34190', whatsapp: false },
+          email: 'domestic@unicorptravel.com',
+        },
+        {
+          name: 'Prabhanshu Nirwan',
+          phone: { e164: '+918826206177', display: '+91 88262 06177', whatsapp: true },
+          email: 'prabhanshu@unicorptravel.com',
+        },
+      ],
+    },
+    {
+      id: 'visa',
+      name: 'Visa assistance',
+      shownOn: 'visa-passport',
+      status: 'verified',
+      people: [
+        {
+          name: 'Hans Raj',
+          phone: { e164: '+919818219616', display: '+91 98182 19616', whatsapp: false },
+          email: 'visa@unicorptravel.com',
+        },
+        {
+          name: 'Amar Singh',
+          phone: { e164: '+919718753983', display: '+91 97187 53983', whatsapp: false },
+          email: 'visa@unicorptravel.com',
+        },
+      ],
+    },
+    {
+      id: 'accounts',
+      name: 'Accounts',
+      shownOn: 'contact',
+      status: 'verified',
+      people: [
+        {
+          name: 'Sharad Jain',
+          phone: { e164: '+919716147321', display: '+91 97161 47321', whatsapp: false },
+          email: 'sharad@unicorptravel.com',
+        },
+        // Same number and email as Sharad Jain, as given in the profile. Flag to the client.
+        {
+          name: 'Himanshu Verma',
+          phone: { e164: '+919716147321', display: '+91 97161 47321', whatsapp: false },
+          email: 'sharad@unicorptravel.com',
+        },
+      ],
+    },
+  ] satisfies ContactDesk[],
+
   /**
    * Only what is known. `null` means unknown, never "closed".
    * Known (Google listing, 2026-10-17): Saturday 10:00 to 19:00; opens 10:00 on Monday.
@@ -180,18 +297,28 @@ export const site = {
       id: 'corporate',
       name: 'Corporate travel',
       items: [
+        {
+          id: 'air-ticketing-business',
+          name: 'Air ticketing, domestic and international',
+          status: 'verified',
+        },
         { id: 'travel-management', name: 'Travel management', status: 'verified' },
         { id: 'policy-adherence', name: 'Travel-policy adherence', status: 'verified' },
         { id: 'supplier-negotiations', name: 'Supplier negotiations', status: 'verified' },
         { id: 'travel-implant', name: 'Dedicated team and travel implant', status: 'verified' },
-        // The 24/7 claim must be confirmed by the client.
-        { id: 'support-24x7', name: '24/7 support', status: 'confirm' },
+        { id: 'support-24x7', name: '24/7 support', status: 'verified' },
+        { id: 'airport-assist', name: 'Meet and assist at Delhi Airport', status: 'verified' },
       ],
     },
     {
       id: 'leisure',
       name: 'Leisure travel',
       items: [
+        {
+          id: 'air-ticketing-leisure',
+          name: 'Air ticketing, domestic and international',
+          status: 'verified',
+        },
         { id: 'domestic-holidays', name: 'Domestic holidays', status: 'verified' },
         { id: 'international-holidays', name: 'International holidays', status: 'verified' },
       ],
@@ -237,6 +364,16 @@ export function listedPhones(): { label: string; phone: Phone }[] {
     const phone = shown<Phone>(site.phones[key]);
     return phone ? [{ label: label(phone), phone }] : [];
   });
+}
+
+/** Desks that may be shown on a page, with their people. A desk with nobody to show is dropped. */
+export function desksFor(place: ContactDesk['shownOn']): ContactDesk[] {
+  return site.contactDesks.filter(
+    (desk: ContactDesk) =>
+      desk.shownOn === place &&
+      (desk.status === 'verified' || desk.status === 'confirm') &&
+      desk.people.length > 0,
+  );
 }
 
 /** `tel:` href for an E.164 number, e.g. `tel:+919891677321`. */

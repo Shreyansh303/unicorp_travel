@@ -4,9 +4,19 @@ import PageHero from '../components/ui/PageHero.astro';
 import Section from '../components/ui/Section.astro';
 import Icon from '../components/ui/Icon.astro';
 import FactsBlock from '../components/ui/FactsBlock.astro';
+import ContactDesks from '../components/ui/ContactDesks.astro';
 import MapPanel from '../components/ui/MapPanel.astro';
 import EnquirySection from '../components/forms/EnquirySection.astro';
-import { listedPhones, shown, site, telHref, weekdays, whatsappHref, type Weekday } from '../config/site';
+import {
+  desksFor,
+  listedPhones,
+  shown,
+  site,
+  telHref,
+  weekdays,
+  whatsappHref,
+  type Weekday,
+} from '../config/site';
 import { emailFor, greeting, mobile } from '../lib/enquiry';
 import { routes } from '../lib/routes';
 
@@ -16,6 +26,7 @@ const officeIn = office ? ` in ${office.locality}` : '';
 const email = shown(site.email);
 const mailHref = emailFor('Travel enquiry');
 const phones = listedPhones();
+const desks = desksFor('contact');
 
 // Hours render only when site.ts allows them to be shown, and only for days with both times.
 const hours = shown(site.hours);
@@ -145,6 +156,23 @@ const hourRows = hours
     </div>
   </Section>
 
+  {desks.length > 0 && (
+    <Section tone="white" mood="corporate" aria-labelledby="who-title" class="sec-compact">
+      <div class="who-grid">
+        <div class="who-head">
+          <h2 id="who-title" class="t-h2">
+            Who to contact
+          </h2>
+          <p class="t-muted">
+            For a booking or a bill, reach the person who handles it. For anything else, use the
+            ways above.
+          </p>
+        </div>
+        <ContactDesks desks={desks} />
+      </div>
+    </Section>
+  )}
+
   <EnquirySection
     title="Or write to us"
     accent="here."
@@ -245,6 +273,17 @@ const hourRows = hours
   .visit {
     display: grid;
     gap: var(--space-4);
+  }
+
+  .who-grid {
+    display: grid;
+    gap: var(--space-6);
+  }
+
+  .who-head {
+    display: grid;
+    gap: var(--space-3);
+    align-content: start;
   }
 
   .facts-grid {
