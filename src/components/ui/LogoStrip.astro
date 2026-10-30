@@ -5,9 +5,9 @@
  * section 6). The list lives in site.ts. The row is the set twice: the second copy is aria-hidden
  * and only there so the loop is seamless (the track moves by exactly one copy).
  *
- * Only transform animates. The visible Pause/Play button covers WCAG 2.2.2; the row also pauses
- * while the pointer is over it. With prefers-reduced-motion nothing moves: the row becomes a
- * wrapped, static grid and the button is hidden.
+ * Only transform animates. The row pauses while the pointer is over it. There is no Pause button
+ * (user decision, 2026-10-31; a WCAG 2.2.2 gap recorded in the roadmap). With
+ * prefers-reduced-motion nothing moves: the row becomes a wrapped, static grid.
  */
 import type { ImageMetadata } from 'astro';
 import { getImage } from 'astro:assets';
@@ -88,37 +88,6 @@ const logos = (
         <h2 id="clients-title" class="t-h2">
           Companies we have worked with
         </h2>
-        <button
-          type="button"
-          class="strip-toggle"
-          data-strip-toggle
-          aria-label="Pause moving logos"
-        >
-          <svg
-            class="icon-pause"
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            aria-hidden="true"
-            focusable="false"
-          >
-            <rect x="6" y="5" width="4" height="14" rx="1" />
-            <rect x="14" y="5" width="4" height="14" rx="1" />
-          </svg>
-          <svg
-            class="icon-play"
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            aria-hidden="true"
-            focusable="false"
-          >
-            <path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5Z" />
-          </svg>
-          <span data-strip-label>Pause</span>
-        </button>
       </div>
 
       <div class="strip" data-strip>
@@ -183,32 +152,6 @@ const logos = (
     margin-bottom: var(--space-8);
   }
 
-  .strip-toggle {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2);
-    min-height: var(--tap);
-    padding: var(--space-2) var(--space-4);
-    border: 1px solid var(--text-muted);
-    border-radius: var(--radius-pill);
-    background: transparent;
-    color: var(--text);
-    font-family: var(--font-text);
-    font-size: var(--text-sm);
-    font-weight: var(--weight-black);
-    line-height: 1.2;
-    cursor: pointer;
-  }
-
-  .strip-toggle .icon-play,
-  .strip-toggle[data-state='paused'] .icon-pause {
-    display: none;
-  }
-
-  .strip-toggle[data-state='paused'] .icon-play {
-    display: block;
-  }
-
   /* The row bleeds to the edges of the section and fades out at both ends. */
   .strip {
     overflow: hidden;
@@ -222,10 +165,6 @@ const logos = (
     width: max-content;
     animation: strip-scroll var(--duration-marquee) linear infinite;
     will-change: transform;
-  }
-
-  .strip[data-paused='true'] .strip-track {
-    animation-play-state: paused;
   }
 
   @media (hover: hover) {
@@ -275,7 +214,7 @@ const logos = (
     }
   }
 
-  /* No movement: a static, wrapped grid; the second copy and the button are not needed. */
+  /* No movement: a static, wrapped grid; the second copy is not needed. */
   @media (prefers-reduced-motion: reduce) {
     .strip {
       margin-inline: 0;
@@ -297,31 +236,8 @@ const logos = (
       row-gap: var(--space-8);
     }
 
-    .strip-copy,
-    .strip-toggle {
+    .strip-copy {
       display: none;
     }
   }
 </style>
-
-<script>
-  function bind(root: HTMLElement): void {
-    if (root.dataset['bound']) return;
-    root.dataset['bound'] = 'true';
-    const strip = root.querySelector<HTMLElement>('[data-strip]');
-    const button = root.querySelector<HTMLButtonElement>('[data-strip-toggle]');
-    const label = root.querySelector<HTMLElement>('[data-strip-label]');
-    if (!strip || !button || !label) return;
-    button.addEventListener('click', () => {
-      const pause = strip.dataset['paused'] !== 'true';
-      strip.dataset['paused'] = String(pause);
-      button.dataset['state'] = pause ? 'paused' : 'playing';
-      button.setAttribute('aria-label', pause ? 'Play moving logos' : 'Pause moving logos');
-      label.textContent = pause ? 'Play' : 'Pause';
-    });
-  }
-
-  document.addEventListener('astro:page-load', () => {
-    document.querySelectorAll<HTMLElement>('[data-strip-root]').forEach(bind);
-  });
-</script>
