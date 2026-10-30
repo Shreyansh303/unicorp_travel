@@ -77,3 +77,15 @@ Files in `src/assets/clients/`, downloaded (not hot-linked) on 2026-10-30 from t
 | the-british-school-new-delhi.png | The British School New Delhi | https://www.british-school.org/wp-content/uploads/2024/12/01-TBS-Logo-Colour-PNG-Transparent-To-be-normally-used.png | School website; trademark |
 
 Not shown, no usable official logo found: Bluestem Global Sourcing and Laj Exports.
+
+## Badges
+
+Files in `src/assets/badges/`, copied unaltered on 2026-10-31 from the client's company profile (supplied 2026-10-30; low resolution). Shown on About and in the footer on the strength of the client's own profile (user decision, 2026-10-31). Each mark belongs to its organisation; this is not a licence from them.
+
+| File | Organisation | Source |
+|---|---|---|
+| iata.png | International Air Transport Association (IATA) | Client company profile |
+| iato.jpg | Indian Association of Tour Operators (IATO), member | Client company profile |
+| wtaaa.jpg | World Travel Agents Associations Alliance (WTAAA) | Client company profile |
+| ministry-of-tourism.jpg | Ministry of Tourism, Government of India | Client company profile |
+| msme.png | Ministry of Micro, Small and Medium Enterprises (MSME), Government of India | Client company profile |

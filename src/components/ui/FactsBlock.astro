@@ -1,6 +1,6 @@
 ---
 /**
- * Company facts and credentials (F-09): legal name, CIN, GSTIN, offices and memberships.
+ * Company facts and credentials (F-09): legal name, CIN, GSTIN, offices. Memberships are shown as badges by BadgeRow.
  * Renders only facts that `shown()` returns; a missing fact leaves no label, blank or link.
  * `condensed` is the one-line footer form.
  */
@@ -22,9 +22,7 @@ const facts = [
 
 const operating = shown(site.offices.operating);
 const registered = shown(site.offices.registered);
-const memberships = site.memberships;
-const hasAny =
-  facts.length > 0 || operating !== null || registered !== null || memberships.length > 0;
+const hasAny = facts.length > 0 || operating !== null || registered !== null;
 ---
 
 {hasAny &&
@@ -69,12 +67,6 @@ const hasAny =
                 ))}
               </address>
             </dd>
-          </div>
-        )}
-        {memberships.length > 0 && (
-          <div>
-            <dt>Memberships</dt>
-            <dd>{memberships.join(', ')}</dd>
           </div>
         )}
       </dl>

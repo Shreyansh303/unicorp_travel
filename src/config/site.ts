@@ -283,8 +283,23 @@ export const site = {
     },
   } satisfies Record<string, Fact<string>>,
 
-  /** Not verified: render nothing while empty. Badges need proof from the client. */
-  memberships: [] as readonly string[],
+  /**
+   * Accreditation and membership badges, taken from the client's own company profile (supplied
+   * 2026-10-30). User decision, 2026-10-31: show them on the strength of that profile, which
+   * overrides the earlier hold that badges need separate proof. `file` is a name in
+   * src/assets/badges/; `name` is the full organisation name and becomes the alt text. The marks
+   * belong to their organisations (see docs/image-credits.md). Render nothing while empty.
+   */
+  memberships: [
+    { name: 'International Air Transport Association (IATA)', file: 'iata.png' },
+    { name: 'Indian Association of Tour Operators (IATO), member', file: 'iato.jpg' },
+    { name: 'World Travel Agents Associations Alliance (WTAAA)', file: 'wtaaa.jpg' },
+    { name: 'Ministry of Tourism, Government of India', file: 'ministry-of-tourism.jpg' },
+    {
+      name: 'Ministry of Micro, Small and Medium Enterprises (MSME), Government of India',
+      file: 'msme.png',
+    },
+  ] as readonly { name: string; file: string }[],
   /** Unsourced counters are not used. */
   counters: [] as readonly string[],
   /** Permission unknown: not used in the demo. */

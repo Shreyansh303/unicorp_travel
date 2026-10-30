@@ -6,6 +6,7 @@
  */
 import Icon from './Icon.astro';
 import FactsBlock from './FactsBlock.astro';
+import BadgeRow from './BadgeRow.astro';
 import { generalEnquiryMessage } from '../../lib/enquiry';
 import type { NavLink } from './types';
 import {
@@ -164,6 +165,9 @@ const columns = (phones.length > 0 || email ? 1 : 0) + (office ? 1 : 0) + groups
         </ul>
       </div>
     ))}
+  </div>
+  <div class="wrap">
+    <BadgeRow variant="footer" />
   </div>
   <div class="wrap footer-base">
     <FactsBlock variant="condensed" />

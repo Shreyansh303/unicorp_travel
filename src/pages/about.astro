@@ -5,6 +5,7 @@ import Section from '../components/ui/Section.astro';
 import Button from '../components/ui/Button.astro';
 import ServiceCard from '../components/ui/ServiceCard.astro';
 import FactsBlock from '../components/ui/FactsBlock.astro';
+import BadgeRow from '../components/ui/BadgeRow.astro';
 import HowItWorks from '../components/ui/HowItWorks.astro';
 import { shown, site } from '../config/site';
 import { routes } from '../lib/routes';
@@ -129,6 +130,7 @@ const steps = [
       </div>
       <FactsBlock />
     </div>
+    <BadgeRow class="facts-badges" />
   </Section>
 </PageLayout>
 
@@ -178,6 +180,10 @@ const steps = [
     display: grid;
     gap: var(--space-4);
     align-content: start;
+  }
+
+  .facts-badges {
+    margin-top: var(--space-10);
   }
 
   .directors {
