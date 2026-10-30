@@ -130,7 +130,9 @@ const steps = [
       </div>
       <FactsBlock />
     </div>
-    <BadgeRow class="facts-badges" />
+    <div class="facts-badges">
+      <BadgeRow />
+    </div>
   </Section>
 </PageLayout>
 
@@ -182,8 +184,9 @@ const steps = [
     align-content: start;
   }
 
+  /* A wrapper, so the page's scoped style reaches it (it would not on the component itself). */
   .facts-badges {
-    margin-top: var(--space-10);
+    margin-top: var(--space-12);
   }
 
   .directors {
