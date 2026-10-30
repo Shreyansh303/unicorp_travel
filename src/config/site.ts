@@ -59,12 +59,14 @@ export interface ServiceItem {
 /** A person in the company, for the "Who to contact" and "Directors" displays. */
 export interface StaffContact {
   name: string;
+  /** Job title, shown under the name (the management desk). */
+  title?: string;
   phone: Phone;
   email: string;
 }
 
 export interface ContactDesk {
-  id: 'international' | 'domestic' | 'visa' | 'accounts';
+  id: 'management' | 'international' | 'domestic' | 'visa' | 'accounts';
   /** Heading shown above the people on the desk. */
   name: string;
   /** Where the desk is shown: the Contact page, or only the visa service page. */
@@ -174,6 +176,28 @@ export const site = {
    * Not used in the header, footer or the "Talk to us" list.
    */
   contactDesks: [
+    {
+      // The profile's "Contact us" block. Barkha Tyagi's number is the same as the accounts number
+      // in the profile; shown as given (flag to the client). User request, 2026-10-31.
+      id: 'management',
+      name: 'Management',
+      shownOn: 'contact',
+      status: 'verified',
+      people: [
+        {
+          name: 'Vishal Tyagi',
+          title: 'Managing Director',
+          phone: { e164: '+919891677321', display: '+91 98916 77321', whatsapp: true },
+          email: 'vishal@unicorptravel.com',
+        },
+        {
+          name: 'Barkha Tyagi',
+          title: 'Director',
+          phone: { e164: '+919716147321', display: '+91 97161 47321', whatsapp: false },
+          email: 'info@unicorptravel.com',
+        },
+      ],
+    },
     {
       id: 'international',
       name: 'International flight and hotel bookings',

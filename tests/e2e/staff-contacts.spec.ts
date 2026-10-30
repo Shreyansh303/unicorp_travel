@@ -11,7 +11,12 @@ const visaDesks = desksFor('visa-passport');
 const visaPath = '/services/visa-passport';
 
 test('the facts list the right desks for each page', () => {
-  expect(contactDesks.map((desk) => desk.id)).toEqual(['international', 'domestic', 'accounts']);
+  expect(contactDesks.map((desk) => desk.id)).toEqual([
+    'management',
+    'international',
+    'domestic',
+    'accounts',
+  ]);
   expect(visaDesks.map((desk) => desk.id)).toEqual(['visa']);
 });
 
@@ -23,7 +28,9 @@ for (const viewport of [
   test.describe(`at ${viewport.width}px`, () => {
     test.use({ viewport });
 
-    test('/contact shows the three desks with tel and mailto links', async ({ page }) => {
+    test('/contact shows management and the three desks with tel and mailto links', async ({
+      page,
+    }) => {
       await page.goto('/contact');
       await expect(page.getByRole('heading', { level: 2, name: 'Who to contact' })).toBeVisible();
       for (const desk of contactDesks) {

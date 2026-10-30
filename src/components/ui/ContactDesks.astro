@@ -27,6 +27,7 @@ const Heading = `h${headingLevel}` as 'h3' | 'h4';
           {desk.people.map((person) => (
             <li class="person">
               <span class="person-name">{person.name}</span>
+              {person.title && <span class="person-title">{person.title}</span>}
               <a class="person-link" href={telHref(person.phone)}>
                 {person.phone.display}
               </a>
@@ -77,6 +78,25 @@ const Heading = `h${headingLevel}` as 'h3' | 'h4';
 
   .desk-title {
     font-size: var(--text-lg);
+  }
+
+  .person-title {
+    margin-top: -0.25rem;
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+  }
+
+  /* Management sits on top across the full width, its people side by side on wider screens. */
+  @media (min-width: 768px) {
+    .desk[data-desk='management'] {
+      grid-column: 1 / -1;
+    }
+
+    .desk[data-desk='management'] .desk-people {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: var(--space-8);
+    }
   }
 
   .desk-people {
