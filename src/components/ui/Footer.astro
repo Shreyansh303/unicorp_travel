@@ -6,7 +6,6 @@
  */
 import Icon from './Icon.astro';
 import FactsBlock from './FactsBlock.astro';
-import BadgeRow from './BadgeRow.astro';
 import { generalEnquiryMessage } from '../../lib/enquiry';
 import type { NavLink } from './types';
 import {
@@ -166,9 +165,16 @@ const columns = (phones.length > 0 || email ? 1 : 0) + (office ? 1 : 0) + groups
       </div>
     ))}
   </div>
-  <div class="wrap">
-    <BadgeRow variant="footer" />
-  </div>
+  {site.memberships.length > 0 && (
+    <div class="wrap footer-memberships" data-memberships>
+      <h2 class="footer-heading">Memberships and registrations</h2>
+      <ul class="memberships-list">
+        {site.memberships.map((membership) => (
+          <li title={membership.name}>{membership.short}</li>
+        ))}
+      </ul>
+    </div>
+  )}
   <div class="wrap footer-base">
     <FactsBlock variant="condensed" />
     <p class="footer-copy">
@@ -245,6 +251,26 @@ const columns = (phones.length > 0 || email ? 1 : 0) + (office ? 1 : 0) + groups
     letter-spacing: var(--tracking-label);
     text-transform: uppercase;
     color: var(--accent-text);
+  }
+
+  /* Memberships as one line of text (the badge images are on About). */
+  .footer-memberships {
+    margin-top: var(--space-10);
+  }
+
+  .memberships-list {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: var(--space-2);
+    row-gap: var(--space-1);
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+  }
+
+  /* The dot ends each item, so a wrapped line never starts with one. */
+  .memberships-list li:not(:last-child)::after {
+    content: '·';
+    margin-left: var(--space-2);
   }
 
   .footer-list {

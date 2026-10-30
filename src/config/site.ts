@@ -315,15 +315,32 @@ export const site = {
    * belong to their organisations (see docs/image-credits.md). Render nothing while empty.
    */
   memberships: [
-    { name: 'International Air Transport Association (IATA)', file: 'iata.png' },
-    { name: 'Indian Association of Tour Operators (IATO), member', file: 'iato.jpg' },
-    { name: 'World Travel Agents Associations Alliance (WTAAA)', file: 'wtaaa.jpg' },
-    { name: 'Ministry of Tourism, Government of India', file: 'ministry-of-tourism.jpg' },
+    {
+      name: 'International Air Transport Association (IATA)',
+      short: 'IATA',
+      file: 'iata.png',
+    },
+    {
+      name: 'Indian Association of Tour Operators (IATO), member',
+      short: 'IATO',
+      file: 'iato.jpg',
+    },
+    {
+      name: 'World Travel Agents Associations Alliance (WTAAA)',
+      short: 'WTAAA',
+      file: 'wtaaa.jpg',
+    },
+    {
+      name: 'Ministry of Tourism, Government of India',
+      short: 'Ministry of Tourism, Govt. of India',
+      file: 'ministry-of-tourism.jpg',
+    },
     {
       name: 'Ministry of Micro, Small and Medium Enterprises (MSME), Government of India',
+      short: 'MSME, Govt. of India',
       file: 'msme.png',
     },
-  ] as readonly { name: string; file: string }[],
+  ] as readonly { name: string; short: string; file: string }[],
   /** Unsourced counters are not used. */
   counters: [] as readonly string[],
   /** Permission unknown: not used in the demo. */
