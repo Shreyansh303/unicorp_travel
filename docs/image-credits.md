@@ -42,6 +42,7 @@ All photographs in `src/assets/photos/` were downloaded from Unsplash (not hot-l
 | hero-journey.jpg | Aerial winding mountain road | Charl Durand | https://unsplash.com/photos/6DcbF4LsoMk | [Unsplash License](https://unsplash.com/license) | A winding road snaking through green mountain valleys, seen from above |
 | about-delhi-ncr.jpg | India Gate, New Delhi, at dawn | shalender kumar | https://unsplash.com/photos/XjKaPInYVCM | [Unsplash License](https://unsplash.com/license) | India Gate in New Delhi against a pink and purple sky |
 | texture-map.jpg | Antique two-hemisphere world map | Smithsonian | https://unsplash.com/photos/q5NugQind8M | Public Domain and [Unsplash License](https://unsplash.com/license) (dual) | An antique world map showing the eastern and western hemispheres |
+| service-air-ticketing.jpg | Aircraft wing above clouds in soft warm light | Johny Goerend | https://unsplash.com/photos/KB9r_hTzyeQ | [Unsplash License](https://unsplash.com/license) | An aircraft wing with a dark blue winglet above a sea of clouds in soft warm light |
 
 Notes:
 - `service-visa.jpg`: the photo is posted on the account Kit (formerly ConvertKit); the photo page credits Henry Thong.

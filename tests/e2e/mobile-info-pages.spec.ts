@@ -172,7 +172,7 @@ test.describe('phone /faqs', () => {
       .evaluateAll((els) => els.map((el) => Math.round(el.getBoundingClientRect().top)));
     expect(new Set(tops).size).toBe(1);
     const chips = page.locator('.jump a');
-    expect(await chips.count()).toBe(11);
+    expect(await chips.count()).toBe(12);
     const last = chips.last();
     const target = (await last.getAttribute('href')) ?? '';
     await last.scrollIntoViewIfNeeded();

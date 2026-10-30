@@ -1,9 +1,9 @@
 ---
-question: 'Can I choose how I receive the currency?'
+question: 'Can the foreign exchange be delivered to me?'
 services:
   - forex
 order: 2
-demo: true
+demo: false
 ---
 
-The forms available depend on the provider and on the rules at the time. We explain the options for your trip and you choose what suits you.
+Yes. We assist with delivery of foreign exchange to your office or your home.

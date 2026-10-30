@@ -1,15 +1,16 @@
 slug: 'car-coach'
 title: 'Car and coach rentals'
 category: 'related'
-order: 9
+order: 10
 summary: 'Cars and coaches with drivers for airport transfers, outstation trips and group travel.'
-intro: 'We arrange cars and coaches with drivers for transfers, day trips and longer journeys. Tell us the route and the number of passengers, and we will suggest a vehicle that fits and confirm the terms with you.'
+intro: 'We arrange cars and coaches with drivers for transfers, day trips and longer journeys. Tell us the route and the number of passengers, and we will suggest a vehicle that fits and confirm the terms with you. We hire cars anywhere in India, and abroad through Hertz and Avis.'
 whatWeHandle:
   - 'Airport and railway station transfers'
   - 'Outstation trips by car, for individuals and families'
   - 'Coaches for groups, weddings and events'
   - 'Multi-day hire with a driver for a holiday or business tour'
   - 'Vehicles for corporate guests and delegates'
+  - 'Car hire anywhere in India, and abroad through Hertz and Avis'
 howItWorks:
   - title: 'Tell us the trip'
     text: 'Share the pickup point, route, dates and how many passengers and bags.'

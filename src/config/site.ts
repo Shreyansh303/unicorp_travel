@@ -327,6 +327,11 @@ export const site = {
       id: 'related',
       name: 'Travel-related services',
       items: [
+        {
+          id: 'air-ticketing',
+          name: 'Air ticketing, domestic and international',
+          status: 'verified',
+        },
         { id: 'visa-passport', name: 'Visa and passport assistance', status: 'verified' },
         { id: 'hotels', name: 'Hotel reservations', status: 'verified' },
         { id: 'forex', name: 'Foreign exchange facilitation', status: 'verified' },

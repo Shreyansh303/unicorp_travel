@@ -177,7 +177,7 @@ test('an unknown path shows the 404 page', async ({ page }) => {
 });
 
 test('the routes cover every collection entry', () => {
-  // 8 sample packages, 9 travel-related services and 2 legal pages at the time of writing.
+  // 8 sample packages, 10 travel-related services and 2 legal pages at the time of writing.
   expect(packageRoutes.length).toBeGreaterThanOrEqual(6);
   expect(allRoutes.filter((path) => path.startsWith('/services/')).length).toBe(
     site.services.find((group) => group.id === 'related')?.items.length,

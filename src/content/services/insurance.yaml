@@ -1,10 +1,11 @@
 slug: 'insurance'
 title: 'Travel insurance'
 category: 'related'
-order: 6
+order: 7
 summary: 'Travel insurance for your trip, with the cover and terms explained before you buy.'
-intro: 'Travel insurance can help with medical costs, trip changes and lost baggage, depending on the policy. We help you compare plans from insurers, explain what each covers and arrange the one you choose.'
+intro: 'Travel insurance can help with medical costs, trip changes and lost baggage, depending on the policy. We are an authorised agent for comprehensive overseas travel insurance. We help you compare plans from insurers, explain what each covers and arrange the one you choose.'
 whatWeHandle:
+  - 'Comprehensive overseas travel insurance, as an authorised agent'
   - 'Cover for international and domestic trips, for individuals, families and groups'
   - 'Plain-language explanation of what a policy covers and what it leaves out'
   - 'Arranging the policy and sending you the documents before you travel'

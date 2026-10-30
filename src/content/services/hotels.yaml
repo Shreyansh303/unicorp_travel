@@ -1,13 +1,15 @@
 slug: 'hotels'
 title: 'Hotel reservations'
 category: 'related'
-order: 4
+order: 5
 summary: 'Hotels and stays booked in India and abroad, for one traveller or a group.'
 intro: 'Tell us the city, dates and the kind of stay you want, and we will suggest hotels that fit. We handle the booking and send the confirmation, for individual travellers, families and groups.'
 whatWeHandle:
   - 'Hotels in India and abroad, from simple stays to resorts'
+  - 'Tie-ups with hotels in Europe, the USA, the Far East and the Middle East'
   - 'Room blocks for groups, weddings and company events'
   - 'Meal plans, room types and special requests passed on to the hotel'
+  - 'Confirmation against pre-payment or a credit card guarantee, as the hotel requires'
   - 'Changes and cancellations raised with the hotel on your behalf'
   - 'Stays that fit into a larger holiday or business trip plan'
 howItWorks:

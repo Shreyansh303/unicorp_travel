@@ -1,0 +1,34 @@
+slug: 'air-ticketing'
+title: 'Air ticketing, domestic and international'
+shortTitle: 'Air ticketing'
+category: 'related'
+order: 3
+summary: 'Domestic and international flight tickets for official and personal travel.'
+intro: 'We issue flight tickets within India and abroad, for company travel and for personal trips. We check live fares and seats on the Galileo and Amadeus reservation systems, and we also look after changes to a ticket after it is issued.'
+whatWeHandle:
+  - 'Domestic and international tickets for official travel'
+  - 'Domestic and international tickets for personal and family travel'
+  - 'Live fares and seat availability from the Galileo and Amadeus reservation systems'
+  - 'Re-routing and re-issue of tickets, under the rules of the airline and other bodies concerned'
+  - 'Flights planned together with hotels, cars and visas when you want one team for the whole trip'
+howItWorks:
+  - title: 'Tell us the journey'
+    text: 'Share the cities, dates, number of travellers and any airline or timing you prefer.'
+  - title: 'We check fares and seats'
+    text: 'We look up the fares and availability on our reservation systems and send you the options.'
+  - title: 'You choose'
+    text: 'Pick the flight you want, and we issue the ticket.'
+  - title: 'We issue the ticket'
+    text: 'We issue the ticket and send it to you. If plans change later, tell us and we handle the re-routing or re-issue.'
+whoItsFor:
+  - 'Companies that book flights for staff, often at short notice'
+  - 'Families and groups travelling within India or abroad'
+  - 'Travellers who need a ticket changed after it is issued'
+formType: 'general'
+image:
+  src: '../../assets/photos/service-air-ticketing.jpg'
+  alt: 'An aircraft wing with a dark blue winglet above a sea of clouds in soft warm light'
+seo:
+  title: 'Air ticketing, domestic and international'
+  description: 'Domestic and international flight tickets for official and personal travel, with re-routing and re-issue. Send us an enquiry.'
+demo: false

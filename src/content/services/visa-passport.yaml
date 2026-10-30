@@ -2,14 +2,15 @@ slug: 'visa-passport'
 title: 'Visa and passport assistance'
 shortTitle: 'Visa and passport'
 category: 'related'
-order: 3
+order: 4
 summary: 'Help with visa and passport paperwork, documents and appointments.'
 intro: 'Visa and passport applications involve forms, documents and appointment slots. We help you work out what is needed, check your papers and book appointments. The decision on every application rests with the embassy or the authority concerned.'
 whatWeHandle:
   - 'A document checklist for your destination and type of visa'
+  - 'Visa applications to consulates and embassies, with the documents they require'
   - 'Checking forms and supporting papers before they are submitted'
   - 'Booking appointments at visa centres, where the process allows it'
-  - 'Help with passport applications and renewals'
+  - 'Advice on the documents needed to get a passport from the Regional Passport Office'
   - 'Keeping you updated on the application as the authority responds'
 howItWorks:
   - title: 'Tell us your trip'

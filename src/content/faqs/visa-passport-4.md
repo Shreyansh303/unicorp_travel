@@ -1,9 +1,9 @@
 ---
-question: 'Can you help with a passport renewal?'
+question: 'Can you help with a passport application?'
 services:
   - visa-passport
 order: 4
-demo: true
+demo: false
 ---
 
-Yes, we can help with the application and the appointment, and tell you which documents to carry. The passport office decides on every application.
+Yes. We advise you on the documents needed to get a passport from the Regional Passport Office. The passport office decides on every application.
