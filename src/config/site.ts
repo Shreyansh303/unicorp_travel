@@ -351,14 +351,28 @@ export const site = {
    * confirm the right to show each mark before production (see docs/image-credits.md).
    */
   clients: [
+    { name: 'FA Home and Apparel Pvt Ltd' },
+    { name: 'Gateway Distriparks', logo: 'gateway-distriparks.png' },
     { name: 'John Lewis', logo: 'john-lewis.svg' },
+    { name: 'Prits Leather Art', logo: 'prits-leather-art.png' },
+    { name: 'Soccer International' },
+    { name: 'Ankhua Exports' },
+    { name: 'Avalon Information Systems' },
+    { name: 'Octogen Trade Links India' },
+    { name: 'H R Polycoats' },
+    { name: 'JSK Electricals' },
+    { name: 'Magic International' },
+    { name: 'The Earth Saviours Foundation', logo: 'the-earth-saviours-foundation.png' },
+    { name: 'Avadh Rail Infra' },
+    { name: 'Shipra Estate' },
     { name: 'JCB India', logo: 'jcb-india.svg' },
     { name: 'Williams-Sonoma', logo: 'williams-sonoma.svg' },
     { name: 'Save the Children', logo: 'save-the-children.svg' },
-    { name: 'Canpack Group', logo: 'canpack-group.svg' },
-    { name: 'Gateway Distriparks', logo: 'gateway-distriparks.png' },
+    { name: 'Newsprint Trading and Sales Corporation' },
     { name: 'The British School New Delhi', logo: 'the-british-school-new-delhi.png' },
-  ] as readonly { readonly name: string; readonly logo: string }[],
+    { name: 'Medallay Exports', logo: 'medallay-exports.png' },
+    { name: 'Biz Tech Consultants' },
+  ] as readonly { readonly name: string; readonly logo?: string }[],
 
   /** Service names as listed on the old site. All copy is written fresh elsewhere. */
   services: [

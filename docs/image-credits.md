@@ -64,7 +64,7 @@ Supplied by the client (2026-10-19), not licensed from a third party.
 
 ## Client logos
 
-Files in `src/assets/clients/`, downloaded (not hot-linked) on 2026-10-30 from the company's own website or Wikimedia Commons, and kept unaltered (greyscale is applied in CSS only). They show the companies named in the client's own profile, under the client's stated business relationship. That is not a licence: every mark is a trademark of its owner, and the client must confirm the right to show each one before the production launch.
+Files in `src/assets/clients/`, downloaded (not hot-linked) on 2026-10-30, and 2026-11-02 for the last three rows, from the company's own website or Wikimedia Commons, and kept unaltered (shown in colour). They show the companies named in the client's own profile, under the client's stated business relationship. That is not a licence: every mark is a trademark of its owner, and the client must confirm the right to show each one before the production launch.
 
 | File | Company | Source | Licence or note |
 |---|---|---|---|
@@ -72,11 +72,14 @@ Files in `src/assets/clients/`, downloaded (not hot-linked) on 2026-10-30 from t
 | jcb-india.svg | JCB India | https://commons.wikimedia.org/wiki/File:JCB_(J.C._Bamford_Excavators_Limited)_logo.svg | Public domain on Commons; trademark |
 | williams-sonoma.svg | Williams-Sonoma | https://commons.wikimedia.org/wiki/File:Williams-Sonoma_logo.svg | Public domain on Commons; trademark |
 | save-the-children.svg | Save the Children | https://commons.wikimedia.org/wiki/File:Save_the_Children_Logo.svg | CC BY-SA 3.0 de (https://creativecommons.org/licenses/by-sa/3.0/de/deed.en). Attribution: logo of Save the Children, uploaded to Wikimedia Commons by the user "Savethechildren"; file unchanged. Trademark of Save the Children |
-| canpack-group.svg | Canpack Group | https://www.canpack.com/wp-content/themes/canpack-theme/dist/img/logo.svg | Company website; trademark |
 | gateway-distriparks.png | Gateway Distriparks | https://www.gatewaydistriparks.com/images/logo.png | Company website; trademark. Source is 180 x 166 px, so it is shown no larger than 83 px tall |
 | the-british-school-new-delhi.png | The British School New Delhi | https://www.british-school.org/wp-content/uploads/2024/12/01-TBS-Logo-Colour-PNG-Transparent-To-be-normally-used.png | School website; trademark |
 
-Not shown, no usable official logo found: Bluestem Global Sourcing and Laj Exports.
+| prits-leather-art.png | Prits Leather Art (Prits Group Pvt. Ltd., same registration number, Sector 63 Noida) | https://pritsgroup.com/wp-content/themes/prits/images/logo.png | Company website; trademark. Source is only 65 px tall |
+| the-earth-saviours-foundation.png | The Earth Saviours Foundation (TESF) | https://tesf.in/wp-content/uploads/2025/07/TESF-logo-final.png | Foundation website (earthsaviours.in redirects there); trademark |
+| medallay-exports.png | Medallay Exports | https://medallayexports.com/uploads/2022/03/logo-black.png | Company website (Jalandhar); trademark. Source is 95 px tall |
+
+Shown as a name in a text tile, no reliable official logo found: FA Home and Apparel, Soccer International, Ankhua Exports, Avalon Information Systems, Octogen Trade Links India, H R Polycoats, JSK Electricals, Magic International, Avadh Rail Infra, Shipra Estate, Newsprint Trading and Sales Corporation, Biz Tech Consultants. Bluestem Global Sourcing and Laj Exports are no longer shown (not on the client's current list).
 
 ## Badges
 

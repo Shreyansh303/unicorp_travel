@@ -5,13 +5,18 @@
  * section 6). The list lives in site.ts. The row is the set twice: the second copy is aria-hidden
  * and only there so the loop is seamless (the track moves by exactly one copy).
  *
- * Only transform animates. The row pauses while the pointer is over it. There is no Pause button
- * (user decision, 2026-10-31; a WCAG 2.2.2 gap recorded in the roadmap). With
- * prefers-reduced-motion nothing moves: the row becomes a wrapped, static grid.
+ * Only transform animates. Logos are always in colour. A company with no usable official logo is a
+ * text tile of the same height. The row pauses while the pointer is over it. There is no Pause
+ * button (user decision, 2026-10-31; a WCAG 2.2.2 gap recorded in the roadmap); a Next button
+ * (2026-11-02) glides the row forward by about one screen of logos, then the slow scroll goes on.
+ * With prefers-reduced-motion nothing moves: the row becomes a wrapped, static grid and the Next
+ * button is hidden.
  */
 import type { ImageMetadata } from 'astro';
 import { getImage } from 'astro:assets';
 import { site } from '../../config/site';
+import Icon from './Icon.astro';
+import './button.css';
 import Section, { type Tone } from './Section.astro';
 
 interface Props {
@@ -41,7 +46,8 @@ const svgText = import.meta.glob<string>('../../assets/clients/*.svg', {
 // but never above their own size (Gateway Distriparks is only 166px tall).
 const deliveredHeight = 144;
 
-async function resolveLogo(name: string, file: string) {
+async function resolveLogo(name: string, file: string | undefined) {
+  if (!file) return { name, src: null, ratio: 0, width: 0, height: 0 };
   const key = `../../assets/clients/${file}`;
   if (file.endsWith('.svg')) {
     const url = svgUrls[key];
@@ -71,6 +77,7 @@ async function resolveLogo(name: string, file: string) {
   };
 }
 
+// A company whose logo file is missing is dropped; one with no logo at all is a text tile.
 const logos = (
   await Promise.all(site.clients.map((client) => resolveLogo(client.name, client.logo)))
 ).filter((logo) => logo !== null);
@@ -88,6 +95,16 @@ const logos = (
         <h2 id="clients-title" class="t-h2">
           Companies we have worked with
         </h2>
+        <button
+          type="button"
+          class="btn btn-secondary btn-sm strip-next"
+          data-strip-next
+          aria-label="Show next companies"
+          hidden
+        >
+          Next
+          <Icon name="arrow-right" size={18} />
+        </button>
       </div>
 
       <div class="strip" data-strip>
@@ -95,32 +112,40 @@ const logos = (
           <ul class="strip-set" aria-labelledby="clients-title">
             {logos.map((logo) => (
               <li class="strip-item">
-                <img
-                  class="strip-logo"
-                  src={logo.src}
-                  alt={logo.name}
-                  width={logo.width}
-                  height={logo.height}
-                  style={`--ar:${logo.ratio.toFixed(3)}`}
-                  loading="lazy"
-                  decoding="async"
-                />
+                {logo.src ? (
+                  <img
+                    class="strip-logo"
+                    src={logo.src}
+                    alt={logo.name}
+                    width={logo.width}
+                    height={logo.height}
+                    style={`--ar:${logo.ratio.toFixed(3)}`}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                ) : (
+                  <span class="strip-tile">{logo.name}</span>
+                )}
               </li>
             ))}
           </ul>
           <ul class="strip-set strip-copy" aria-hidden="true">
             {logos.map((logo) => (
               <li class="strip-item">
-                <img
-                  class="strip-logo"
-                  src={logo.src}
-                  alt=""
-                  width={logo.width}
-                  height={logo.height}
-                  style={`--ar:${logo.ratio.toFixed(3)}`}
-                  loading="lazy"
-                  decoding="async"
-                />
+                {logo.src ? (
+                  <img
+                    class="strip-logo"
+                    src={logo.src}
+                    alt=""
+                    width={logo.width}
+                    height={logo.height}
+                    style={`--ar:${logo.ratio.toFixed(3)}`}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                ) : (
+                  <span class="strip-tile">{logo.name}</span>
+                )}
               </li>
             ))}
           </ul>
@@ -192,20 +217,40 @@ const logos = (
     align-items: center;
   }
 
-  /* Same height for every logo; very wide wordmarks are capped in width. Grey at rest. */
+  /* Same height for every logo; very wide wordmarks are capped in width. Always in colour. */
   .strip-logo {
     display: block;
     height: var(--logo-h);
     width: calc(var(--logo-h) * min(var(--ar), 4.2));
     max-width: none;
     object-fit: contain;
-    filter: grayscale(1);
-    opacity: 0.85;
   }
 
-  .strip:hover .strip-logo {
-    filter: none;
-    opacity: 1;
+  /* A company without a usable official logo: its name in a tile as tall as the logos. */
+  .strip-tile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    height: var(--logo-h);
+    width: max-content;
+    max-width: 16rem;
+    padding: 0 var(--space-5);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-md);
+    background: #fff;
+    color: var(--ink);
+    font-family: var(--font-display);
+    font-size: var(--text-base);
+    line-height: 1.15;
+    text-align: center;
+    text-wrap: balance;
+  }
+
+  @media (min-width: 768px) {
+    .strip-tile {
+      font-size: var(--text-lg);
+    }
   }
 
   @keyframes strip-scroll {
@@ -239,5 +284,49 @@ const logos = (
     .strip-copy {
       display: none;
     }
+
+    /* Everything is already on screen. */
+    .strip-next {
+      display: none;
+    }
   }
 </style>
+
+<script>
+  // Next: glide the running loop forward by about one screen of logos. The CSS animation keeps
+  // running; its time is moved forward each frame, so only transform changes and the loop wraps
+  // with no gap (the track is the set twice and the animation repeats forever).
+  const root = document.querySelector<HTMLElement>('[data-strip-root]');
+  const button = root?.querySelector<HTMLButtonElement>('[data-strip-next]');
+  const track = root?.querySelector<HTMLElement>('.strip-track');
+  const row = root?.querySelector<HTMLElement>('[data-strip]');
+
+  if (root && button && track && row && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const glideMs = 600;
+    let frame = 0;
+
+    const animation = () => track.getAnimations()[0];
+
+    const ease = (t: number) => 1 - Math.pow(1 - t, 3);
+
+    button.hidden = false;
+    button.addEventListener('click', () => {
+      const anim = animation();
+      const timing = anim?.effect?.getComputedTiming();
+      const duration = Number(timing?.duration);
+      const copyWidth = track.scrollWidth / 2;
+      if (!anim || !duration || !copyWidth) return;
+
+      const from = Number(anim.currentTime ?? 0);
+      const to = from + (row.clientWidth / copyWidth) * duration;
+      const started = performance.now();
+      cancelAnimationFrame(frame);
+      const step = (now: number) => {
+        const t = Math.min(1, (now - started) / glideMs);
+        anim.currentTime = from + (to - from) * ease(t);
+        if (t < 1) frame = requestAnimationFrame(step);
+      };
+      frame = requestAnimationFrame(step);
+    });
+  }
+</script>
