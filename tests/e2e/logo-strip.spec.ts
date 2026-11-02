@@ -49,6 +49,8 @@ for (const path of pages) {
       await page.goto(path);
       expect(site.clients.filter((c) => c.logo ?? c.mark)).toHaveLength(18);
       expect(site.clients.filter((c) => c.monogram)).toHaveLength(3);
+      // The strip opens on real logos: no name-only entry in the first stretch.
+      expect(site.clients.slice(0, 10).every((c) => c.logo)).toBe(true);
       const types = strip(page).locator('ul:not([aria-hidden]) .strip-type');
       await expect(types).toHaveCount(4);
       const looks = await types.evaluateAll((els) =>
