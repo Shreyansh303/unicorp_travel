@@ -167,13 +167,18 @@ const logos = (
     }
   }
 
+  /* Heading and arrow share one row at every width; the arrow sits at the end of the heading. */
   .strip-head {
     display: flex;
-    flex-wrap: wrap;
-    align-items: center;
+    align-items: flex-end;
     justify-content: space-between;
     gap: var(--space-4);
     margin-bottom: var(--space-8);
+  }
+
+  .strip-head h2 {
+    flex: 1 1 auto;
+    min-width: 0;
   }
 
   /* The row bleeds to the edges of the section and fades out at both ends. */
@@ -320,6 +325,14 @@ const logos = (
 
   .strip-next[hidden] {
     display: none;
+  }
+
+  /* Phones: a slightly smaller arrow (still a 44px target) beside the two-line heading. */
+  @media (max-width: 767.98px) {
+    .strip-next {
+      width: 2.75rem;
+      height: 2.75rem;
+    }
   }
 </style>
 
