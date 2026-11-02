@@ -1,0 +1,167 @@
+---
+/**
+ * Certificates the company holds, as a timeline: a red line with a hollow marker above (desktop)
+ * or beside (phones and tablets) each entry. Facts come from `site.recognitions`; renders nothing
+ * while that list is empty. The line and markers are decoration only (CSS), the list is an
+ * ordered list. Meant for an ink section, where the tokens give readable red years.
+ */
+import { site } from '../../config/site';
+import Stagger from '../motion/Stagger.astro';
+
+const items = site.recognitions;
+---
+
+{items.length > 0 && (
+  <Stagger as="ol" class="recs">
+    {items.map((item) => (
+      <li class="rec">
+        <span class="rec-dot" aria-hidden="true" />
+        {item.year ? (
+          <p class="rec-year">{item.year}</p>
+        ) : (
+          <p class="rec-year rec-year-gap" aria-hidden="true">
+            &nbsp;
+          </p>
+        )}
+        <h3 class="rec-issuer">{item.issuer}</h3>
+        <p class="rec-type">{item.type}</p>
+        <p class="rec-text">{item.text}</p>
+        {item.details.length > 0 && (
+          <dl class="rec-details">
+            {item.details.map((detail) => (
+              <div>
+                <dt>{detail.label}:</dt>
+                <dd>{detail.value}</dd>
+              </div>
+            ))}
+          </dl>
+        )}
+      </li>
+    ))}
+  </Stagger>
+)}
+
+<style>
+  .recs {
+    position: relative;
+    display: grid;
+    gap: var(--space-8);
+    padding-left: var(--space-8);
+    margin: 0;
+    list-style: none;
+  }
+
+  /* The line: vertical on the left below 1024px, across the top from 1024px. */
+  .recs::before {
+    content: '';
+    position: absolute;
+    top: 0.5rem;
+    bottom: 0.5rem;
+    left: 0.4375rem;
+    width: 2px;
+    background: var(--red-600);
+  }
+
+  .rec {
+    position: relative;
+    display: grid;
+    gap: var(--space-1);
+    align-content: start;
+  }
+
+  .rec-dot {
+    position: absolute;
+    top: 0.375rem;
+    left: calc(-1 * var(--space-8));
+    width: 1rem;
+    height: 1rem;
+    box-sizing: border-box;
+    border: 2px solid var(--red-400);
+    border-radius: 50%;
+    background: var(--bg);
+  }
+
+  .rec-year {
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    font-weight: var(--weight-black);
+    letter-spacing: var(--tracking-heading);
+    line-height: 1.2;
+    color: var(--red-400);
+  }
+
+  .rec-year-gap {
+    display: none;
+  }
+
+  .rec-issuer {
+    margin-top: var(--space-1);
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    font-weight: var(--weight-bold);
+    line-height: 1.2;
+    letter-spacing: var(--tracking-heading);
+    color: var(--text);
+  }
+
+  .rec-type {
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+  }
+
+  .rec-text {
+    margin-top: var(--space-2);
+    font-size: var(--text-sm);
+    line-height: 1.55;
+    color: var(--text-muted);
+  }
+
+  .rec-details {
+    display: grid;
+    gap: var(--space-1);
+    margin-top: var(--space-3);
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--border);
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+  }
+
+  .rec-details div {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25em;
+  }
+
+  .rec-details dd {
+    font-weight: var(--weight-bold);
+    color: var(--text);
+  }
+
+  @media (min-width: 1024px) {
+    .recs {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: var(--space-8);
+      padding-left: 0;
+      padding-top: var(--space-10);
+    }
+
+    .recs::before {
+      top: 0.4375rem;
+      bottom: auto;
+      left: 0;
+      right: 0;
+      width: auto;
+      height: 2px;
+    }
+
+    .rec-dot {
+      top: calc(-1 * var(--space-10));
+      left: 0;
+    }
+
+    .rec-year-gap {
+      display: block;
+      visibility: hidden;
+    }
+  }
+</style>

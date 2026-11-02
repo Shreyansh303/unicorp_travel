@@ -7,6 +7,7 @@ import ServiceCard from '../components/ui/ServiceCard.astro';
 import FactsBlock from '../components/ui/FactsBlock.astro';
 import BadgeRow from '../components/ui/BadgeRow.astro';
 import HowItWorks from '../components/ui/HowItWorks.astro';
+import RecognitionTimeline from '../components/ui/RecognitionTimeline.astro';
 import { shown, site } from '../config/site';
 import { routes } from '../lib/routes';
 import indiaGate from '../assets/photos/about-delhi-ncr.jpg';
@@ -108,6 +109,19 @@ const steps = [
     <HowItWorks steps={steps} list />
   </Section>
 
+  {site.recognitions.length > 0 && (
+    <Section tone="ink" mood="corporate" aria-labelledby="recognition-title" class="sec-compact">
+      <div data-reveal class="rec-head">
+        <p class="t-eyebrow">Recognition</p>
+        <h2 id="recognition-title" class="t-h2">
+          Recognised by our partners
+        </h2>
+        <p>Certificates from IATA and from the airlines and travel partners we work with.</p>
+      </div>
+      <RecognitionTimeline />
+    </Section>
+  )}
+
   <Section tone="paper" mood="corporate" aria-labelledby="facts-title" class="sec-compact">
     <div class="facts-grid">
       <div class="facts-head">
@@ -137,6 +151,27 @@ const steps = [
 </PageLayout>
 
 <style>
+  .rec-head {
+    display: grid;
+    gap: var(--space-3);
+    margin-bottom: var(--space-10);
+  }
+
+  .rec-head .t-eyebrow {
+    color: var(--red-300);
+  }
+
+  .rec-head > p:last-child {
+    max-width: 36rem;
+    color: var(--text-muted);
+  }
+
+  @media (min-width: 1024px) {
+    .rec-head {
+      margin-bottom: var(--space-12);
+    }
+  }
+
   .what-grid {
     display: grid;
     gap: var(--space-4);

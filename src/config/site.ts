@@ -75,6 +75,14 @@ export interface ContactDesk {
   people: StaffContact[];
 }
 
+export interface Recognition {
+  year: string;
+  issuer: string;
+  type: string;
+  text: string;
+  details: readonly { label: string; value: string }[];
+}
+
 export interface Director {
   name: string;
   title: string;
@@ -341,6 +349,45 @@ export const site = {
       file: 'msme.png',
     },
   ] as readonly { name: string; short: string; file: string }[],
+  /**
+   * Certificates the company holds, from the client's own scans (supplied 2026-11-02). Shown as a
+   * timeline on /about. `year` is empty where the certificate shows none. `details` is an optional
+   * row of labelled facts. Render nothing while empty.
+   */
+  recognitions: [
+    {
+      year: '2023',
+      issuer: 'GRNconnect.com (Global Reservations Network)',
+      type: 'Certificate of Appreciation',
+      text: 'For outstanding partnership during 2023.',
+      details: [],
+    },
+    {
+      year: '2024-25',
+      issuer: 'Allianz Partners',
+      type: 'Certificate of Appreciation',
+      text: 'In recognition of Unicorp’s support and trust in 2024-25.',
+      details: [],
+    },
+    {
+      year: '2026',
+      issuer: 'International Air Transport Association (IATA)',
+      type: 'Certificate of Accreditation',
+      text: 'IATA certifies that Unicorp Holidays & Business Travel Private Limited has met IATA’s professional standards to promote and sell international air passenger transportation.',
+      details: [
+        { label: 'IATA code', value: '14022982' },
+        { label: 'Accreditation type', value: 'GoLite' },
+        { label: 'Valid', value: '2026' },
+      ],
+    },
+    {
+      year: '',
+      issuer: 'IndiGo (6E)',
+      type: 'Certificate of Recognition · “We are 6E together”',
+      text: 'For outstanding partnership and continued contribution to strengthening IndiGo’s network and service across India.',
+      details: [],
+    },
+  ] as readonly Recognition[],
   /** Unsourced counters are not used. */
   counters: [] as readonly string[],
   /** Permission unknown: not used in the demo. */
