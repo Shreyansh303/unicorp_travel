@@ -1,0 +1,43 @@
+---
+/**
+ * A photo from `photoSet` (src/lib/photo.ts): AVIF and WebP sources cropped to the frame, with art
+ * direction where the frame changes shape. With `phoneHidden` the photo is not fetched below
+ * 768px (its frame is hidden there): phones match an empty pixel first.
+ */
+import type { PhotoSet } from '../../lib/photo';
+
+interface Props {
+  set: PhotoSet;
+  alt: string;
+  loading?: 'eager' | 'lazy';
+  fetchpriority?: 'high' | 'low' | 'auto';
+  phoneHidden?: boolean;
+  class?: string;
+}
+
+const {
+  set,
+  alt,
+  loading = 'lazy',
+  fetchpriority,
+  phoneHidden = false,
+  class: className,
+} = Astro.props;
+const emptyPixel = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
+---
+
+<picture class={className}>
+  {phoneHidden && <source media="(max-width: 767.98px)" srcset={emptyPixel} />}
+  {set.sources.map((source) => (
+    <source type={source.type} media={source.media} srcset={source.srcset} sizes={source.sizes} />
+  ))}
+  <img
+    src={set.src}
+    alt={alt}
+    width={set.width}
+    height={set.height}
+    loading={loading}
+    fetchpriority={fetchpriority}
+    decoding="async"
+  />
+</picture>

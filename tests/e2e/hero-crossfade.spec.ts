@@ -176,13 +176,22 @@ for (const width of [1366, 390]) {
       await expect(page.locator('[data-hero-fade] [data-slide]')).toHaveCount(7);
       await expect(page.locator('[data-hero-fade] [data-chip]')).toHaveText(homeCaptions);
       await expect(page.locator('[data-hero-fade] button')).toHaveCount(0);
-      // The other photos are sized for the frame: on a phone no 960 or 1280 px file is fetched.
-      const widths = () =>
-        page
-          .locator('[data-hero-fade] [data-slide] img')
-          .evaluateAll((images) => images.map((img) => (img as HTMLImageElement).naturalWidth));
-      await expect.poll(async () => (await widths()).every((w) => w > 0)).toBe(true);
-      for (const w of await widths()) expect(w).toBeLessThanOrEqual(width < 500 ? 640 : 1280);
+      // The other photos are sized for the frame: with srcset, naturalWidth is the width `sizes`
+      // asked for, which should be the width the photo shows at (object-fit: cover), no more.
+      const ratios = () =>
+        page.locator('[data-hero-fade] [data-slide] img').evaluateAll((images) =>
+          images.map((el) => {
+            const img = el as HTMLImageElement;
+            if (!img.naturalWidth) return 0;
+            const shown = Math.max(
+              img.clientWidth,
+              (img.clientHeight * img.naturalWidth) / img.naturalHeight,
+            );
+            return img.naturalWidth / shown;
+          }),
+        );
+      await expect.poll(async () => (await ratios()).every((r) => r > 0)).toBe(true);
+      for (const r of await ratios()) expect(r).toBeLessThanOrEqual(1.1);
     });
 
     test('each photo is shown with its own chip, and only that pair is exposed', async ({

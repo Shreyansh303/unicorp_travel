@@ -1,6 +1,5 @@
 ---
 import type { GetStaticPaths } from 'astro';
-import { Picture } from 'astro:assets';
 import PageLayout from '../../layouts/PageLayout.astro';
 import Section from '../../components/ui/Section.astro';
 import Button from '../../components/ui/Button.astro';
@@ -12,10 +11,12 @@ import Stagger from '../../components/motion/Stagger.astro';
 import Reveal from '../../components/motion/Reveal.astro';
 import Parallax from '../../components/motion/Parallax.astro';
 import Accordion from '../../components/ui/Accordion.astro';
+import Photo from '../../components/ui/Photo.astro';
 import EnquirySection from '../../components/forms/EnquirySection.astro';
 import { getPackages, type PackageEntry } from '../../lib/content';
 import { callHref, mobile, whatsappFor } from '../../lib/enquiry';
 import { formatINR } from '../../lib/format';
+import { coverWidth, phoneQuality, photoSet } from '../../lib/photo';
 import { packageTypeLabels, priceFootnote, regionLabels, themeLabels } from '../../lib/packages';
 import { routes } from '../../lib/routes';
 
@@ -37,6 +38,42 @@ const last = data.destinations.at(-1);
 const route = data.destinations.join(' · ');
 const gallery = data.images.gallery[0];
 const photos = data.images.gallery;
+
+// Photos cropped to their frames (src/lib/photo.ts). The hero is the 4:5 arch from 768px (516px
+// wide from 1280px, 27rem on tablets) and a full-bleed photo of fixed height on phones, which keeps
+// the photo's own shape. The itinerary photo is 4:3, desktop only, scaled 1.18 by the parallax.
+// The phone gallery is 16:10.
+const heroSrc = data.images.hero.src;
+const heroPhoto = await photoSet(heroSrc, [
+  {
+    media: '(max-width: 767.98px)',
+    widths: [640, 750, 828, 960, 1080, 1280, 1640],
+    quality: phoneQuality,
+    sizes: `(max-height: 700px) ${coverWidth(heroSrc, '100vw', '13.5rem')}, ${coverWidth(heroSrc, '100vw', '20rem')}`,
+  },
+  {
+    aspect: 4 / 5,
+    widths: [400, 560, 720, 880, 1040, 1280],
+    sizes: '(min-width: 1280px) 516px, (min-width: 1024px) calc(45.5vw - 4rem), 27rem',
+  },
+]);
+const galleryPhoto = gallery
+  ? await photoSet(gallery.src, [
+      {
+        aspect: 4 / 3,
+        widths: [480, 640, 800, 1100],
+        sizes: '(min-width: 1280px) 551px, calc((100vw - 10rem) * 0.49)',
+      },
+    ])
+  : null;
+const phonePhotos = await Promise.all(
+  photos.map(async (photo) => ({
+    alt: photo.alt,
+    set: await photoSet(photo.src, [
+      { aspect: 16 / 10, widths: [480, 720, 1080], sizes: 'calc(100vw - 2rem)' },
+    ]),
+  })),
+);
 
 // One wave per day, so the line has a bend beside each stop.
 const days = data.itinerary.length;
@@ -150,15 +187,7 @@ const priceRows = [
         </Button>
       </div>
       <figure class="arch pk-arch">
-        <Picture
-          src={data.images.hero.src}
-          alt={data.images.hero.alt}
-          formats={['avif', 'webp']}
-          widths={[400, 640, 960, 1280]}
-          sizes="(min-width: 1366px) 520px, (min-width: 1024px) 38vw, (min-width: 768px) calc(100vw - 2rem), 100vw"
-          loading="eager"
-          fetchpriority="high"
-        />
+        <Photo set={heroPhoto} alt={data.images.hero.alt} loading="eager" fetchpriority="high" />
       </figure>
     </div>
   </Section>
@@ -194,15 +223,9 @@ const priceRows = [
         <p class="t-muted">
           Follow the line through {route}.
         </p>
-        {gallery && (
+        {gallery && galleryPhoto && (
           <Parallax class="itin-photo">
-            <Picture
-              src={gallery.src}
-              alt={gallery.alt}
-              formats={['avif', 'webp']}
-              widths={[400, 640, 960]}
-              sizes="(min-width: 1366px) 480px, 36vw"
-            />
+            <Photo set={galleryPhoto} alt={gallery.alt} />
           </Parallax>
         )}
       </div>
@@ -232,16 +255,9 @@ const priceRows = [
         <Accordion id="day-acc" items={dayRows} open={[0]} phoneRows />
         <div class="pk-gallery" role="region" aria-label="Photos from this trip">
           <ul>
-            {photos.map((photo) => (
+            {phonePhotos.map((photo) => (
               <li>
-                <Picture
-                  src={photo.src}
-                  alt={photo.alt}
-                  formats={['avif', 'webp']}
-                  widths={[400, 640, 960]}
-                  sizes="calc(100vw - 2.5rem)"
-                  loading="lazy"
-                />
+                <Photo set={photo.set} alt={photo.alt} />
               </li>
             ))}
           </ul>

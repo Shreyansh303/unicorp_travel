@@ -6,9 +6,10 @@
  * With `fold` (Home) the card is a 380px photo card on phones, with the details on a white inset
  * panel. The page that lists the cards carries the price footnote (priceFootnote).
  */
-import { Picture } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
+import Photo from './Photo.astro';
 import { formatINR } from '../../lib/format';
+import { coverWidth, phoneQuality, photoSet } from '../../lib/photo';
 
 interface Props {
   name: string;
@@ -25,6 +26,8 @@ interface Props {
   fold?: boolean;
   headingLevel?: 2 | 3 | 4;
   sizes?: string;
+  /** Phones: the shape of the photo frame when the listing page changes it (e.g. 16 / 10). */
+  phoneAspect?: number;
   state?: 'hover' | 'focus';
   class?: string;
 }
@@ -42,11 +45,32 @@ const {
   fold = false,
   headingLevel = 3,
   sizes = '(min-width: 1024px) 22vw, (min-width: 768px) 45vw, 100vw',
+  phoneAspect,
   state,
   class: className,
   ...rest
 } = Astro.props;
 const Heading = `h${headingLevel}` as 'h2' | 'h3' | 'h4';
+
+// The arch is 4:5, so the photo is cropped to it; a listing page may give phones another fixed
+// shape (`phoneAspect`). The phone photo card (`fold`) is a fixed 380px tall at any width, so on
+// phones it keeps the photo's own shape, sized by that height.
+const phone = '(max-width: 767.98px)';
+const photo = await photoSet(image, [
+  ...(fold
+    ? [
+        {
+          media: phone,
+          widths: [640, 960, 1280, 1800],
+          quality: phoneQuality,
+          sizes: coverWidth(image, '100vw', '23.75rem'),
+        },
+      ]
+    : phoneAspect
+      ? [{ media: phone, aspect: phoneAspect, widths: [480, 720, 1080], sizes }]
+      : []),
+  { aspect: 4 / 5, widths: [320, 480, 640, 800, 1080], sizes },
+]);
 ---
 
 <article
@@ -60,13 +84,7 @@ const Heading = `h${headingLevel}` as 'h2' | 'h3' | 'h4';
   {...rest}
 >
   <div class="arch pkg-photo">
-    <Picture
-      src={image}
-      alt={alt}
-      formats={['avif', 'webp']}
-      widths={[400, 640, 800]}
-      sizes={sizes}
-    />
+    <Photo set={photo} alt={alt} />
   </div>
   <div class="pkg-body">
     <p class="pkg-meta">

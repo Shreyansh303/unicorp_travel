@@ -13,16 +13,17 @@
  * fades with its photo (opacity only). It is visual only: each photo's alt names the place for
  * assistive technology, and only the visible photo and chip are exposed to it.
  */
-import { Picture, getImage } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 import RouteLine from '../motion/RouteLine.astro';
+import Photo from './Photo.astro';
+import { coverWidth, phoneQuality, photoSet } from '../../lib/photo';
 
 interface Props {
   /** At least two photos; the first is shown at once. `caption` is the destination chip (home). */
   photos: { src: ImageMetadata; alt: string; caption?: string }[];
   /** `home` is the Home hero; the default is the inner-page hero. */
   variant?: 'page' | 'home';
-  /** The `sizes` of every photo; the default suits the inner-page frame. */
+  /** The `sizes` of the arch frame (all sizes, or from 768px for `home` and `sheet`). */
   sizes?: string;
   /** Phones: a short full-bleed photo under a cream sheet (the page header puts the sheet on top). */
   sheet?: boolean;
@@ -31,7 +32,8 @@ interface Props {
 const {
   photos,
   variant = 'page',
-  sizes = '(min-width: 1366px) 520px, (min-width: 1024px) 38vw, min(82vw, 26rem)',
+  // The inner-page arch: 26rem wide from 1260px and on tablets, 82% of its column in between.
+  sizes = '(min-width: 1260px) 26rem, (min-width: 1024px) calc(37.3vw - 3.375rem), min(82vw, 26rem)',
   sheet = false,
 } = Astro.props;
 const home = variant === 'home';
@@ -41,18 +43,34 @@ if (photos.some((photo) => Boolean(photo.caption) !== Boolean(first.caption))) {
   throw new Error('HeroCrossfade: give every photo a caption, or none');
 }
 
-const widths = [400, 640, 800, 960, 1280];
+// The arch is 4:5 wherever it shows, so the photos are cropped to it (widths up to 2x of the
+// largest frame). The home and sheet variants are a full-bleed photo of fixed height on phones,
+// whose shape changes with the width: there each photo keeps its own shape, sized by that height.
+const archWidths = [400, 560, 720, 880, 1040, 1280];
+const phoneWidths = [640, 750, 828, 960, 1080, 1280, 1800];
+const fullBleed = home || sheet;
+const [shortHeight, phoneHeight] = home ? ['13.5rem', '23.75rem'] : ['12rem', '16.25rem'];
 
+const setFor = (src: ImageMetadata) =>
+  photoSet(src, [
+    ...(fullBleed
+      ? [
+          {
+            media: '(max-width: 767.98px)',
+            widths: phoneWidths,
+            quality: phoneQuality,
+            sizes: `(max-height: 700px) ${coverWidth(src, '100vw', shortHeight)}, ${coverWidth(src, '100vw', phoneHeight)}`,
+          },
+        ]
+      : []),
+    { aspect: 4 / 5, widths: archWidths, sizes },
+  ]);
+
+const firstSet = await setFor(first.src);
 const slides = await Promise.all(
   others.map(async (photo) => {
-    const sources = await Promise.all(
-      (['avif', 'webp'] as const).map(async (format) => {
-        const image = await getImage({ src: photo.src, format, widths, sizes });
-        return { type: `image/${format}`, srcset: image.srcSet.attribute };
-      }),
-    );
-    const fallback = await getImage({ src: photo.src, format: 'webp', width: 960 });
-    return { alt: photo.alt, caption: photo.caption, sources, src: fallback.src };
+    const set = await setFor(photo.src);
+    return { alt: photo.alt, caption: photo.caption, sources: set.sources, src: set.src };
   }),
 );
 
@@ -65,19 +83,10 @@ const route =
   class:list={['hf', home && 'hf-home hero-art', sheet && 'hf-sheet']}
   data-hero-fade
   data-slides={JSON.stringify(slides)}
-  data-sizes={sizes}
 >
   <figure class:list={['hf-frame arch', home && 'hero-arch']}>
     <div class="hf-slide is-active" data-slide>
-      <Picture
-        src={first.src}
-        alt={first.alt}
-        formats={['avif', 'webp']}
-        widths={widths}
-        sizes={sizes}
-        loading="eager"
-        fetchpriority="high"
-      />
+      <Photo set={firstSet} alt={first.alt} loading="eager" fetchpriority="high" />
     </div>
   </figure>
   {first.caption && (
@@ -265,7 +274,7 @@ const route =
     alt: string;
     caption?: string;
     src: string;
-    sources: { type: string; srcset: string }[];
+    sources: { type: string; srcset: string; sizes: string; media?: string }[];
   }
 
   interface Controller {
@@ -283,7 +292,7 @@ const route =
     return value.endsWith('ms') ? number : value.endsWith('s') ? number * 1000 : fallback;
   }
 
-  function buildSlide(data: Slide, sizes: string): HTMLElement {
+  function buildSlide(data: Slide): HTMLElement {
     const slide = document.createElement('div');
     slide.className = 'hf-slide';
     slide.dataset['slide'] = '';
@@ -292,8 +301,9 @@ const route =
     data.sources.forEach((source) => {
       const el = document.createElement('source');
       el.type = source.type;
+      if (source.media) el.media = source.media;
       el.srcset = source.srcset;
-      el.sizes = sizes;
+      el.sizes = source.sizes;
       picture.append(el);
     });
     const img = document.createElement('img');
@@ -428,9 +438,8 @@ const route =
     // they never slow the first photo, which is the LCP image.
     const load = () => {
       if (destroyed) return;
-      const sizes = root.dataset['sizes'] ?? '';
       data.forEach((item) => {
-        const slide = buildSlide(item, sizes);
+        const slide = buildSlide(item);
         frame.append(slide);
         slides.push(slide);
         if (chipBox && item.caption) {

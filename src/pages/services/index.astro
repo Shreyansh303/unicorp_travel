@@ -1,5 +1,4 @@
 ---
-import { Picture } from 'astro:assets';
 import PageLayout from '../../layouts/PageLayout.astro';
 import PageHero from '../../components/ui/PageHero.astro';
 import airport from '../../assets/photos/corporate-airport.jpg';
@@ -11,12 +10,27 @@ import Button from '../../components/ui/Button.astro';
 import Icon from '../../components/ui/Icon.astro';
 import ServiceCard from '../../components/ui/ServiceCard.astro';
 import Stagger from '../../components/motion/Stagger.astro';
+import Photo from '../../components/ui/Photo.astro';
 import { getServicesGrouped } from '../../lib/content';
 import { whatsappFor } from '../../lib/enquiry';
+import { photoSet } from '../../lib/photo';
 import { routes, serviceHref, serviceLabel } from '../../lib/routes';
 
 const grouped = await getServicesGrouped();
-const related = grouped.related;
+// Tile photos are 16:9 (hidden on phones), cropped to it.
+const related = await Promise.all(
+  grouped.related.map(async (service) => ({
+    ...service,
+    photo: await photoSet(service.data.image.src, [
+      {
+        aspect: 16 / 9,
+        widths: [320, 480, 640, 800],
+        sizes:
+          '(min-width: 1366px) 400px, (min-width: 1024px) 30vw, (min-width: 768px) 45vw, calc(100vw - 2rem)',
+      },
+    ]),
+  })),
+);
 // Each card shows its entry's summary.
 const others = [...grouped.leisure, ...grouped.corporate].map((service) => ({
   title: service.data.title,
@@ -71,13 +85,7 @@ const heroPhotos = [
         <li>
           <a class="svc-tile" href={serviceHref(service)}>
             <span class="svc-photo">
-              <Picture
-                src={service.data.image.src}
-                alt=""
-                formats={['avif', 'webp']}
-                widths={[320, 480, 640]}
-                sizes="(min-width: 1366px) 400px, (min-width: 1024px) 30vw, (min-width: 768px) 45vw, calc(100vw - 2rem)"
-              />
+              <Photo set={service.photo} alt="" />
             </span>
             <span class="svc-body">
               <span class="svc-name">

@@ -25,6 +25,7 @@ import machu from '../assets/photos/hero-machu-picchu.jpg';
 import christ from '../assets/photos/hero-christ-redeemer.jpg';
 import airport from '../assets/photos/corporate-airport.jpg';
 import { getImage } from 'astro:assets';
+import { photoQuality } from '../lib/photo';
 
 const office = shown(site.offices.operating);
 const from = office ? ` from ${office.locality}` : '';
@@ -129,8 +130,9 @@ const heroPhotos = [
     caption: 'Christ the Redeemer, Rio',
   },
 ];
-const heroSizes =
-  '(min-width: 1366px) 440px, (min-width: 1024px) 34vw, (min-width: 768px) 82vw, 100vw';
+// The arch from 768px (phones get the full-bleed photo, sized in HeroCrossfade): 26rem on tablets
+// and from 1280px (the content width stops growing), 78% of its column in between.
+const heroSizes = '(min-width: 1280px) 26rem, (min-width: 1024px) calc(36.3vw - 3.25rem), 26rem';
 
 // Corporate band photo, phones only. Its sources match only below 768px and the fallback is an
 // empty pixel, so a desktop browser has no reason to fetch the photo (the slot is also display:none
@@ -141,6 +143,7 @@ const corpPhotoSources = await Promise.all(
     const image = await getImage({
       src: airport,
       format,
+      quality: photoQuality[format],
       widths: [350, 700, 1050],
       sizes: corpPhotoSizes,
     });

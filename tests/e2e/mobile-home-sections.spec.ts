@@ -215,7 +215,11 @@ test.describe('phone Trips pager at 390x844', () => {
 
   test('photos are sized for a phone', async ({ page }) => {
     await page.goto('/');
-    const sizes = await cards(page).first().locator('source').first().getAttribute('sizes');
+    // Phones: the 380px photo card keeps the photo's shape, so its file is sized by that height.
+    const sources = cards(page).first().locator('source');
+    expect(await sources.first().getAttribute('media')).toBe('(max-width: 767.98px)');
+    expect(await sources.first().getAttribute('sizes')).toContain('23.75rem');
+    const sizes = await sources.last().getAttribute('sizes');
     expect(sizes).toContain('calc(100vw - 2.5rem)');
     expect(sizes).toContain('(min-width: 1024px) 22vw');
   });
