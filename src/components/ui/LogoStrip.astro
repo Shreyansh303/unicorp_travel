@@ -97,13 +97,12 @@ const logos = (
         </h2>
         <button
           type="button"
-          class="btn btn-secondary btn-sm strip-next"
+          class="strip-next"
           data-strip-next
           aria-label="Show next companies"
           hidden
         >
-          Next
-          <Icon name="arrow-right" size={18} />
+          <Icon name="arrow-right" size={22} />
         </button>
       </div>
 
@@ -285,10 +284,42 @@ const logos = (
       display: none;
     }
 
-    /* Everything is already on screen. */
-    .strip-next {
+    /* Everything is already on screen. (Scoped under .strip-wrap to beat the base rule below.) */
+    .strip-wrap .strip-next {
       display: none;
     }
+  }
+
+  /* Next: a plain round arrow button (no text; the accessible name is on aria-label). */
+  .strip-next {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    border: 1.5px solid var(--ink);
+    border-radius: 50%;
+    background: transparent;
+    color: var(--ink);
+    cursor: pointer;
+    transition:
+      background-color var(--duration-fast) ease,
+      color var(--duration-fast) ease;
+  }
+
+  .strip-next:hover {
+    background: var(--ink);
+    color: var(--white);
+  }
+
+  .strip-next:focus-visible {
+    outline: 2px solid var(--focus, var(--ink));
+    outline-offset: 3px;
+  }
+
+  .strip-next[hidden] {
+    display: none;
   }
 </style>
 

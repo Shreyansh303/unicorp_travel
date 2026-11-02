@@ -107,7 +107,7 @@ for (const path of pages) {
       await row.scrollIntoViewIfNeeded();
       const next = strip(page).getByRole('button', { name: 'Show next companies' });
       await expect(next).toBeVisible();
-      await expect(next).toContainText('Next');
+      await expect(next).toHaveText('');
       const size = await next.boundingBox();
       expect(size?.height ?? 0).toBeGreaterThanOrEqual(44);
 
