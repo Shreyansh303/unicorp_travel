@@ -164,8 +164,14 @@ const Heading = `h${headingLevel}` as 'h2' | 'h3' | 'h4';
     transform: scale(var(--hover-scale));
   }
 
+  /* No underline at rest; a thin one on hover shows the card is a link. */
+  .pkg-name a {
+    text-decoration: none;
+  }
+
   .pkg-card-link:where(:hover, .is-hover) .pkg-name a {
-    text-decoration-thickness: 5px;
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
   }
 
   /* "Starting from" and the price share a baseline; a tight line height keeps the big figure from
