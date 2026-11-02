@@ -2,7 +2,7 @@ slug: 'dubai-city-and-desert'
 title: 'Dubai city and desert'
 summary: 'A family trip with the city sights, the desert, a creek cruise and free time.'
 type: 'international'
-order: 2
+order: 1
 region: 'middle-east'
 destinations:
   - 'Dubai'
@@ -59,5 +59,5 @@ images:
 seo:
   title: 'Dubai city and desert, 5 days'
   description: 'Five days in Dubai with a desert safari, a dhow cruise and an Abu Dhabi day trip, flights from Delhi included. Day-wise itinerary and an estimated price.'
-featured: false
+featured: true
 demo: true

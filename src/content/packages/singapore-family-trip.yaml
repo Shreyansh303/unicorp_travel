@@ -62,5 +62,5 @@ images:
 seo:
   title: 'Singapore family trip, 6 days'
   description: 'Six days in Singapore with Gardens by the Bay, Sentosa and the zoo, flights from Delhi included. Day-wise itinerary and an estimated price.'
-featured: false
+featured: true
 demo: true
