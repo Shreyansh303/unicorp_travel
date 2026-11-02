@@ -11,7 +11,7 @@ This website gives information about our holidays, corporate travel and travel-r
 
 ## Packages and prices
 
-Holiday packages are examples of trips we can plan. Prices are indicative "from" prices per person, on the basis stated with each price, and are valid only until the date shown. The actual price depends on your dates, the number of travellers, availability and supplier rates at the time of booking.
+Holiday packages are examples of trips we can plan. Prices are estimated "starting from" prices per person, on the basis stated with each price. The actual price depends on your dates, the number of travellers, availability and supplier rates at the time of booking.
 
 A price or itinerary on this website is not an offer. We confirm the final itinerary, price and payment terms to you in writing before anything is booked.
 

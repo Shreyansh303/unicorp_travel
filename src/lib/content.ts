@@ -71,12 +71,13 @@ export async function getFaqsGroupedByService(): Promise<FaqGroup[]> {
     .filter((group) => group.faqs.length > 0);
 }
 
-export type PackageSort = 'featured' | 'price-asc' | 'price-desc' | 'duration' | 'title';
+export type PackageSort = 'order' | 'featured' | 'price-asc' | 'price-desc' | 'duration' | 'title';
 
 /** All packages sorted. `featured` puts featured ones first, then the cheapest. */
-export async function getPackages(sort: PackageSort = 'featured'): Promise<PackageEntry[]> {
+export async function getPackages(sort: PackageSort = 'order'): Promise<PackageEntry[]> {
   const items = await getCollection('packages');
   const compare: Record<PackageSort, (a: PackageEntry, b: PackageEntry) => number> = {
+    order: (a, b) => a.data.order - b.data.order,
     featured: (a, b) =>
       Number(b.data.featured) - Number(a.data.featured) || a.data.fromPrice - b.data.fromPrice,
     'price-asc': (a, b) => a.data.fromPrice - b.data.fromPrice,
@@ -87,9 +88,9 @@ export async function getPackages(sort: PackageSort = 'featured'): Promise<Packa
   return items.sort((a, b) => compare[sort](a, b) || a.data.title.localeCompare(b.data.title));
 }
 
-/** Packages marked featured, cheapest first. */
+/** Packages marked featured, in list order. */
 export async function getFeaturedPackages(): Promise<PackageEntry[]> {
-  return (await getPackages('featured')).filter((item) => item.data.featured);
+  return (await getPackages('order')).filter((item) => item.data.featured);
 }
 
 /** One package by slug. */

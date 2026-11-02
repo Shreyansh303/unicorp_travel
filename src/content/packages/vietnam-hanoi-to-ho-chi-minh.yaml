@@ -1,0 +1,74 @@
+slug: 'vietnam-hanoi-to-ho-chi-minh'
+title: 'Vietnam from Hanoi to Ho Chi Minh City'
+summary: 'Hanoi, a cruise in Ha Long Bay, lantern-lit Hoi An and the Mekong, in one north-to-south route.'
+type: 'international'
+order: 4
+region: 'southeast-asia'
+destinations:
+  - 'Hanoi'
+  - 'Ha Long Bay'
+  - 'Hoi An'
+  - 'Ho Chi Minh City'
+duration:
+  days: 8
+  nights: 7
+themes:
+  - 'culture'
+  - 'nature'
+  - 'honeymoon'
+fromPrice: 95000
+priceBasis: 'per person, twin sharing, including return flights from Delhi'
+highlights:
+  - 'An overnight cruise among the limestone islands of Ha Long Bay'
+  - 'Walking tour of the Old Quarter in Hanoi'
+  - 'Evenings in Hoi An, with its lantern-lit old town'
+  - 'A boat ride in the Mekong Delta'
+  - 'Domestic flights between cities included'
+itinerary:
+  - day: 1
+    title: 'Fly to Hanoi'
+    description: 'Depart from Delhi for Hanoi, with a change of flight on the way. Meet your guide on arrival and transfer to your hotel in the Old Quarter.'
+  - day: 2
+    title: 'Hanoi city tour'
+    description: 'Visit the Temple of Literature, Hoan Kiem Lake and the Old Quarter on foot. In the evening, watch a water puppet show.'
+  - day: 3
+    title: 'Hanoi to Ha Long Bay'
+    description: 'Drive to Ha Long Bay and board your cruise boat. Sail among the limestone islands, kayak near a floating village and spend the night on board.'
+  - day: 4
+    title: 'Ha Long Bay to Hoi An'
+    description: 'After breakfast on deck, return to the harbour and drive to Hanoi airport. Fly to Da Nang and drive to Hoi An.'
+  - day: 5
+    title: 'Hoi An old town'
+    description: 'Walk through the old town with a local guide, and see the covered bridge and the old merchant houses. The riverside is at its best after dark, when the lanterns are lit.'
+  - day: 6
+    title: 'Hoi An at leisure'
+    description: 'Spend the morning at An Bang beach or join a cooking class. Keep the rest of the day free for tailors, cafes and the market.'
+  - day: 7
+    title: 'Da Nang to Ho Chi Minh City'
+    description: 'Fly to Ho Chi Minh City. Visit the Reunification Palace, the Central Post Office and the cathedral, then enjoy the evening at leisure.'
+  - day: 8
+    title: 'Mekong Delta and return to Delhi'
+    description: 'Take a day trip to the Mekong Delta with a boat ride along the canals and a stop at a fruit orchard. Transfer to the airport for your flight to Delhi, which may leave late at night.'
+inclusions:
+  - 'Return economy flights from Delhi, with a change of flight'
+  - 'Domestic flights from Hanoi to Da Nang and from Da Nang to Ho Chi Minh City'
+  - 'Seven nights of stay, six in hotels and one on a cruise boat, on twin sharing'
+  - 'Daily breakfast, with meals on the cruise as per the boat menu'
+  - 'Private vehicle and English-speaking guides for the sightseeing listed'
+exclusions:
+  - 'Vietnam e-visa fee'
+  - 'Most lunches and dinners'
+  - 'Entry fees not mentioned in the itinerary and optional activities'
+  - 'Personal expenses, tips and travel insurance'
+images:
+  hero:
+    src: '../../assets/photos/vietnam-1.jpg'
+    alt: 'Turquoise water and limestone islands in Ha Long Bay, with tour boats on the bay'
+  gallery:
+    - src: '../../assets/photos/vietnam-2.jpg'
+      alt: 'Cycle rickshaws on a street of yellow shophouses hung with lanterns in Hoi An'
+seo:
+  title: 'Vietnam, Hanoi to Ho Chi Minh City, 8 days'
+  description: 'Eight days across Hanoi, Ha Long Bay, Hoi An and Ho Chi Minh City, flights from Delhi included. Day-wise itinerary and an estimated price.'
+featured: false
+demo: true

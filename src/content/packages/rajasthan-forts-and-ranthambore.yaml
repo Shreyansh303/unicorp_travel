@@ -2,6 +2,7 @@ slug: 'rajasthan-forts-and-ranthambore'
 title: 'Rajasthan forts and Ranthambore'
 summary: 'Safaris in Ranthambore, then the palaces and forts of Jaipur, Jodhpur and Udaipur.'
 type: 'domestic'
+order: 10
 region: 'north-india'
 destinations:
   - 'Ranthambore'
@@ -15,9 +16,8 @@ themes:
   - 'heritage'
   - 'wildlife'
   - 'family'
-fromPrice: 52000
-priceBasis: 'per person, twin sharing, land arrangements only'
-priceValidUntil: '2027-03-31'
+fromPrice: 55000
+priceBasis: 'per person, twin sharing, land arrangements only, flights not included'
 highlights:
   - 'Amer Fort and the City Palace in Jaipur'
   - 'Two jungle safaris in Ranthambore National Park'
@@ -71,6 +71,6 @@ images:
       alt: 'A tiger lying in dry grass beside a waterhole at golden hour'
 seo:
   title: 'Rajasthan forts and Ranthambore, 8 days'
-  description: 'Eight days across Ranthambore, Jaipur, Jodhpur and Udaipur with safaris, forts and palaces. Day-wise itinerary and an indicative price. Send an enquiry.'
+  description: 'Eight days across Ranthambore, Jaipur, Jodhpur and Udaipur with safaris, forts and palaces. Day-wise itinerary and an estimated price. Send an enquiry.'
 featured: false
 demo: true

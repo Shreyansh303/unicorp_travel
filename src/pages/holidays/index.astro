@@ -4,7 +4,7 @@ import PageLayout from '../../layouts/PageLayout.astro';
 import PageHero from '../../components/ui/PageHero.astro';
 import ladakh from '../../assets/photos/ladakh-1.jpg';
 import kerala from '../../assets/photos/kerala-backwaters-1.jpg';
-import switzerland from '../../assets/photos/switzerland-1.jpg';
+import europe from '../../assets/photos/europe-1.jpg';
 import andaman from '../../assets/photos/andaman-1.jpg';
 import Section from '../../components/ui/Section.astro';
 import Button from '../../components/ui/Button.astro';
@@ -15,11 +15,11 @@ import Stagger from '../../components/motion/Stagger.astro';
 import HolidayFilters from '../../components/holidays/HolidayFilters.astro';
 import EnquirySection from '../../components/forms/EnquirySection.astro';
 import { getPackages } from '../../lib/content';
-import { formatDate } from '../../lib/format';
 import {
   budgetBandFor,
   durationBandFor,
   packageTypeLabels,
+  priceFootnote,
   regionLabels,
 } from '../../lib/packages';
 import { packageHref, routes } from '../../lib/routes';
@@ -27,12 +27,12 @@ import { greeting, whatsappFor } from '../../lib/enquiry';
 
 const leisure = await getEntry('services', 'leisure');
 if (!leisure) throw new Error('The leisure service entry is missing');
-const packages = await getPackages('featured');
+const packages = await getPackages();
 /** Photos for the hero crossfade; the first one is the LCP image. */
 const heroPhotos = [
   { src: ladakh, alt: 'A turquoise lake ringed by bare mountains under a blue sky' },
   { src: kerala, alt: 'A traditional houseboat gliding along a palm-lined backwater in Kerala' },
-  { src: switzerland, alt: 'A still alpine lake below snow-capped Swiss peaks' },
+  { src: europe, alt: 'A still alpine lake below snow-capped Swiss peaks' },
   { src: andaman, alt: 'Coconut palms leaning over a white sand beach and turquoise water' },
 ];
 ---
@@ -79,10 +79,7 @@ const heroPhotos = [
       <h2 id="list-title" class="t-h2">
         Our <span class="t-accent">holidays</span>
       </h2>
-      <p>
-        Trips in India and abroad to start from. Prices are indicative, per person, and valid until
-        the date shown on each trip.
-      </p>
+      <p>Trips in India and abroad to start from.</p>
     </div>
     <HolidayFilters packages={packages} />
     <Stagger as="ul" class="list-grid">
@@ -102,7 +99,6 @@ const heroPhotos = [
             nights={item.data.duration.nights}
             fromPrice={item.data.fromPrice}
             priceBasis={item.data.priceBasis}
-            validTo={formatDate(item.data.priceValidUntil)}
             image={item.data.images.hero.src}
             alt={item.data.images.hero.alt}
             href={packageHref(item)}
@@ -112,6 +108,9 @@ const heroPhotos = [
         </li>
       ))}
     </Stagger>
+    <p class="list-note" data-price-note>
+      {priceFootnote}
+    </p>
     <button type="button" class="list-more" data-show-more hidden>
       Show more
     </button>
@@ -179,6 +178,13 @@ const heroPhotos = [
     }
   }
 
+  .list-note {
+    margin-top: var(--space-6);
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: var(--text-muted);
+  }
+
   .list-more {
     display: none;
   }
@@ -227,8 +233,7 @@ const heroPhotos = [
       font-size: 0.875rem;
     }
 
-    .list-grid :global(.pkg-basis),
-    .list-grid :global(.pkg-valid) {
+    .list-grid :global(.pkg-basis) {
       font-size: 0.8125rem;
       line-height: 1.4;
     }

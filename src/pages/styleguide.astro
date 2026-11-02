@@ -29,7 +29,6 @@ import Parallax from '../components/motion/Parallax.astro';
 import { getFooterGroups, getMainNav } from '../lib/nav';
 import { getPackages, type PackageEntry } from '../lib/content';
 import { callHref } from '../lib/enquiry';
-import { formatDate } from '../lib/format';
 import { regionLabels } from '../lib/packages';
 import { packageHref, routes } from '../lib/routes';
 import { shown, site } from '../config/site';
@@ -225,7 +224,6 @@ const toCard = (entry: PackageEntry | undefined) =>
     nights: entry.data.duration.nights,
     fromPrice: entry.data.fromPrice,
     priceBasis: entry.data.priceBasis,
-    validTo: formatDate(entry.data.priceValidUntil),
     image: entry.data.images.hero.src,
     alt: entry.data.images.hero.alt,
     href: packageHref(entry),
@@ -868,7 +866,6 @@ const facebook = shown(site.social.facebook);
               nights={kerala.nights}
               fromPrice={kerala.fromPrice}
               priceBasis={kerala.priceBasis}
-              validTo={kerala.validTo}
               image={kerala.image}
               alt={kerala.alt}
               href={kerala?.href ?? routes.holidays}

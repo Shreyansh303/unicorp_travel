@@ -2,6 +2,7 @@ slug: 'kerala-backwaters-and-hills'
 title: 'Kerala backwaters and hills'
 summary: 'Tea hills, a night on a houseboat and the quiet backwaters of Alleppey.'
 type: 'domestic'
+order: 9
 region: 'south-india'
 destinations:
   - 'Kochi'
@@ -15,9 +16,8 @@ themes:
   - 'family'
   - 'nature'
   - 'culture'
-fromPrice: 36500
-priceBasis: 'per person, twin sharing, land arrangements only'
-priceValidUntil: '2027-03-31'
+fromPrice: 38000
+priceBasis: 'per person, twin sharing, land arrangements only, flights not included'
 highlights:
   - 'Tea gardens and cool hill air at Munnar'
   - 'A night on a private houseboat in the Alleppey backwaters'
@@ -63,6 +63,6 @@ images:
       alt: 'A houseboat on calm backwater beneath tall coconut palms'
 seo:
   title: 'Kerala backwaters and hills, 6 days'
-  description: 'Six days from Kochi to Munnar, Thekkady and Alleppey, with a houseboat night. Day-wise itinerary and an indicative price. Send an enquiry.'
+  description: 'Six days from Kochi to Munnar, Thekkady and Alleppey, with a houseboat night. Day-wise itinerary and an estimated price. Send an enquiry.'
 featured: true
 demo: true

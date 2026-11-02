@@ -56,9 +56,7 @@ test.describe('phone Services accordion at 390x844', () => {
     await expect(rows(page).nth(1)).toHaveAttribute('aria-expanded', 'false');
   });
 
-  test('an open panel holds the description, wrapped chips, and the link', async ({
-    page,
-  }) => {
+  test('an open panel holds the description, wrapped chips, and the link', async ({ page }) => {
     await page.goto('/');
     await rows(page).nth(1).click();
     const panel = page.locator('#services [data-fold-body]').nth(1);
@@ -136,16 +134,16 @@ test.describe('phone Trips pager at 390x844', () => {
     await expect(photo).toHaveAttribute('alt', /.+/);
   });
 
-  test('the white panel carries region, name, price and note; valid-to is hidden', async ({
+  test('the white panel carries region, name, price and note; no valid-to line', async ({
     page,
   }) => {
     await page.goto('/');
     const card = cards(page).first().locator('.pkg-card');
     await expect(card.locator('.pkg-meta')).toBeVisible();
     await expect(card.locator('.pkg-name')).toBeVisible();
-    await expect(card.locator('.pkg-price')).toContainText('from');
+    await expect(card.locator('.pkg-price')).toContainText('Starting from');
     await expect(card.locator('.pkg-basis')).toBeVisible();
-    await expect(card.locator('.pkg-valid')).toBeHidden();
+    await expect(card.locator('.pkg-valid')).toHaveCount(0);
     const panel = await card.locator('.pkg-body').evaluate((el) => {
       const css = getComputedStyle(el);
       return { bg: css.backgroundColor, radius: css.borderTopLeftRadius, pad: css.paddingTop };
@@ -200,11 +198,11 @@ test.describe('phone Trips pager at 390x844', () => {
     expect(await tripHrefs(page)).toEqual(phoneHrefs);
   });
 
-  test('the footnote notes indicative prices; See all holidays follows', async ({ page }) => {
+  test('the footnote notes estimated prices; See all holidays follows', async ({ page }) => {
     await page.goto('/');
     const note = page.locator('#packages .pkg-note');
     await expect(note).toBeVisible();
-    await expect(note).toContainText('Prices are indicative');
+    await expect(note).toContainText('Estimated price per person');
     await expect(page.locator('#packages .pkg-head > p')).toBeHidden();
     await expect(page.locator('#packages .pkg-route')).toBeHidden();
     const noteBox = await note.boundingBox();
@@ -260,7 +258,7 @@ test.describe('Home sections at 1366x900', () => {
     await expect(page.locator('[data-pager-controls]')).toBeHidden();
     await expect(page.locator('#services .svc-head > p')).toBeVisible();
     await expect(page.locator('#packages .pkg-head > p')).toBeVisible();
-    await expect(page.locator('#packages .pkg-note')).toBeHidden();
+    await expect(page.locator('#packages .pkg-note')).toBeVisible();
     const inView = await page
       .locator('#packages .pkg-cell')
       .evaluateAll((items) => items.map((el) => el.getBoundingClientRect().right <= 1366));

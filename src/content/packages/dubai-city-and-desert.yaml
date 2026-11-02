@@ -2,6 +2,7 @@ slug: 'dubai-city-and-desert'
 title: 'Dubai city and desert'
 summary: 'A family trip with the city sights, the desert, a creek cruise and free time.'
 type: 'international'
+order: 2
 region: 'middle-east'
 destinations:
   - 'Dubai'
@@ -12,9 +13,8 @@ duration:
 themes:
   - 'family'
   - 'adventure'
-fromPrice: 46500
+fromPrice: 48000
 priceBasis: 'per person, twin sharing, including return flights from Delhi'
-priceValidUntil: '2027-03-31'
 highlights:
   - 'A desert safari with dune driving and an evening camp'
   - 'A visit to the observation deck of the Burj Khalifa'
@@ -58,6 +58,6 @@ images:
       alt: 'The Dubai skyline in silhouette at sunset with the Burj Khalifa rising above it'
 seo:
   title: 'Dubai city and desert, 5 days'
-  description: 'Five days in Dubai with a desert safari, a dhow cruise and an Abu Dhabi day trip, flights from Delhi included. Day-wise itinerary and an indicative price.'
+  description: 'Five days in Dubai with a desert safari, a dhow cruise and an Abu Dhabi day trip, flights from Delhi included. Day-wise itinerary and an estimated price.'
 featured: false
 demo: true

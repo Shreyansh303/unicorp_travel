@@ -18,8 +18,16 @@ All photographs in `src/assets/photos/` were downloaded from Unsplash (not hot-l
 | dubai-2.jpg | Dubai skyline silhouette at sunset | August Togbor | https://unsplash.com/photos/Il8XxCdrikE | [Unsplash License](https://unsplash.com/license) | The Dubai skyline in silhouette at sunset with the Burj Khalifa rising above it |
 | singapore-1.jpg | Marina Bay aerial | Hu Chen | https://unsplash.com/photos/__cBlRzLSTg | [Unsplash License](https://unsplash.com/license) | Aerial view of the Marina Bay waterfront in Singapore at dusk |
 | singapore-2.jpg | Supertrees at Gardens by the Bay | Coleen Rivas | https://unsplash.com/photos/OZ2rS2zCjNo | [Unsplash License](https://unsplash.com/license) | Supertree structures and a skywalk above the gardens in Singapore |
-| switzerland-1.jpg | Alpine lake below snow-capped peaks | Pascal Debrunner | https://unsplash.com/photos/Ap53G_567Dc | [Unsplash License](https://unsplash.com/license) | A still alpine lake below snow-capped Swiss peaks |
-| switzerland-2.jpg | Red mountain train on a stone viaduct | Johannes Hofmann | https://unsplash.com/photos/PM5a_R83-YQ | [Unsplash License](https://unsplash.com/license) | A red train crossing a stone viaduct in a snowy mountain gorge |
+| europe-1.jpg | Alpine lake below snow-capped peaks | Pascal Debrunner | https://unsplash.com/photos/Ap53G_567Dc | [Unsplash License](https://unsplash.com/license) | A still alpine lake below snow-capped Swiss peaks |
+| europe-2.jpg | Red mountain train on a stone viaduct | Johannes Hofmann | https://unsplash.com/photos/PM5a_R83-YQ | [Unsplash License](https://unsplash.com/license) | A red train crossing a stone viaduct in a snowy mountain gorge |
+| vietnam-1.jpg | Ha Long Bay, Vietnam, boats and limestone islands | Marina Lobato | https://unsplash.com/photos/kG7pOXbBfNs | [Unsplash License](https://unsplash.com/license) | Turquoise water and limestone islands in Ha Long Bay, with tour boats on the bay |
+| vietnam-2.jpg | Hoi An, Vietnam, shophouses with lanterns | allPhoto Bangkok | https://unsplash.com/photos/dpj0K1CEjAw | [Unsplash License](https://unsplash.com/license) | Cycle rickshaws on a street of yellow shophouses hung with lanterns in Hoi An |
+| usa-1.jpg | Brooklyn Bridge and Manhattan skyline, New York | Jeet Datta | https://unsplash.com/photos/sSDt_SLOhGs | [Unsplash License](https://unsplash.com/license) | The Brooklyn Bridge and the Manhattan skyline under a blue sky with clouds |
+| usa-2.jpg | Niagara Falls, Ontario, Canada | Dennis Zhang | https://unsplash.com/photos/A7IfnuDGGzk | [Unsplash License](https://unsplash.com/license) | Water pouring over the edge of Niagara Falls into a cloud of mist |
+| thailand-1.jpg | Maya Bay, Ko Phi Phi, Thailand | Humphrey M | https://unsplash.com/photos/TejFa7VW5e4 | [Unsplash License](https://unsplash.com/license) | Boats on turquoise water in Maya Bay between steep green cliffs in Thailand |
+| thailand-2.jpg | Wat Arun, Bangkok, Thailand | Teodor Kuduschiev | https://unsplash.com/photos/wd3tQvk0WXA | [Unsplash License](https://unsplash.com/license) | Wat Arun in Bangkok seen across the Chao Phraya river, with a long-tail boat in front |
+| maldives-1.jpg | Water villas over a lagoon, Maldives | Rayyu Maldives | https://unsplash.com/photos/xPsFXsbXJRg | [Unsplash License](https://unsplash.com/license) | Water villas on stilts over a turquoise lagoon in the Maldives |
+| maldives-2.jpg | Sandbank at Guraidhoo, Maldives, aerial | Saffu | https://unsplash.com/photos/u-jW1xDGMfk | [Unsplash License](https://unsplash.com/license) | A small white sandbank with a few visitors, seen from above, in clear blue water |
 | corporate-meeting.jpg | Empty boardroom with glass walls | Benjamin Child | https://unsplash.com/photos/GWe0dlVD9e0 | [Unsplash License](https://unsplash.com/license) | A boardroom with a long table and leather chairs beside floor-to-ceiling windows |
 | corporate-city.jpg | Mumbai (Worli) skyline at golden hour, cropped to remove a readable sign | Drone Master | https://unsplash.com/photos/qrj4LiT9NRQ | [Unsplash License](https://unsplash.com/license) | Mumbai skyline of high-rise towers in warm evening light |
 | service-visa.jpg | Passport open to stamped pages | Kit (formerly ConvertKit); photo by Henry Thong | https://unsplash.com/photos/htQznS-Rx7w | [Unsplash License](https://unsplash.com/license) | An open passport with several visa and entry stamps |
@@ -50,7 +58,8 @@ Notes:
 - `service-frro.jpg` shows a US passport, which suits FRRO services for foreign nationals. Do not caption it as an Indian document.
 - `service-cruise.jpg` shows a ship whose name on the hull is too small to read at normal size; do not crop in on the hull.
 - `ladakh-2.jpg` is listed on Unsplash under Ladakh searches; the photo page does not state a location, so keep the caption generic.
-- Portrait files (`andaman-2`, `dubai-2`, `ladakh-2`, `singapore-2`, `switzerland-2`) are detail shots; do not use them as wide heroes.
+- `europe-1` and `europe-2` were first used for a Switzerland-only trip; they now illustrate the Switzerland leg of the Europe trip.
+- Portrait files (`andaman-2`, `dubai-2`, `ladakh-2`, `singapore-2`, `europe-2`, `usa-1`) are detail shots; do not use them as wide heroes.
 
 ## Brand assets
 

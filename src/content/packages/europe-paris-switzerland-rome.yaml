@@ -1,0 +1,79 @@
+slug: 'europe-paris-switzerland-rome'
+title: 'Europe: Paris, Switzerland and Rome'
+summary: 'A first Europe trip: Paris, the Swiss Alps by train and the old city of Rome.'
+type: 'international'
+order: 5
+region: 'europe'
+destinations:
+  - 'Paris'
+  - 'Lucerne'
+  - 'Interlaken'
+  - 'Rome'
+duration:
+  days: 9
+  nights: 8
+themes:
+  - 'honeymoon'
+  - 'family'
+  - 'heritage'
+  - 'nature'
+fromPrice: 235000
+priceBasis: 'per person, twin sharing, including return flights from Delhi'
+highlights:
+  - 'Eiffel Tower and a Seine river cruise in Paris'
+  - 'Mount Titlis by cable car in Switzerland'
+  - 'Lake Lucerne and the old town of Lucerne'
+  - 'Colosseum and Vatican City with a local guide in Rome'
+  - 'Schengen visa support from our team'
+itinerary:
+  - day: 1
+    title: 'Fly to Paris'
+    description: 'Depart from Delhi for Paris. Meet your driver on arrival and transfer to your hotel. The rest of the day is at leisure.'
+  - day: 2
+    title: 'Paris city tour'
+    description: 'Drive past the main sights, stop at the Eiffel Tower and take an evening cruise on the Seine.'
+  - day: 3
+    title: 'Paris at leisure'
+    description: 'A free day to visit the Louvre, walk in Montmartre or go shopping. A day trip to Versailles can be added.'
+  - day: 4
+    title: 'Paris to Lucerne'
+    description: 'Take a morning train to Switzerland and reach Lucerne in the afternoon. Walk across the wooden Chapel Bridge and around the old town.'
+  - day: 5
+    title: 'Mount Titlis'
+    description: 'Go up Mount Titlis by cable car for views of the snow and the glacier. Return to Lucerne for the evening.'
+  - day: 6
+    title: 'Lucerne to Interlaken'
+    description: 'Travel by rail to Interlaken, with a stop at a viewpoint on the way. Spend the evening between the two lakes.'
+  - day: 7
+    title: 'Interlaken to Rome'
+    description: 'Spend the morning on a boat on Lake Brienz, or on the train up to Jungfraujoch if the weather allows. Later, fly to Rome from Zurich.'
+  - day: 8
+    title: 'Rome sightseeing'
+    description: 'With a local guide, visit the Colosseum and the Roman Forum, then the Trevi Fountain and the Spanish Steps.'
+  - day: 9
+    title: 'Rome and return to Delhi'
+    description: 'Visit Vatican City in the morning, then transfer to the airport for your flight to Delhi.'
+inclusions:
+  - 'Return economy flights from Delhi, and the flight from Zurich to Rome'
+  - 'Eight nights of stay in hotels, on twin sharing'
+  - 'Daily breakfast'
+  - 'Train travel between Paris and Switzerland and within Switzerland as per the itinerary'
+  - 'Airport transfers and local guides for the sightseeing listed'
+exclusions:
+  - 'Schengen visa fee and service charges'
+  - 'Lunches and dinners'
+  - 'Entry tickets not mentioned in the itinerary and optional tours'
+  - 'City tourist tax paid at hotels'
+  - 'Personal expenses, tips and travel insurance'
+images:
+  hero:
+    src: '../../assets/photos/europe-1.jpg'
+    alt: 'A still alpine lake below snow-capped Swiss peaks'
+  gallery:
+    - src: '../../assets/photos/europe-2.jpg'
+      alt: 'A red train crossing a stone viaduct in a snowy mountain gorge'
+seo:
+  title: 'Europe: Paris, Switzerland and Rome, 9 days'
+  description: 'Nine days across Paris, Lucerne, Interlaken and Rome, flights from Delhi included. Day-wise itinerary and an estimated price. Send an enquiry.'
+featured: true
+demo: true

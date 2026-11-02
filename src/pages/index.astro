@@ -14,8 +14,7 @@ import Reveal from '../components/motion/Reveal.astro';
 import { shown, site } from '../config/site';
 import { getFeaturedPackages } from '../lib/content';
 import { whatsappFor } from '../lib/enquiry';
-import { formatDate } from '../lib/format';
-import { regionLabels } from '../lib/packages';
+import { priceFootnote, regionLabels } from '../lib/packages';
 import { packageHref, routes } from '../lib/routes';
 import taj from '../assets/photos/hero-taj-mahal.jpg';
 import greatWall from '../assets/photos/hero-great-wall.jpg';
@@ -31,9 +30,6 @@ const office = shown(site.offices.operating);
 const from = office ? ` from ${office.locality}` : '';
 const featured = await getFeaturedPackages();
 
-// One shared price-valid-until date can go in the phone footnote; differing dates are left out.
-const validDates = new Set(featured.map((item) => formatDate(item.data.priceValidUntil)));
-const sharedValidTo = validDates.size === 1 ? [...validDates][0] : undefined;
 const packageSizes = '(min-width: 1024px) 22vw, (min-width: 768px) 45vw, calc(100vw - 2.5rem)';
 
 const groupNames = Object.fromEntries(site.services.map((group) => [group.id, group]));
@@ -240,7 +236,6 @@ const emptyPixel = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAA
               nights={item.data.duration.nights}
               fromPrice={item.data.fromPrice}
               priceBasis={item.data.priceBasis}
-              validTo={formatDate(item.data.priceValidUntil)}
               image={item.data.images.hero.src}
               alt={item.data.images.hero.alt}
               href={packageHref(item)}
@@ -271,8 +266,7 @@ const emptyPixel = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAA
       </div>
     </div>
     <p class="pkg-note">
-      Prices are indicative{sharedValidTo ? `, valid to ${sharedValidTo}` : ''}. We change the pace,
-      the hotels and the length to suit you.
+      {priceFootnote} We change the pace, the hotels and the length to suit you.
     </p>
     <div class="pkg-more">
       <Link href={routes.holidays} variant="standalone">
@@ -578,7 +572,10 @@ const emptyPixel = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAA
 
   .pkg-pager,
   .pkg-note {
-    display: none;
+    margin-top: 1.25rem;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: var(--stone-600);
   }
 
   /* Phones: one trip at a time in a swipeable row; the buttons and the counter drive the same row. */
@@ -654,14 +651,6 @@ const emptyPixel = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAA
 
     .pkg-prev :global(svg) {
       transform: scaleX(-1);
-    }
-
-    .pkg-note {
-      display: block;
-      margin-top: 1.25rem;
-      font-size: 0.8125rem;
-      line-height: 1.5;
-      color: var(--stone-600);
     }
   }
 

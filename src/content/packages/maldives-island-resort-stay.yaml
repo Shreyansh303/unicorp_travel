@@ -1,0 +1,62 @@
+slug: 'maldives-island-resort-stay'
+title: 'Maldives island resort stay'
+summary: 'Five days on a resort island with a lagoon, a sandbank trip and time with nothing planned.'
+type: 'international'
+order: 8
+region: 'indian-ocean'
+destinations:
+  - 'Malé'
+  - 'Resort island'
+duration:
+  days: 5
+  nights: 4
+themes:
+  - 'honeymoon'
+  - 'beach'
+fromPrice: 125000
+priceBasis: 'per person, twin sharing, including return flights from Delhi'
+highlights:
+  - 'Four nights on a resort island, in the villa type you choose'
+  - 'Snorkelling on the house reef'
+  - 'A sunset cruise or a sandbank picnic'
+  - 'Speedboat or seaplane transfers, as per the resort'
+  - 'Meal plan chosen with us'
+itinerary:
+  - day: 1
+    title: 'Fly to Malé and reach the resort'
+    description: 'Depart from Delhi for Malé. After you land, a speedboat or seaplane takes you to your resort island, where you check in.'
+  - day: 2
+    title: 'Island day'
+    description: 'Take the day as it comes: swim in the lagoon, snorkel on the house reef or book a spa session.'
+  - day: 3
+    title: 'Sandbank or sunset cruise'
+    description: 'Join a boat trip to a sandbank for a picnic, or a sunset cruise with a chance to see dolphins. Dinner at the resort.'
+  - day: 4
+    title: 'Free day'
+    description: 'A day with nothing planned. Water sports, diving lessons and fishing trips can be added at the resort.'
+  - day: 5
+    title: 'Return to Delhi'
+    description: 'Check out and take the boat or seaplane back to Malé airport for your flight to Delhi.'
+inclusions:
+  - 'Return economy flights from Delhi'
+  - 'Four nights at a resort, on twin sharing'
+  - 'Breakfast, or the meal plan you choose, as quoted'
+  - 'Speedboat or seaplane transfers between the airport and the resort, as per the resort'
+  - 'Welcome drink on arrival'
+exclusions:
+  - 'Maldives tourism tax, paid at the resort'
+  - 'Meals not covered by the meal plan, and drinks'
+  - 'Water sports, diving, spa and excursions'
+  - 'Personal expenses, tips and travel insurance'
+images:
+  hero:
+    src: '../../assets/photos/maldives-1.jpg'
+    alt: 'Water villas on stilts over a turquoise lagoon in the Maldives'
+  gallery:
+    - src: '../../assets/photos/maldives-2.jpg'
+      alt: 'A small white sandbank with a few visitors, seen from above, in clear blue water'
+seo:
+  title: 'Maldives island resort stay, 5 days'
+  description: 'Five days on a Maldives resort island with a lagoon, a sandbank trip and free time, flights from Delhi included. Estimated price.'
+featured: false
+demo: true

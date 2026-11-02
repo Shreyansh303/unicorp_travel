@@ -2,6 +2,7 @@ slug: 'bali-temples-and-terraces'
 title: 'Bali temples and terraces'
 summary: 'Ubud rice terraces, temples and a few easy days by the sea in Seminyak.'
 type: 'international'
+order: 1
 region: 'southeast-asia'
 destinations:
   - 'Ubud'
@@ -14,9 +15,8 @@ themes:
   - 'honeymoon'
   - 'culture'
   - 'beach'
-fromPrice: 68000
+fromPrice: 72000
 priceBasis: 'per person, twin sharing, including return flights from Delhi'
-priceValidUntil: '2027-03-31'
 highlights:
   - 'Tegalalang rice terraces near Ubud'
   - 'A temple visit and traditional Kecak dance at Uluwatu'
@@ -65,6 +65,6 @@ images:
       alt: 'A Balinese split temple gate framed by red flowers'
 seo:
   title: 'Bali temples and terraces, 7 days'
-  description: 'Seven days in Ubud and Seminyak with rice terraces, temples and beach time, flights from Delhi included. Day-wise itinerary and an indicative price.'
+  description: 'Seven days in Ubud and Seminyak with rice terraces, temples and beach time, flights from Delhi included. Day-wise itinerary and an estimated price.'
 featured: true
 demo: true

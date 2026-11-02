@@ -1,0 +1,80 @@
+slug: 'usa-new-york-washington-niagara'
+title: 'USA: New York, Washington and Niagara'
+summary: 'The East Coast in ten days: New York, Washington DC and the falls at Niagara.'
+type: 'international'
+order: 6
+region: 'north-america'
+destinations:
+  - 'New York'
+  - 'Washington DC'
+  - 'Niagara Falls'
+duration:
+  days: 10
+  nights: 9
+themes:
+  - 'family'
+  - 'heritage'
+  - 'group'
+fromPrice: 345000
+priceBasis: 'per person, twin sharing, including return flights from Delhi'
+highlights:
+  - 'Statue of Liberty ferry and a walk around Lower Manhattan'
+  - 'Times Square and Central Park in New York'
+  - 'The Capitol, the Lincoln Memorial and the museums of Washington DC'
+  - 'A boat ride at the foot of Niagara Falls'
+  - 'Help with the US visa application'
+itinerary:
+  - day: 1
+    title: 'Fly to New York'
+    description: 'Depart from Delhi for New York, with a change of flight on the way. Transfer to your hotel on arrival.'
+  - day: 2
+    title: 'New York city tour'
+    description: 'Take a guided tour of Manhattan with stops at Times Square, Fifth Avenue and a Brooklyn Bridge viewpoint.'
+  - day: 3
+    title: 'Statue of Liberty'
+    description: 'Take the ferry to the Statue of Liberty and walk through Lower Manhattan, including the 9/11 Memorial. Evening at leisure.'
+  - day: 4
+    title: 'New York at leisure'
+    description: 'A free day for museums, Central Park or shopping. An optional Broadway show can be added.'
+  - day: 5
+    title: 'New York to Washington DC'
+    description: 'Drive south, stopping in Philadelphia to see the Liberty Bell. Continue to Washington DC for the night.'
+  - day: 6
+    title: 'Washington DC sightseeing'
+    description: 'Visit the Capitol, the White House viewpoint, the Lincoln Memorial and the Smithsonian museums on the National Mall.'
+  - day: 7
+    title: 'Washington DC to Niagara Falls'
+    description: 'Take a morning flight to Buffalo and drive to Niagara Falls. Walk along the falls in the evening.'
+  - day: 8
+    title: 'Niagara Falls'
+    description: 'Take the boat ride to the foot of the falls and walk to the viewpoints. Spend the rest of the day at leisure.'
+  - day: 9
+    title: 'Niagara Falls to New York'
+    description: 'Fly back to New York in the afternoon and spend the evening at leisure or shopping.'
+  - day: 10
+    title: 'Return to Delhi'
+    description: 'Transfer to the airport for your flight to Delhi. You arrive the next day.'
+inclusions:
+  - 'Return economy flights from Delhi, with a change of flight'
+  - 'Flights from Washington DC to Buffalo and from Buffalo to New York'
+  - 'Nine nights of stay in hotels, on twin sharing'
+  - 'Daily breakfast'
+  - 'Airport transfers, a private vehicle and guides for the sightseeing listed'
+exclusions:
+  - 'US visa fee and appointment charges'
+  - 'Lunches and dinners'
+  - 'Entry tickets not mentioned in the itinerary and optional shows'
+  - 'Hotel resort fees and city taxes paid on the spot'
+  - 'Personal expenses, tips and travel insurance'
+images:
+  hero:
+    src: '../../assets/photos/usa-1.jpg'
+    alt: 'The Brooklyn Bridge and the Manhattan skyline under a blue sky with clouds'
+  gallery:
+    - src: '../../assets/photos/usa-2.jpg'
+      alt: 'Water pouring over the edge of Niagara Falls into a cloud of mist'
+seo:
+  title: 'USA East Coast and Niagara, 10 days'
+  description: 'Ten days across New York, Washington DC and Niagara Falls, flights from Delhi included. Day-wise itinerary and an estimated price.'
+featured: false
+demo: true

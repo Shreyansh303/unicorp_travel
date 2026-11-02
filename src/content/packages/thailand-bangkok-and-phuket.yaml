@@ -1,0 +1,67 @@
+slug: 'thailand-bangkok-and-phuket'
+title: 'Thailand: Bangkok and Phuket'
+summary: 'Temples and markets in Bangkok, then an island day and easy beach time in Phuket.'
+type: 'international'
+order: 7
+region: 'southeast-asia'
+destinations:
+  - 'Bangkok'
+  - 'Phuket'
+  - 'Phi Phi Islands'
+duration:
+  days: 6
+  nights: 5
+themes:
+  - 'beach'
+  - 'family'
+  - 'culture'
+fromPrice: 54000
+priceBasis: 'per person, twin sharing, including return flights from Delhi'
+highlights:
+  - 'Wat Arun and the Grand Palace in Bangkok'
+  - 'A boat ride on the Chao Phraya river'
+  - 'A speedboat day trip to the Phi Phi Islands'
+  - 'Free time on the beach in Phuket'
+  - 'A short flight between the two cities, included'
+itinerary:
+  - day: 1
+    title: 'Fly to Bangkok'
+    description: 'Depart from Delhi for Bangkok. Meet your driver on arrival and transfer to your hotel. Evening at leisure.'
+  - day: 2
+    title: 'Bangkok temples'
+    description: 'Visit Wat Pho, the Grand Palace and Wat Arun. In the evening, take a boat ride on the Chao Phraya river.'
+  - day: 3
+    title: 'Bangkok to Phuket'
+    description: 'Fly to Phuket in the morning and transfer to your hotel. Spend the afternoon on Patong or Karon beach.'
+  - day: 4
+    title: 'Phi Phi Islands day trip'
+    description: 'Take a speedboat to the Phi Phi Islands, with a stop at Maya Bay, time for snorkelling and lunch on an island. Return to Phuket by evening.'
+  - day: 5
+    title: 'Phuket at leisure'
+    description: 'A free day for the beach, a spa or shopping. A tour of the Big Buddha and Old Phuket Town can be added.'
+  - day: 6
+    title: 'Return to Delhi'
+    description: 'Transfer to Phuket airport for your flight to Delhi, with a change of flight on the way.'
+inclusions:
+  - 'Return economy flights from Delhi, with a change of flight'
+  - 'Flight from Bangkok to Phuket'
+  - 'Five nights of stay in hotels, on twin sharing'
+  - 'Daily breakfast'
+  - 'Airport transfers, the Bangkok temple tour and the Phi Phi Islands day trip with lunch'
+exclusions:
+  - 'Thailand visa fee, if it applies on your dates'
+  - 'Lunches and dinners, except where mentioned'
+  - 'Entry fees to the Grand Palace and other sites unless mentioned'
+  - 'Personal expenses, tips and travel insurance'
+images:
+  hero:
+    src: '../../assets/photos/thailand-1.jpg'
+    alt: 'Boats on turquoise water in Maya Bay between steep green cliffs in Thailand'
+  gallery:
+    - src: '../../assets/photos/thailand-2.jpg'
+      alt: 'Wat Arun in Bangkok seen across the Chao Phraya river, with a long-tail boat in front'
+seo:
+  title: 'Thailand: Bangkok and Phuket, 6 days'
+  description: 'Six days in Bangkok and Phuket with temples, a Phi Phi Islands day trip and beach time, flights from Delhi included. Estimated price.'
+featured: false
+demo: true

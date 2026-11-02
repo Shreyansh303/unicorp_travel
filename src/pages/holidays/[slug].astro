@@ -15,12 +15,12 @@ import Accordion from '../../components/ui/Accordion.astro';
 import EnquirySection from '../../components/forms/EnquirySection.astro';
 import { getPackages, type PackageEntry } from '../../lib/content';
 import { callHref, mobile, whatsappFor } from '../../lib/enquiry';
-import { formatDate, formatINR, isoDate } from '../../lib/format';
-import { packageTypeLabels, regionLabels, themeLabels } from '../../lib/packages';
+import { formatINR } from '../../lib/format';
+import { packageTypeLabels, priceFootnote, regionLabels, themeLabels } from '../../lib/packages';
 import { routes } from '../../lib/routes';
 
 export const getStaticPaths = (async () => {
-  const packages = await getPackages('featured');
+  const packages = await getPackages();
   return packages.map((pkg) => ({ params: { slug: pkg.id }, props: { pkg } }));
 }) satisfies GetStaticPaths;
 
@@ -37,7 +37,6 @@ const last = data.destinations.at(-1);
 const route = data.destinations.join(' · ');
 const gallery = data.images.gallery[0];
 const photos = data.images.gallery;
-const validUntil = formatDate(data.priceValidUntil);
 
 // One wave per day, so the line has a bend beside each stop.
 const days = data.itinerary.length;
@@ -103,13 +102,10 @@ const priceRows = [
         </ul>
         <div class="pk-price hero-enter" style="--enter-index: 2">
           <p>
-            from <strong>{formatINR(data.fromPrice)}</strong>
+            Starting from <strong>{formatINR(data.fromPrice)}*</strong>
           </p>
           <p class="pk-basis">{data.priceBasis}</p>
-          <p class="pk-valid">
-            Indicative price, valid until{' '}
-            <time datetime={isoDate(data.priceValidUntil)}>{validUntil}</time>
-          </p>
+          <p class="pk-note">{priceFootnote}</p>
         </div>
         <div class="pk-actions hero-enter" style="--enter-index: 3">
           {mobile && (
@@ -136,17 +132,12 @@ const priceRows = [
               <dd class="pk-sub">{data.duration.nights} nights</dd>
             </div>
             <div>
-              <dt>From</dt>
-              <dd>{formatINR(data.fromPrice)}</dd>
-            </div>
-            <div>
-              <dt>Valid until</dt>
-              <dd>
-                <time datetime={isoDate(data.priceValidUntil)}>{validUntil}</time>
-              </dd>
+              <dt>Starting from</dt>
+              <dd>{formatINR(data.fromPrice)}*</dd>
             </div>
           </dl>
-          <p class="pk-strip-basis">Indicative price, {data.priceBasis}</p>
+          <p class="pk-strip-basis">{data.priceBasis}</p>
+          <p class="pk-strip-basis">{priceFootnote}</p>
         </div>
         <Button
           size="lg"
@@ -265,7 +256,7 @@ const priceRows = [
         What the price covers
       </h2>
       <p>
-        The indicative price is {data.priceBasis}. We confirm everything in writing before you book.
+        The estimated price is {data.priceBasis}. We confirm everything in writing before you book.
       </p>
     </div>
     <div class="inc-grid">
@@ -361,7 +352,7 @@ const priceRows = [
   }
 
   .pk-basis,
-  .pk-valid {
+  .pk-note {
     font-size: var(--text-sm);
     color: var(--text-muted);
   }
@@ -630,7 +621,7 @@ const priceRows = [
 
     .pk-stats {
       display: grid;
-      grid-template-columns: 0.8fr 1fr 1.2fr;
+      grid-template-columns: 0.8fr 1.4fr;
       margin: 0;
     }
 

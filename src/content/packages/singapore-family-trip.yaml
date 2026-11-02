@@ -2,6 +2,7 @@ slug: 'singapore-family-trip'
 title: 'Singapore family trip'
 summary: 'Gardens, a zoo, Sentosa and the waterfront, planned at an easy pace for families.'
 type: 'international'
+order: 3
 region: 'southeast-asia'
 destinations:
   - 'Singapore'
@@ -12,9 +13,8 @@ duration:
 themes:
   - 'family'
   - 'nature'
-fromPrice: 89000
+fromPrice: 85000
 priceBasis: 'per person, twin sharing, including return flights from Delhi'
-priceValidUntil: '2027-03-31'
 highlights:
   - 'Gardens by the Bay and the evening Supertree light show'
   - 'A day on Sentosa Island'
@@ -61,6 +61,6 @@ images:
       alt: 'Supertree structures and a skywalk above the gardens in Singapore'
 seo:
   title: 'Singapore family trip, 6 days'
-  description: 'Six days in Singapore with Gardens by the Bay, Sentosa and the zoo, flights from Delhi included. Day-wise itinerary and an indicative price.'
+  description: 'Six days in Singapore with Gardens by the Bay, Sentosa and the zoo, flights from Delhi included. Day-wise itinerary and an estimated price.'
 featured: false
 demo: true

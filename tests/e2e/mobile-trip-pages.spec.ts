@@ -6,7 +6,7 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
 
-const routes = ['/holidays/andaman-islands', '/holidays/switzerland-lakes-and-alps'];
+const routes = ['/holidays/andaman-islands', '/holidays/europe-paris-switzerland-rome'];
 
 const hrefs = (page: Page) =>
   page.evaluate(() =>
@@ -31,8 +31,8 @@ for (const route of routes) {
       expect((button?.y ?? 0) + (button?.height ?? 0)).toBeLessThan(844);
       await expect(page.locator('.pk-stats')).toBeVisible();
       await expect(page.locator('.pk-stats')).toContainText('Duration');
-      await expect(page.locator('.pk-stats')).toContainText('From');
-      await expect(page.locator('.pk-stats')).toContainText('Valid until');
+      await expect(page.locator('.pk-stats')).toContainText('Starting from');
+      await expect(page.locator('.pk-stats')).toContainText('₹');
       await expect(page.locator('h1')).toHaveCount(1);
     });
 

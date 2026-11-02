@@ -5,6 +5,10 @@
  */
 import { formatINR } from './format';
 
+/** Shown once near any list of package prices. */
+export const priceFootnote =
+  '*Estimated price per person. The final cost depends on travel dates, hotels and the number of travellers.';
+
 export const packageTypes = ['domestic', 'international'] as const;
 export type PackageType = (typeof packageTypes)[number];
 
@@ -27,6 +31,8 @@ export const regions = {
   'southeast-asia': { label: 'Southeast Asia', type: 'international' },
   'middle-east': { label: 'Middle East', type: 'international' },
   europe: { label: 'Europe', type: 'international' },
+  'north-america': { label: 'North America', type: 'international' },
+  'indian-ocean': { label: 'Indian Ocean', type: 'international' },
 } as const satisfies Record<string, RegionInfo>;
 
 export type RegionId = keyof typeof regions;

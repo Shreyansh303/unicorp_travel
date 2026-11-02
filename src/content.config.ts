@@ -259,12 +259,12 @@ const packages = defineCollection({
           nights: z.number().int().min(1),
         }),
         themes: z.array(z.enum(themeIds)).min(1).max(4),
-        /** Indicative "from" price in whole INR, per person. */
+        /** Position in the package lists (lowest first): international trips, then domestic. */
+        order: z.number().int().positive(),
+        /** Estimated "starting from" price in whole INR, per person. */
         fromPrice: z.number().int().positive(),
         /** What the price covers, e.g. "per person, twin sharing". */
         priceBasis: z.string().min(10),
-        /** Last date the indicative price is shown as valid. Must be in the future at build time. */
-        priceValidUntil: z.coerce.date(),
         highlights: z.array(z.string().min(5)).min(4).max(6),
         itinerary: z
           .array(
@@ -315,13 +315,6 @@ const packages = defineCollection({
         }
         if (new Set(pkg.themes).size !== pkg.themes.length) {
           ctx.addIssue({ code: 'custom', path: ['themes'], message: 'themes must not repeat' });
-        }
-        if (pkg.priceValidUntil.getTime() <= Date.now()) {
-          ctx.addIssue({
-            code: 'custom',
-            path: ['priceValidUntil'],
-            message: 'priceValidUntil must be a date in the future; refresh the price or the date',
-          });
         }
       });
   },

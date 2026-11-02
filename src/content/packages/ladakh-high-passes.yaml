@@ -2,6 +2,7 @@ slug: 'ladakh-high-passes'
 title: 'Ladakh high passes'
 summary: 'Leh, Nubra Valley and Pangong Lake, with time to settle in at altitude.'
 type: 'domestic'
+order: 12
 region: 'himalaya'
 destinations:
   - 'Leh'
@@ -14,9 +15,8 @@ themes:
   - 'adventure'
   - 'nature'
   - 'culture'
-fromPrice: 46500
-priceBasis: 'per person, twin sharing, land arrangements only'
-priceValidUntil: '2027-03-31'
+fromPrice: 48000
+priceBasis: 'per person, twin sharing, land arrangements only, flights not included'
 highlights:
   - 'Khardung La, the high mountain pass on the road to Nubra Valley'
   - 'Sand dunes and double-humped camels at Hunder in Nubra Valley'
@@ -65,6 +65,6 @@ images:
       alt: 'A white stupa with red circles standing on a rocky mountain slope'
 seo:
   title: 'Ladakh high passes, 7 days'
-  description: 'Seven days in Leh, Nubra Valley and Pangong Lake with time to adjust to altitude. Day-wise itinerary and an indicative price. Send an enquiry.'
+  description: 'Seven days in Leh, Nubra Valley and Pangong Lake with time to adjust to altitude. Day-wise itinerary and an estimated price. Send an enquiry.'
 featured: false
 demo: true
