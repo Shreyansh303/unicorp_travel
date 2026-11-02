@@ -6,7 +6,7 @@
  * and only there so the loop is seamless (the track moves by exactly one copy).
  *
  * Only transform animates. Logos are always in colour. A company with no usable official logo is a
- * text tile of the same height. The row pauses while the pointer is over it. There is no Pause
+ * typographic logotype of the same height (a round monogram or small mark, then the name; no box). The row pauses while the pointer is over it. There is no Pause
  * button (user decision, 2026-10-31; a WCAG 2.2.2 gap recorded in the roadmap); a Next button
  * (2026-11-02) glides the row forward by about one screen of logos, then the slow scroll goes on.
  * With prefers-reduced-motion nothing moves: the row becomes a wrapped, static grid and the Next
@@ -46,8 +46,11 @@ const svgText = import.meta.glob<string>('../../assets/clients/*.svg', {
 // but never above their own size (Gateway Distriparks is only 166px tall).
 const deliveredHeight = 144;
 
-async function resolveLogo(name: string, file: string | undefined) {
-  if (!file) return { name, src: null, ratio: 0, width: 0, height: 0 };
+async function resolveLogo(client: (typeof site.clients)[number]) {
+  const { name, logo, mark, monogram } = client;
+  const none = { name, src: null, ratio: 0, width: 0, height: 0, monogram, mark: null };
+  if (!logo && !mark) return none;
+  const file = (logo ?? mark) as string;
   const key = `../../assets/clients/${file}`;
   if (file.endsWith('.svg')) {
     const url = svgUrls[key];
@@ -57,8 +60,9 @@ async function resolveLogo(name: string, file: string | undefined) {
     if (!url || !box) return null;
     const ratio = Number(box[1]) / Number(box[2]);
     return {
-      name,
-      src: url,
+      ...none,
+      src: logo ? url : null,
+      mark: mark ? url : null,
       ratio,
       width: Math.round(deliveredHeight * ratio),
       height: deliveredHeight,
@@ -68,19 +72,22 @@ async function resolveLogo(name: string, file: string | undefined) {
   if (!meta) return null;
   const height = Math.min(deliveredHeight, meta.height);
   const image = await getImage({ src: meta, height, format: 'webp' });
-  return {
-    name,
+  const shown = {
     src: image.src,
     ratio: meta.width / meta.height,
     width: Number(image.attributes['width']),
     height: Number(image.attributes['height']),
   };
+  return logo
+    ? { ...none, ...shown }
+    : { ...none, mark: image.src, ratio: shown.ratio, width: shown.width, height: shown.height };
 }
 
-// A company whose logo file is missing is dropped; one with no logo at all is a text tile.
-const logos = (
-  await Promise.all(site.clients.map((client) => resolveLogo(client.name, client.logo)))
-).filter((logo) => logo !== null);
+// A company whose logo file is missing is dropped; one with no logo at all is a logotype.
+const logos = (await Promise.all(site.clients.map(resolveLogo))).filter((logo) => logo !== null);
+
+// The row is the set twice; the second copy is hidden from assistive technology.
+const copies = [{ hidden: false }, { hidden: true }];
 ---
 
 {logos.length > 0 && (
@@ -108,46 +115,50 @@ const logos = (
 
       <div class="strip" data-strip>
         <div class="strip-track">
-          <ul class="strip-set" aria-labelledby="clients-title">
-            {logos.map((logo) => (
-              <li class="strip-item">
-                {logo.src ? (
-                  <img
-                    class="strip-logo"
-                    src={logo.src}
-                    alt={logo.name}
-                    width={logo.width}
-                    height={logo.height}
-                    style={`--ar:${logo.ratio.toFixed(3)}`}
-                    loading="lazy"
-                    decoding="async"
-                  />
-                ) : (
-                  <span class="strip-tile">{logo.name}</span>
-                )}
-              </li>
-            ))}
-          </ul>
-          <ul class="strip-set strip-copy" aria-hidden="true">
-            {logos.map((logo) => (
-              <li class="strip-item">
-                {logo.src ? (
-                  <img
-                    class="strip-logo"
-                    src={logo.src}
-                    alt=""
-                    width={logo.width}
-                    height={logo.height}
-                    style={`--ar:${logo.ratio.toFixed(3)}`}
-                    loading="lazy"
-                    decoding="async"
-                  />
-                ) : (
-                  <span class="strip-tile">{logo.name}</span>
-                )}
-              </li>
-            ))}
-          </ul>
+          {copies.map((copy) => (
+            <ul
+              class:list={['strip-set', copy.hidden && 'strip-copy']}
+              aria-hidden={copy.hidden ? 'true' : undefined}
+              aria-labelledby={copy.hidden ? undefined : 'clients-title'}
+            >
+              {logos.map((logo) => (
+                <li class="strip-item">
+                  {logo.src ? (
+                    <img
+                      class="strip-logo"
+                      src={logo.src}
+                      alt={copy.hidden ? '' : logo.name}
+                      width={logo.width}
+                      height={logo.height}
+                      style={`--ar:${logo.ratio.toFixed(3)}`}
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  ) : (
+                    <span class="strip-type">
+                      {logo.mark ? (
+                        <img
+                          class="strip-mark"
+                          src={logo.mark}
+                          alt=""
+                          width={logo.width}
+                          height={logo.height}
+                          style={`--ar:${logo.ratio.toFixed(3)}`}
+                          loading="lazy"
+                          decoding="async"
+                        />
+                      ) : (
+                        <span class="strip-monogram" aria-hidden="true">
+                          {logo.monogram}
+                        </span>
+                      )}
+                      <span class="strip-name">{logo.name}</span>
+                    </span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          ))}
         </div>
       </div>
     </div>
@@ -167,10 +178,11 @@ const logos = (
     }
   }
 
-  /* Heading and arrow share one row at every width; the arrow sits at the end of the heading. */
+  /* Heading and arrow share one row at every width; the arrow sits at the end of the heading,
+     centred vertically on it (on phones, on the whole two-line heading). */
   .strip-head {
     display: flex;
-    align-items: flex-end;
+    align-items: center;
     justify-content: space-between;
     gap: var(--space-4);
     margin-bottom: var(--space-8);
@@ -230,30 +242,55 @@ const logos = (
     object-fit: contain;
   }
 
-  /* A company without a usable official logo: its name in a tile as tall as the logos. */
-  .strip-tile {
+  /* A company without a usable official logo: a logotype as tall as the logos. A round monogram
+     (or a small mark) then the name in the display face, on one or two lines. No box. */
+  .strip-type {
     display: flex;
     align-items: center;
-    justify-content: center;
-    box-sizing: border-box;
+    gap: 0.625rem;
     height: var(--logo-h);
-    width: max-content;
-    max-width: 16rem;
-    padding: 0 var(--space-5);
-    border: 1px solid var(--border-strong);
-    border-radius: var(--radius-md);
-    background: #fff;
     color: var(--ink);
+  }
+
+  .strip-monogram {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: calc(var(--logo-h) * 0.72);
+    height: calc(var(--logo-h) * 0.72);
+    border-radius: 50%;
+    background: var(--red-700);
+    color: var(--white);
+    font-family: var(--font-display);
+    font-size: calc(var(--logo-h) * 0.26);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    line-height: 1;
+  }
+
+  .strip-mark {
+    display: block;
+    flex: none;
+    height: calc(var(--logo-h) * 0.62);
+    width: calc(var(--logo-h) * 0.62 * var(--ar));
+    max-width: none;
+    object-fit: contain;
+  }
+
+  .strip-name {
+    max-width: 9.5rem;
     font-family: var(--font-display);
     font-size: var(--text-base);
-    line-height: 1.15;
-    text-align: center;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    line-height: 1.12;
     text-wrap: balance;
   }
 
   @media (min-width: 768px) {
-    .strip-tile {
+    .strip-name {
       font-size: var(--text-lg);
+      max-width: 11rem;
     }
   }
 
@@ -272,12 +309,14 @@ const logos = (
     }
 
     .strip-track {
+      display: block;
       width: auto;
       animation: none;
       will-change: auto;
     }
 
     .strip-set {
+      flex: 0 1 auto;
       flex-wrap: wrap;
       justify-content: center;
       min-width: 0;

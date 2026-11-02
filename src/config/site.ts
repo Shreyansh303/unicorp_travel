@@ -347,32 +347,41 @@ export const site = {
   testimonials: [] as readonly string[],
   /**
    * Companies from the client's profile, shown as a logo strip. `logo` is a file name in
-   * src/assets/clients/. Shown under the client's stated business relationship; the client must
+   * src/assets/clients/. A company with no logo is set as a typographic logotype: `monogram` (its
+   * initials in a round badge) or `mark` (a small image) followed by the name. Shown under the client's stated business relationship; the client must
    * confirm the right to show each mark before production (see docs/image-credits.md).
    */
   clients: [
-    { name: 'FA Home and Apparel Pvt Ltd' },
+    { name: 'FA Home and Apparel Pvt Ltd', logo: 'fa-home-and-apparel.png' },
     { name: 'Gateway Distriparks', logo: 'gateway-distriparks.png' },
     { name: 'John Lewis', logo: 'john-lewis.svg' },
     { name: 'Prits Leather Art', logo: 'prits-leather-art.png' },
-    { name: 'Soccer International' },
-    { name: 'Ankhua Exports' },
-    { name: 'Avalon Information Systems' },
-    { name: 'Octogen Trade Links India' },
-    { name: 'H R Polycoats' },
-    { name: 'JSK Electricals' },
-    { name: 'Magic International' },
+    { name: 'Soccer International', logo: 'soccer-international.png' },
+    { name: 'Ankhua Exports', monogram: 'AE' },
+    { name: 'Avalon Information Systems', logo: 'avalon-information-systems.png' },
+    { name: 'Octogen Trade Links India', monogram: 'OT' },
+    { name: 'H R Polycoats', logo: 'h-r-polycoats.png' },
+    { name: 'JSK Electricals', monogram: 'JSK' },
+    { name: 'Magic International', logo: 'magic-international.png' },
     { name: 'The Earth Saviours Foundation', logo: 'the-earth-saviours-foundation.png' },
-    { name: 'Avadh Rail Infra' },
-    { name: 'Shipra Estate' },
+    { name: 'Avadh Rail Infra', logo: 'avadh-rail-infra.png' },
+    { name: 'Shipra Estate', logo: 'shipra-estate.png' },
     { name: 'JCB India', logo: 'jcb-india.svg' },
     { name: 'Williams-Sonoma', logo: 'williams-sonoma.svg' },
     { name: 'Save the Children', logo: 'save-the-children.svg' },
-    { name: 'Newsprint Trading and Sales Corporation' },
+    {
+      name: 'Newsprint Trading and Sales Corporation',
+      logo: 'newsprint-trading-and-sales-corporation.png',
+    },
     { name: 'The British School New Delhi', logo: 'the-british-school-new-delhi.png' },
     { name: 'Medallay Exports', logo: 'medallay-exports.png' },
-    { name: 'Biz Tech Consultants' },
-  ] as readonly { readonly name: string; readonly logo?: string }[],
+    { name: 'Biz Tech Consultants', mark: 'biz-tech-consultants-mark.png' },
+  ] as readonly {
+    readonly name: string;
+    readonly logo?: string;
+    readonly mark?: string;
+    readonly monogram?: string;
+  }[],
 
   /** Service names as listed on the old site. All copy is written fresh elsewhere. */
   services: [

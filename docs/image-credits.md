@@ -88,7 +88,21 @@ Files in `src/assets/clients/`, downloaded (not hot-linked) on 2026-10-30, and 2
 | the-earth-saviours-foundation.png | The Earth Saviours Foundation (TESF) | https://tesf.in/wp-content/uploads/2025/07/TESF-logo-final.png | Foundation website (earthsaviours.in redirects there); trademark |
 | medallay-exports.png | Medallay Exports | https://medallayexports.com/uploads/2022/03/logo-black.png | Company website (Jalandhar); trademark. Source is 95 px tall |
 
-Shown as a name in a text tile, no reliable official logo found: FA Home and Apparel, Soccer International, Ankhua Exports, Avalon Information Systems, Octogen Trade Links India, H R Polycoats, JSK Electricals, Magic International, Avadh Rail Infra, Shipra Estate, Newsprint Trading and Sales Corporation, Biz Tech Consultants. Bluestem Global Sourcing and Laj Exports are no longer shown (not on the client's current list).
+Supplied by the client on 2026-11-02 (the client's own marks; kept as supplied apart from the edits noted; trademarks of their owners, and the client must confirm the right to show each one before the production launch):
+
+| File | Company | Note |
+|---|---|---|
+| fa-home-and-apparel.png | FA Home and Apparel (Fashion Accessories) | Margin cropped, white background made transparent. Source is small, so it is shown no larger than its own size |
+| soccer-international.png | Soccer International | Margin cropped, white background made transparent, downscaled |
+| avalon-information-systems.png | Avalon Information Systems | Supplied in white on transparent; recoloured to the site ink colour so it shows on the cream background (shape unchanged), trimmed |
+| h-r-polycoats.png | H R Polycoats | Margin cropped, white background made transparent |
+| magic-international.png | Magic International | Cropped to the wordmark, star and tagline (the supplied white circle and blue corners dropped), white background made transparent |
+| avadh-rail-infra.png | Avadh Rail Infra | Margin cropped, white background made transparent |
+| shipra-estate.png | Shipra Estate (Shipra World) | Margin cropped, downscaled |
+| newsprint-trading-and-sales-corporation.png | Newsprint Trading and Sales Corporation (NTSC) | Cropped, downscaled; the light blue deepened slightly so it reads on the cream background |
+| biz-tech-consultants-mark.png | Biz Tech Consultants | Supplied as a light grey mark on a grey square with no name; the mark is extracted and coloured in the site ink colour, and the company name is set as text beside it |
+
+Shown as a typographic logotype (a round monogram, then the name as text), no logo supplied or found: Ankhua Exports, Octogen Trade Links India, JSK Electricals. Bluestem Global Sourcing and Laj Exports are no longer shown (not on the client's current list).
 
 ## Badges
 

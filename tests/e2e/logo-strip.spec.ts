@@ -1,6 +1,6 @@
 /**
  * The client logo strip ("Companies we have worked with") on Home and Corporate travel: it
- * renders all 21 companies from site.ts (a logo with alt text, or a text tile), always in colour,
+ * renders all 21 companies from site.ts (a logo with alt text, or a typographic logotype), always in colour,
  * the second copy is hidden from assistive technology, the row moves slowly and only by
  * transform, pauses under the pointer, has a Next button but no Pause button (user decisions,
  * 2026-10-31 and 2026-11-02), and with reduced motion it becomes a static grid without Next.
@@ -28,8 +28,10 @@ for (const path of pages) {
         if (client.logo) {
           await expect(item.locator('img')).toHaveAttribute('alt', client.name);
         } else {
-          await expect(item.locator('img')).toHaveCount(0);
-          await expect(item.locator('.strip-tile')).toHaveText(client.name);
+          // A logotype: a monogram (no image) or a small mark (decorative image), then the name.
+          await expect(item.locator('img:not([alt=""])')).toHaveCount(0);
+          await expect(item.locator('.strip-name')).toHaveText(client.name);
+          await expect(item.locator('.strip-tile')).toHaveCount(0);
         }
       }
       // The copy that makes the loop seamless is hidden; its logos have empty alt text.
@@ -37,8 +39,25 @@ for (const path of pages) {
       await expect(copy).toHaveCount(site.clients.length);
       const copyImgs = strip(page).locator('ul[aria-hidden="true"] img');
       expect(await copyImgs.evaluateAll((els) => els.map((el) => el.getAttribute('alt')))).toEqual(
-        site.clients.filter((c) => c.logo).map(() => ''),
+        site.clients.filter((c) => c.logo ?? c.mark).map(() => ''),
       );
+    });
+
+    test('has 18 logos (one a mark beside its name) and 3 monogram logotypes, without a box', async ({
+      page,
+    }) => {
+      await page.goto(path);
+      expect(site.clients.filter((c) => c.logo ?? c.mark)).toHaveLength(18);
+      expect(site.clients.filter((c) => c.monogram)).toHaveLength(3);
+      const types = strip(page).locator('ul:not([aria-hidden]) .strip-type');
+      await expect(types).toHaveCount(4);
+      const looks = await types.evaluateAll((els) =>
+        els.map((el) => {
+          const style = getComputedStyle(el);
+          return `${style.borderTopWidth}|${style.backgroundColor}`;
+        }),
+      );
+      expect(new Set(looks)).toEqual(new Set(['0px|rgba(0, 0, 0, 0)']));
     });
 
     test('is always in colour', async ({ page }) => {
