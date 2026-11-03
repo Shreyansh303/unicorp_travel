@@ -7,7 +7,7 @@ import { formatINR } from './format';
 
 /** Shown once near any list of package prices. */
 export const priceFootnote =
-  '*Estimated price per person. The final cost depends on travel dates, hotels and the number of travellers. GST, and TCS (tax collected at source) on trips abroad, are charged as the law requires and shown in your written quote.';
+  '*Estimated price per person. The final cost depends on travel dates, hotels and the number of travellers. Prices exclude GST, and TCS (tax collected at source) on trips abroad; both are shown in your written quote.';
 
 export const packageTypes = ['domestic', 'international'] as const;
 export type PackageType = (typeof packageTypes)[number];

@@ -13,7 +13,7 @@ This website gives information about our holidays, corporate travel and travel-r
 
 Holiday packages are examples of trips we can plan. Prices are estimated "starting from" prices per person, on the basis stated with each price. The actual price depends on your dates, the number of travellers, availability and supplier rates at the time of booking.
 
-Prices do not include GST, or TCS (tax collected at source) on trips abroad, unless we say so; these are charged as the law requires and shown in your quote. A price or itinerary on this website is not an offer. We confirm the final itinerary, price and payment terms to you in writing before anything is booked.
+Prices exclude GST, and TCS (tax collected at source) on trips abroad. Both are charged as the law requires and shown in your quote. A price or itinerary on this website is not an offer. We confirm the final itinerary, price and payment terms to you in writing before anything is booked.
 
 ## Bookings
 

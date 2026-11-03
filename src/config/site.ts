@@ -130,9 +130,17 @@ export const site = {
   foundingYear: { status: 'doNotShow', value: null } satisfies Fact<number>,
   /**
    * Grievance Officer for personal data (IT Rules 2011, rule 5(9); DPDP Act 2023, section 8(9)).
-   * Shown on the privacy page once the client supplies it.
+   * Shown on the privacy page. The managing director, confirmed by the client 2026-11-03.
    */
-  grievanceOfficer: { status: 'clientToSupply', value: null } as Fact<GrievanceOfficer>,
+  grievanceOfficer: {
+    status: 'verified',
+    value: {
+      name: 'Vishal Tyagi',
+      title: 'Managing Director',
+      email: 'vishal@unicorptravel.com',
+      phone: { e164: '+919891677321', display: '+91 98916 77321', whatsapp: true },
+    },
+  } as Fact<GrievanceOfficer>,
 
   offices: {
     operating: {

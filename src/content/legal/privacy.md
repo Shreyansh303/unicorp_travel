@@ -78,7 +78,7 @@ Use any of the ways on our [contact page](/contact). Withdrawing consent does no
 
 ## Questions and complaints
 
-If you have a question or a complaint about how we handle your details, contact us first, using the details on this page or our [contact page](/contact). We will reply as soon as we can, and within the time the law sets. If you are not satisfied with our answer, you can complain to the Data Protection Board of India.
+If you have a question or a complaint about how we handle your details, contact our Grievance Officer first, using the details on this page, or use our [contact page](/contact). We will reply as soon as we can, and within the time the law sets. If you are not satisfied with our answer, you can complain to the Data Protection Board of India.
 
 ## Links to other services
 
