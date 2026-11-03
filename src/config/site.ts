@@ -56,6 +56,14 @@ export interface ServiceItem {
   status: FactStatus;
 }
 
+/** The person who answers questions and complaints about personal data. */
+export interface GrievanceOfficer {
+  name: string;
+  title: string;
+  email: string;
+  phone?: Phone;
+}
+
 /** A person in the company, for the "Who to contact" and "Directors" displays. */
 export interface StaffContact {
   name: string;
@@ -120,6 +128,11 @@ export const site = {
   gstin: { status: 'clientToSupply', value: null } satisfies Fact<string>,
   /** Do not show until confirmed: registry says incorporated 2014, old site said 2024. */
   foundingYear: { status: 'doNotShow', value: null } satisfies Fact<number>,
+  /**
+   * Grievance Officer for personal data (IT Rules 2011, rule 5(9); DPDP Act 2023, section 8(9)).
+   * Shown on the privacy page once the client supplies it.
+   */
+  grievanceOfficer: { status: 'clientToSupply', value: null } as Fact<GrievanceOfficer>,
 
   offices: {
     operating: {

@@ -174,7 +174,6 @@ const priceRows = [
             </div>
           </dl>
           <p class="pk-strip-basis">{data.priceBasis}</p>
-          <p class="pk-strip-basis">{priceFootnote}</p>
         </div>
         <Button
           size="lg"
@@ -185,6 +184,8 @@ const priceRows = [
         >
           Enquire about this trip
         </Button>
+        {/* Phones: the tax note sits under the button, so the button stays above the call bar. */}
+        <p class="pk-strip-note">{priceFootnote}</p>
       </div>
       <figure class="arch pk-arch">
         <Photo set={heroPhoto} alt={data.images.hero.alt} loading="eager" fetchpriority="high" />
@@ -556,6 +557,7 @@ const priceRows = [
 
   /* Desktop: the phone-only pieces stay out. */
   .pk-strip,
+  .pk-strip-note,
   .pk-copy :global(.pk-enquire),
   .pk-phone {
     display: none;
@@ -611,6 +613,13 @@ const priceRows = [
       width: 100%;
       min-height: 3.5rem;
       font-size: 1.0625rem;
+    }
+
+    .pk-strip-note {
+      order: 3;
+      display: block;
+      font-size: 0.8125rem;
+      color: var(--text-muted);
     }
 
     .pk-chips {

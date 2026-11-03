@@ -10,6 +10,7 @@ import PageHero from '../components/ui/PageHero.astro';
 import Section from '../components/ui/Section.astro';
 import FactsBlock from '../components/ui/FactsBlock.astro';
 import Icon from '../components/ui/Icon.astro';
+import { mailtoHref, shown, site, telHref } from '../config/site';
 import { getLegal } from '../lib/content';
 import { formatDate, isoDate } from '../lib/format';
 import { midSentence, routes } from '../lib/routes';
@@ -22,6 +23,8 @@ const { id } = Astro.props;
 const entry = await getLegal(id);
 const { Content, headings } = await render(entry);
 const sections = headings.filter((heading) => heading.depth === 2);
+/* The privacy page names the Grievance Officer once the client supplies one. */
+const officer = id === 'privacy' ? shown(site.grievanceOfficer) : null;
 ---
 
 <PageLayout
@@ -86,6 +89,22 @@ const sections = headings.filter((heading) => heading.depth === 2);
           Questions about this page? Use any of the ways on our{' '}
           <a href={routes.contact}>contact page</a>.
         </p>
+        {officer && (
+          <div class="legal-officer">
+            <h3 class="t-eyebrow">Grievance Officer</h3>
+            <p>
+              {officer.name}, {officer.title}
+            </p>
+            <p>
+              <a href={mailtoHref(officer.email)}>{officer.email}</a>
+            </p>
+            {officer.phone && (
+              <p>
+                <a href={telHref(officer.phone)}>{officer.phone.display}</a>
+              </p>
+            )}
+          </div>
+        )}
         <FactsBlock />
       </aside>
     </div>
@@ -115,6 +134,12 @@ const sections = headings.filter((heading) => heading.depth === 2);
     color: var(--warning-700);
     font-size: var(--text-sm);
     font-weight: var(--weight-bold);
+  }
+
+  .legal-officer {
+    display: grid;
+    gap: var(--space-1);
+    margin-block: var(--space-4);
   }
 
   .legal-updated {

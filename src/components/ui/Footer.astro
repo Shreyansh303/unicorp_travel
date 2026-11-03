@@ -178,7 +178,7 @@ const columns = (phones.length > 0 || email ? 1 : 0) + (office ? 1 : 0) + groups
   <div class="wrap footer-base">
     <FactsBlock variant="condensed" />
     <p class="footer-copy">
-      &copy; {year} {site.displayName}
+      &copy; {year} {shown(site.legalName) ?? site.displayName}
     </p>
   </div>
 </Tag>

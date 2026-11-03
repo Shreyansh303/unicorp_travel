@@ -1,7 +1,7 @@
 ---
 title: 'Privacy notice'
 summary: 'What this website collects, what it does not, and how we use the details you send when you ask us about a trip.'
-updated: '2026-10-19'
+updated: '2026-11-03'
 demo: true
 ---
 
@@ -29,23 +29,56 @@ You choose how to reach us: by WhatsApp, by email or by phone. A message only re
 
 When you contact us, we receive what you choose to share, such as the details listed above. WhatsApp and your email provider handle the message under their own privacy terms.
 
-## Offers and travel ideas
+## Documents for visas, insurance and foreign exchange
 
-Every form has a separate box, unticked unless you tick it, that asks whether you would like occasional travel ideas and offers. Your choice is written into the message you send ("Travel ideas and offers: Yes, please" or "No"). We send offers only if you said yes, and you can ask us to stop at any time.
+Some services need more than an enquiry. A visa or passport application can need copies of your passport, photographs, and financial papers such as bank statements. Travel insurance can need health details. Foreign exchange needs your passport and ticket.
+
+We ask for these only when you choose one of these services, use them only for that application, and share them only with the embassy, visa centre, insurer or currency provider concerned. We ask for your clear consent before we collect financial or health details.
 
 ## How we use your details
 
 We use your details to reply to your enquiry, plan and quote for your trip, and make the bookings you ask for. For a booking, we share the details a supplier needs, such as an airline, a hotel or a visa centre, and only for that booking.
 
-We do not sell your details. We send you offers only if you have asked us to.
+We do not sell your details.
 
-## How long we keep them
+## Who receives your details
 
-We keep enquiry messages and booking records for as long as we need them to serve you, and for as long as the law requires us to keep business records.
+To serve you, your details may reach:
+
+- WhatsApp and email providers, when you send us a message through them
+- the company that hosts this website, which keeps the short technical logs described above
+- airlines, hotels, cruise lines, rail and transport operators, insurers and currency providers, for the booking you ask for
+- embassies, visa centres and the authorities that decide visa, passport and FRRO applications
+
+Some of these are outside India, for example a hotel or embassy abroad. We share your details abroad only for the trip or application you ask for.
+
+## How we keep your details safe
+
+We take reasonable security measures to protect your details. Only the staff who handle your enquiry or booking can see them, and we keep documents for an application only as long as that application needs them, unless the law asks us to keep a record.
+
+## Children
+
+Our forms are meant for people aged 18 or over. A parent or guardian gives us any details we need about a child who is travelling, such as a passport copy for a family visa.
+
+## How long we keep your details
+
+We keep enquiry messages and booking records for as long as we need them to serve you. Accounts and tax records, such as invoices, are kept for the period the law sets, usually up to eight years. When we no longer need your details, we delete them.
 
 ## Your choices
 
-You can ask us what details we hold about you, ask us to correct them, or ask us to delete them where the law allows. Use any of the ways on our [contact page](/contact).
+You can:
+
+- ask us what details we hold about you and who we have shared them with
+- ask us to correct, complete or update them
+- ask us to delete them, where the law allows
+- withdraw your consent at any time, as easily as you gave it
+- name another person to act for you if you die or cannot act yourself
+
+Use any of the ways on our [contact page](/contact). Withdrawing consent does not affect what we did before you withdrew it.
+
+## Questions and complaints
+
+If you have a question or a complaint about how we handle your details, contact us first, using the details on this page or our [contact page](/contact). We will reply as soon as we can, and within the time the law sets. If you are not satisfied with our answer, you can complain to the Data Protection Board of India.
 
 ## Links to other services
 
