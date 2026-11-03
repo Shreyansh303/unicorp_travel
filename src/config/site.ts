@@ -169,6 +169,12 @@ export const site = {
 
   email: { status: 'confirm', value: 'info@unicorptravel.com' } satisfies Fact<string>,
 
+  /** Corporate travel enquiries (the MD's address, given by the client on 2026-11-03). */
+  corporateEmail: {
+    status: 'verified',
+    value: 'vishal@unicorptravel.com',
+  } satisfies Fact<string>,
+
   /** Names and titles only: no phone or email is shown for a director. */
   directors: {
     status: 'verified',
