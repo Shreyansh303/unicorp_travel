@@ -1,5 +1,5 @@
 /**
- * The client logo strip ("Companies we have worked with") on Home and Corporate travel: it
+ * The client logo strip ("Companies whose travel we manage") on Home and Corporate travel: it
  * renders all 21 companies from site.ts (a logo with alt text, or a typographic logotype), always in colour,
  * the second copy is hidden from assistive technology, the row moves slowly and only by
  * transform, pauses under the pointer, has a Next button but no Pause button (user decisions,
@@ -18,7 +18,7 @@ for (const path of pages) {
     test('shows every client logo with its name as alt text', async ({ page }) => {
       await page.goto(path);
       await expect(strip(page).getByRole('heading', { level: 2 })).toHaveText(
-        'Companies we have worked with',
+        'Companies whose travel we manage',
       );
       expect(site.clients).toHaveLength(21);
       const items = strip(page).locator('ul:not([aria-hidden]) > li');
