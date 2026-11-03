@@ -36,7 +36,6 @@ export interface PlanValues {
   phone: string;
   email: string;
   consent: boolean;
-  marketing: boolean;
 }
 
 export type FieldName = keyof PlanValues;
@@ -59,7 +58,6 @@ export const initialValues: PlanValues = {
   phone: '',
   email: '',
   consent: false,
-  marketing: false,
 };
 
 export const tripTypes: Option[] = [
@@ -104,7 +102,7 @@ export const steps: StepInfo[] = [
   {
     label: 'Contact',
     title: 'How can we reach you?',
-    fields: ['name', 'phone', 'email', 'consent', 'marketing'],
+    fields: ['name', 'phone', 'email', 'consent'],
   },
 ];
 
@@ -236,10 +234,6 @@ export function answersByStep(values: PlanValues, lists: Lists): EnquiryAnswer[]
       { label: 'Name', value: values.name.trim() },
       { label: 'Phone', value: parseIndianPhone(values.phone)?.display ?? values.phone.trim() },
       { label: 'Email', value: values.email.trim() },
-      {
-        label: 'Travel ideas and offers',
-        value: values.marketing ? 'Yes, please' : 'No',
-      },
     ],
   ].map((group) => group.filter((answer) => answer.value !== ''));
 }
@@ -254,7 +248,6 @@ export function toEnquiry(values: PlanValues, lists: Lists, page: string): Enqui
     page,
     contact: { name: values.name.trim(), phone: values.phone.trim(), ...(email ? { email } : {}) },
     answers: [...answers, { label: 'Consent to reply', value: values.consent ? 'Yes' : 'No' }],
-    marketingOptIn: values.marketing,
   };
 }
 

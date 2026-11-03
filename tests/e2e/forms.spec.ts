@@ -1,7 +1,7 @@
 /**
  * F-01 enquiry forms, F-02 callback forms and F-14 notices: labels, errors and the error
  * summary, Indian phone formats, email and GSTIN checks, keyboard-only runs, the success screen
- * with its WhatsApp and email hand-off, the unticked opt-in, and no network traffic on submit.
+ * with its WhatsApp and email hand-off, no marketing opt-in (user decision 2026-11-03), and no network traffic on submit.
  */
 import { expect, test, type Page, type Request } from '@playwright/test';
 import { shown, site } from '../../src/config/site';
@@ -143,7 +143,7 @@ async function unlabelled(page: Page): Promise<string[]> {
 
 test.describe('every form page', () => {
   for (const path of callbackPages) {
-    test(`${path}: labelled fields, unticked opt-in and a purpose notice`, async ({ page }) => {
+    test(`${path}: labelled fields, no marketing opt-in and a purpose notice`, async ({ page }) => {
       await open(page, path);
       const forms = page.locator('form[data-enquiry-form]');
       expect(await forms.count()).toBeGreaterThanOrEqual(1);
@@ -152,10 +152,9 @@ test.describe('every form page', () => {
         await expect(page.locator('form[data-kind="enquiry"]')).toHaveCount(1);
       expect(await unlabelled(page)).toEqual([]);
       for (const form of await forms.all()) {
-        const optIn = form.locator('[data-optin]');
-        await expect(optIn).toHaveCount(1);
-        await expect(optIn).not.toBeChecked();
-        await expect(optIn).not.toHaveAttribute('required', /.*/);
+        // No mailing list: no marketing opt-in on any form (user decision, 2026-11-03).
+        await expect(form.locator('[name="marketing"]')).toHaveCount(0);
+        await expect(form).not.toContainText('travel ideas and offers');
         const notice = form.locator('.form-notice');
         await expect(notice).toContainText('does not store');
         await expect(notice.locator('a[href="/privacy"]')).toBeVisible();
@@ -328,7 +327,6 @@ test.describe('enquiry form', () => {
       'Purpose of the trip: Tourism',
       'Number of travellers: 3',
       'Two adults and a child, first trip to Japan.',
-      'Travel ideas and offers: No',
       'Sent from: /services/visa-passport',
     ];
     // The hand-off links must exist: a hidden fact in site.ts would fail here, not skip.
@@ -380,7 +378,7 @@ test.describe('enquiry form', () => {
     await expect(success.locator('[data-summary]')).toContainText(readable(later.iso));
   });
 
-  test('the package form carries the package name, reference and opt-in choice', async ({
+  test('the package form carries the package name and reference', async ({
     page,
   }) => {
     const pkg = packageFacts[0];
@@ -392,7 +390,6 @@ test.describe('enquiry form', () => {
     await form.locator('[name="name"]').fill('Meera Iyer');
     await form.locator('[name="phone"]').fill('8826206177');
     await form.locator('[name="adults"]').fill('2');
-    await form.locator('[data-optin]').check();
     await form.locator('button[type="submit"]').click();
     await expect(page.locator('#enquiry-success')).toBeVisible();
     const text = whatsappText(
@@ -402,7 +399,7 @@ test.describe('enquiry form', () => {
     expect(text).toContain(`Holiday: ${pkg.title}`);
     expect(text).toContain(`Package reference: ${pkg.slug}`);
     expect(text).toContain('Adults: 2');
-    expect(text).toContain('Travel ideas and offers: Yes, please');
+    expect(text).not.toContain('Travel ideas and offers');
   });
 
   test('no network request is made on submit', async ({ page }) => {

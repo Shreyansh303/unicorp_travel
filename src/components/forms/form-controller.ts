@@ -205,7 +205,6 @@ function collect(form: HTMLFormElement): EnquiryData {
     ...(packageRef ? { packageRef } : {}),
     contact: { name: value('name'), phone: value('phone'), ...(email ? { email } : {}) },
     answers,
-    marketingOptIn: form.querySelector<HTMLInputElement>('[data-optin]')?.checked ?? false,
   };
 }
 

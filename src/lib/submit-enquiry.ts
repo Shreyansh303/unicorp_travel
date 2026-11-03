@@ -35,8 +35,6 @@ export interface EnquiryData {
   contact: { name: string; phone: string; email?: string };
   /** Every other answer, in the order the form asks them. */
   answers: EnquiryAnswer[];
-  /** The separate, optional marketing opt-in (F-14). Unticked unless the visitor ticks it. */
-  marketingOptIn: boolean;
 }
 
 export type ContactField = keyof EnquiryData['contact'];
@@ -92,7 +90,7 @@ export function checkContact(
   return errors;
 }
 
-/** Builds the summary the visitor sends: greeting, contact details, answers, opt-in, page. */
+/** Builds the summary the visitor sends: greeting, contact details, answers, page. */
 export function summarise(data: EnquiryData): EnquirySummary {
   const phone = parseIndianPhone(data.contact.phone);
   const lines: EnquiryAnswer[] = [
@@ -100,7 +98,6 @@ export function summarise(data: EnquiryData): EnquirySummary {
     { label: 'Phone', value: phone?.display ?? data.contact.phone.trim() },
     { label: 'Email', value: data.contact.email?.trim() ?? '' },
     ...data.answers.map((answer) => ({ label: answer.label, value: answer.value.trim() })),
-    { label: 'Travel ideas and offers', value: data.marketingOptIn ? 'Yes, please' : 'No' },
     ...(data.packageRef ? [{ label: 'Package reference', value: data.packageRef }] : []),
     { label: 'Sent from', value: data.page },
   ].filter((line) => line.value !== '');

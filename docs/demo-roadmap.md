@@ -117,7 +117,7 @@ Services, as listed on the old site (rewrite all copy; P-04, P-07):
 | F-09 | Company facts and credentials block | A block on About and Contact (and in the footer, condensed): legal name, CIN, GSTIN, offices. Membership badges (from the client's profile, user decision 2026-10-31) render from the config and nothing renders while the list is empty. | Nothing renders for a missing fact (no blanks, no "#" links). |
 | F-10 | FAQs | Short FAQ section on each service page plus an `/faqs` page that aggregates them. | Accessible accordion (button, `aria-expanded`, keyboard); FAQ text written as demo copy and marked for client review; FAQPage structured data only after the client approves the answers. |
 | F-13 | "Plan my trip" guided request | A 4 to 5 step form: trip type, destination ideas, dates and flexibility, travellers, budget and interests, then contact details and consent. Progress indicator, back and forward, summary before sending. | Works without a mouse; state survives a page refresh (session storage); each step validates before moving on. |
-| F-14 | Privacy notice, consent, legal pages | `/privacy` and `/terms` pages; a short purpose notice beside every form; a separate, unticked marketing opt-in. | Pages exist and are linked from the footer (fixes P-49); text marked "Draft, pending legal review". No cookie banner is needed while the demo sets no non-essential cookies (see section 6). |
+| F-14 | Privacy notice, consent, legal pages | `/privacy` and `/terms` pages; a short purpose notice beside every form. No marketing opt-in: there is no mailing list (user decision, 2026-11-03). | Pages exist and are linked from the footer (fixes P-49); text marked "Draft, pending legal review". No cookie banner is needed while the demo sets no non-essential cookies (see section 6). |
 | F-15 | One consistent set of location, hours and profile details | Section 3 config used everywhere, plus TravelAgency structured data from the same file. | A test asserts the address and phone are identical on every page. |
 
 **Form submission in the demo.** There is no backend in the demo. On submit: validate, show a clear success screen, and offer two ways to actually send the request: "Send on WhatsApp" (a `wa.me` link with the form summary pre-filled) and "Email instead" (a `mailto:` link with the summary). The site itself stores nothing. Put the submit logic behind one interface (for example `submitEnquiry(data)`) so a real endpoint can replace it at launch.
@@ -215,7 +215,7 @@ Site map:
 - F-04 filters (URL-synced).
 - F-13 multi-step planner.
 - F-10 accordions.
-- F-14 purpose notices and opt-in on every form.
+- F-14 purpose notices on every form (no marketing opt-in, user decision 2026-11-03).
 - **Done when:** Playwright tests cover each feature's acceptance criteria in section 4, including keyboard-only runs.
 
 ### M6. Motion and polish

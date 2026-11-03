@@ -5,14 +5,12 @@
  * the visitor on WhatsApp or by email, with a message that asks for a call back.
  */
 import Button from '../ui/Button.astro';
-import Checkbox from '../ui/form/Checkbox.astro';
 import Input from '../ui/form/Input.astro';
 import Select from '../ui/form/Select.astro';
 import ContactFields from './ContactFields.astro';
 import ErrorSummary from './ErrorSummary.astro';
 import FormNotice from './FormNotice.astro';
 import FormSuccess from './FormSuccess.astro';
-import { formCopy } from '../../lib/form-copy';
 import { callbackTimes } from '../../lib/forms';
 import './forms.css';
 
@@ -72,14 +70,6 @@ const {
         data-required-message="Tell us what the call is about"
       />
     </div>
-    <Checkbox
-      id={`${id}-marketing`}
-      name="marketing"
-      label={formCopy.optInLabel}
-      hint={formCopy.optInHint}
-      class="form-optin"
-      data-optin
-    />
     <div class="form-actions">
       <Button type="submit" size="lg" iconStart="phone" aria-describedby={`${id}-notice`}>
         Request a call back

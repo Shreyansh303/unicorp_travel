@@ -88,9 +88,14 @@ test('keyboard only: all five steps, the summary and the hand-off', async ({ pag
   await page.keyboard.press('Tab');
   expect(await focusedId(page)).toBe('plan-consent');
   await page.keyboard.press('Space');
-  await page.keyboard.press('Tab');
-  expect(await focusedId(page)).toBe('plan-marketing');
-  await expect(page.locator('#plan-marketing')).not.toBeChecked();
+  // Side by side, the phone hint sits under its box, so the name and phone boxes line up.
+  if ((page.viewportSize()?.width ?? 0) >= 768) {
+    const nameBox = await page.locator('#plan-name').boundingBox();
+    const phoneBox = await page.locator('#plan-phone').boundingBox();
+    expect(Math.abs((nameBox?.y ?? 0) - (phoneBox?.y ?? 1))).toBeLessThan(1);
+  }
+  // No mailing list: no marketing opt-in (user decision, 2026-11-03).
+  await expect(page.locator('#plan-marketing')).toHaveCount(0);
   await expect(page.locator('#plan-notice')).toContainText('kept in this browser tab');
   await expect(page.locator('#plan-notice')).toContainText('does not send them anywhere');
   await expect(page.locator('#plan-notice')).not.toContainText('does not store');
@@ -144,7 +149,6 @@ test('keyboard only: all five steps, the summary and the hand-off', async ({ pag
     'Travellers: 2 adults, 1 child, 1 room',
     'Interests: Family',
     'Consent to reply: Yes',
-    'Travel ideas and offers: No',
     'Sent from: /plan-my-trip',
   ];
   const whatsapp = page.locator('[data-planner]').getByRole('link', { name: /Send on WhatsApp/ });
@@ -301,7 +305,6 @@ test('the summary links back to each step, and storage is cleared after sending'
   await page.locator('#plan-name').fill('Ira Das');
   await page.locator('#plan-phone').fill('9891677321');
   await page.locator('#plan-consent').check();
-  await page.locator('#plan-marketing').check();
   await next(page).click();
 
   await page.getByRole('button', { name: 'Change destinations' }).click();
@@ -309,7 +312,8 @@ test('the summary links back to each step, and storage is cleared after sending'
   await page.locator('#plan-destinations').fill('Ladakh and Spiti');
   for (let i = 0; i < 4; i += 1) await next(page).click();
   await expect(page.locator('.plan-summary')).toContainText('Ladakh and Spiti');
-  await expect(page.locator('.plan-summary')).toContainText('Yes, please');
+  await expect(page.locator('.plan-summary')).toContainText('Ira Das');
+  await expect(page.locator('.plan-summary')).not.toContainText('Travel ideas and offers');
 
   await next(page).click();
   await expect(heading(page)).toHaveText('Your trip request is ready to send');

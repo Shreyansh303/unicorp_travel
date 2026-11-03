@@ -448,13 +448,6 @@ export default function PlanMyTrip({ regions, themes, budgets, privacyHref }: Pr
                 error={errors.consent}
                 required
               />
-              <CheckboxField
-                id="plan-marketing"
-                label={formCopy.optInLabel}
-                hint={formCopy.optInHint}
-                checked={values.marketing}
-                onChange={(value) => set('marketing', value)}
-              />
             </>
           )}
 

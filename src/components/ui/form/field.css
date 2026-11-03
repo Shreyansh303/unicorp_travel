@@ -84,6 +84,19 @@
   margin-top: 0.05em;
 }
 
+/* Half-width fields sit in pairs from 768px. A hint above one control would push it below its
+   neighbour, so there the hint moves under the control (then any error line) and both controls
+   line up. aria-describedby still ties the hint to its control. */
+@media (min-width: 768px) {
+  .field-half > .field-hint {
+    order: 1;
+  }
+
+  .field-half > .field-error {
+    order: 2;
+  }
+}
+
 /* Checkbox */
 .check {
   display: grid;

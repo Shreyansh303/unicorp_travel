@@ -1,7 +1,7 @@
 ---
 /**
  * F-01 enquiry form: one component, configured by `formType` (src/lib/forms.ts). Contact
- * details, the fields for that type, a message, the optional marketing opt-in and the purpose
+ * details, the fields for that type, a message and the purpose
  * notice. The form controller checks it in the browser and hands it to submitEnquiry; the
  * success screen then offers WhatsApp or email. Without JavaScript the form is hidden and the
  * note below points to the direct routes, which every page also ends with. The inline
@@ -9,13 +9,11 @@
  * controller has loaded.
  */
 import Button from '../ui/Button.astro';
-import Checkbox from '../ui/form/Checkbox.astro';
 import ContactFields from './ContactFields.astro';
 import ErrorSummary from './ErrorSummary.astro';
 import FormField from './FormField.astro';
 import FormNotice from './FormNotice.astro';
 import FormSuccess from './FormSuccess.astro';
-import { formCopy } from '../../lib/form-copy';
 import { formFields, messageField, type FormType } from '../../lib/forms';
 import './forms.css';
 
@@ -73,14 +71,6 @@ const fields = [...formFields[formType], messageField(formType)];
       ))}
     </div>
     {packageRef && <input type="hidden" name="packageRef" value={packageRef} />}
-    <Checkbox
-      id={`${id}-marketing`}
-      name="marketing"
-      label={formCopy.optInLabel}
-      hint={formCopy.optInHint}
-      class="form-optin"
-      data-optin
-    />
     <div class="form-actions">
       <Button type="submit" size="lg" iconEnd="arrow-right" aria-describedby={`${id}-notice`}>
         {submitLabel}
