@@ -190,8 +190,8 @@ export const site = {
 
   email: { status: 'confirm', value: 'info@unicorptravel.com' } satisfies Fact<string>,
 
-  /** Corporate travel enquiries (the MD's address, given by the client on 2026-11-03). */
-  corporateEmail: {
+  /** The floating Email button beside WhatsApp and Call (the MD's address, client 2026-11-03). */
+  floatingEmail: {
     status: 'verified',
     value: 'vishal@unicorptravel.com',
   } satisfies Fact<string>,

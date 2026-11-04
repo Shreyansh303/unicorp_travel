@@ -1,13 +1,14 @@
 ---
 /**
- * Floating WhatsApp and call buttons (F-02). Below 1440px they form a bar fixed to the bottom of
+ * Floating WhatsApp, call and email buttons (F-02; email added by the client, 2026-11-04). Below 1440px they form a bar fixed to the bottom of
  * the screen, and the page reserves the bar's height at its end, so the bar never covers content
  * (at 375px or anywhere else). From 1440px the side margin beside the 75rem content column is at
- * least 120px, so two round buttons in the bottom-right corner keep a clear gap from content.
+ * least 120px, so the round buttons in the bottom-right corner keep a clear gap from content.
+ * On phones the email button is a round icon, so WhatsApp and Call keep their width.
  * Numbers and links come from site.ts helpers; nothing renders without a number.
  */
 import Icon from './Icon.astro';
-import { shown, site, telHref, whatsappHref } from '../../config/site';
+import { mailtoHref, shown, site, telHref, whatsappHref } from '../../config/site';
 
 interface Props {
   /** Page-specific WhatsApp message. */
@@ -27,6 +28,7 @@ const {
   phoneHidden = false,
 } = Astro.props;
 const mobile = shown(site.phones.mobile);
+const email = shown(site.floatingEmail);
 ---
 
 {mobile && (
@@ -64,6 +66,15 @@ const mobile = shown(site.phones.mobile);
         Call<span class="floating-number"> {mobile.display}</span>
       </span>
     </a>
+    {email && (
+      <a
+        class="floating-btn floating-mail"
+        href={mailtoHref(email, { subject: `Enquiry from the ${site.displayName} website` })}
+      >
+        <Icon name="mail" size={22} />
+        <span class="floating-text">Email</span>
+      </a>
+    )}
   </div>
 )}
 
@@ -144,6 +155,16 @@ const mobile = shown(site.phones.mobile);
 
   .floating-call:hover {
     background: var(--stone-800);
+  }
+
+  .floating-mail {
+    background: var(--white);
+    color: var(--ink);
+    box-shadow: inset 0 0 0 1.5px var(--ink);
+  }
+
+  .floating-mail:hover {
+    background: var(--sand-100);
   }
 
   .floating-btn:focus-visible {
@@ -242,6 +263,20 @@ const mobile = shown(site.phones.mobile);
       flex: 1 1 0;
     }
 
+    /* A round 48px icon button; its name is still read out. */
+    .floating-fixed .floating-mail {
+      flex: 0 0 3rem;
+    }
+
+    .floating-fixed .floating-mail .floating-text {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+
     .floating-fixed .floating-btn :global(.icon) {
       width: 20px;
       height: 20px;
@@ -271,6 +306,10 @@ const mobile = shown(site.phones.mobile);
       grid-template-columns: repeat(2, minmax(0, 15rem));
       justify-content: center;
     }
+
+    .floating:has(.floating-mail) {
+      grid-template-columns: repeat(3, minmax(0, 13rem));
+    }
   }
 
   @media (min-width: 1440px) {
@@ -283,7 +322,8 @@ const mobile = shown(site.phones.mobile);
       --floating-bar-height: 0px;
     }
 
-    .floating-fixed {
+    .floating-fixed,
+    .floating-fixed:has(.floating-mail) {
       inset: auto var(--space-6) var(--space-6) auto;
       grid-template-columns: auto;
       padding: 0;
@@ -297,6 +337,14 @@ const mobile = shown(site.phones.mobile);
       padding: 0;
       /* A white ring keeps the round buttons visible over ink and red sections. */
       box-shadow:
+        0 0 0 2px var(--white),
+        var(--shadow-lg);
+    }
+
+    /* The white email button gets an ink ring inside the white one, so it shows on paper too. */
+    .floating-fixed .floating-mail {
+      box-shadow:
+        inset 0 0 0 1.5px var(--ink),
         0 0 0 2px var(--white),
         var(--shadow-lg);
     }

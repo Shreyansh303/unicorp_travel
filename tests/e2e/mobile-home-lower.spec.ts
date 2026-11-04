@@ -3,7 +3,6 @@
  * shared contact band. From 768px all three are as they were: no photo request, same links.
  */
 import { expect, test, type Page } from '@playwright/test';
-import { site } from '../../src/config/site';
 
 const why = (page: Page) => page.locator('.why-section');
 const corp = (page: Page) => page.locator('.corp-section');
@@ -119,10 +118,7 @@ test.describe('phone corporate band at 390x844', () => {
   }) => {
     await page.goto('/');
     const phone = await hrefs(page, '.corp-actions a');
-    expect(phone).toHaveLength(3);
-    expect(phone).toContain(
-      `mailto:${site.corporateEmail.value}?subject=Corporate%20travel%20enquiry`,
-    );
+    expect(phone).toHaveLength(2);
     const requests: string[] = [];
     const desktop = await page.context().newPage();
     desktop.on('request', (request) => requests.push(request.url()));
