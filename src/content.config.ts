@@ -231,6 +231,23 @@ const services = defineCollection({
         .min(3)
         .max(4),
       whoItsFor: z.array(z.string().min(5)).min(1).max(5).optional(),
+      /** Company-owned vehicles shown on the service page (car and coach rentals). */
+      vehicles: z
+        .array(
+          z.object({
+            name: z.string().min(3).max(40),
+            edition: z.string().min(3).max(60),
+            passengers: z.number().int().positive(),
+            bestFor: z.string().min(10).max(80),
+            features: z.array(z.string().min(5).max(80)).min(3).max(6),
+            photos: z
+              .array(z.object({ src: image(), alt: z.string().min(10) }))
+              .min(1)
+              .max(3),
+          }),
+        )
+        .max(4)
+        .optional(),
       formType: z.enum(formTypes),
       image: z.object({ src: image(), alt: z.string().min(10) }),
       seo,

@@ -143,16 +143,16 @@ export const site = {
   } as Fact<GrievanceOfficer>,
 
   offices: {
+    // As printed in the client's brochure (user confirmed it is correct, 2026-11-05).
     operating: {
-      status: 'confirm',
+      status: 'verified',
       value: {
         lines: [
-          '16th Floor, Office No. 7, A Silver Wing',
-          'Wave One, Plot No. L-2A, Sector 18',
+          'Office No. 07A Silver, 16th Floor, Wave One',
+          'Plot No. 2A, Sector 18',
           'Noida, Uttar Pradesh 201301',
         ],
-        streetAddress:
-          '16th Floor, Office No. 7, A Silver Wing, Wave One, Plot No. L-2A, Sector 18',
+        streetAddress: 'Office No. 07A Silver, 16th Floor, Wave One, Plot No. 2A, Sector 18',
         locality: 'Noida',
         region: 'Uttar Pradesh',
         postalCode: '201301',

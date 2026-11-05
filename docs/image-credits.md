@@ -115,3 +115,16 @@ Files in `src/assets/badges/`, copied unaltered on 2026-10-31 from the client's 
 | wtaaa.jpg | World Travel Agents Associations Alliance (WTAAA) | Client company profile |
 | ministry-of-tourism.jpg | Ministry of Tourism, Government of India | Client company profile |
 | msme.png | Ministry of Micro, Small and Medium Enterprises (MSME), Government of India | Client company profile |
+
+## Company vehicles
+
+Files in `src/assets/photos/fleet/`, cropped on 2026-11-05 from the client's vehicle brochures ("UNICORP HYCROSS PREMIUM.pdf" and "UNICORP PREMIUM URBANIA.pdf", supplied 2026-11-05). Photos of the client's own vehicles, used with the client's permission. Low resolution (each crop is 430 to 690px wide); replace with the original photos when the client sends them.
+
+| File | Shows |
+|---|---|
+| hycross-exterior.jpg | Toyota Hycross, side view |
+| hycross-rear-seats.jpg | Hycross captain seats |
+| hycross-ambient.jpg | Hycross door panel lighting |
+| urbania-exterior.jpg | Force Urbania, side view |
+| urbania-cabin.jpg | Urbania cabin and aisle |
+| urbania-seats.jpg | Urbania seats |

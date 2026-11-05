@@ -3,7 +3,7 @@ title: 'Car and coach rentals'
 category: 'related'
 order: 10
 summary: 'Cars and coaches with drivers for airport transfers, outstation trips and group travel.'
-intro: 'We arrange cars and coaches with drivers for transfers, day trips and longer journeys. Tell us the route and the number of passengers, and we will suggest a vehicle that fits and confirm the terms with you. We hire cars anywhere in India, and abroad through Hertz and Avis.'
+intro: 'We arrange cars and coaches with drivers for transfers, day trips and longer journeys. Tell us the route and the number of passengers, and we will suggest a vehicle that fits and confirm the terms with you. We hire cars anywhere in India, and abroad through Hertz and Avis. We also run two company-owned premium vehicles with drivers across North India: a Toyota Hycross and a Force Urbania.'
 whatWeHandle:
   - 'Airport and railway station transfers'
   - 'Outstation trips by car, for individuals and families'
@@ -24,6 +24,43 @@ whoItsFor:
   - 'Families and groups who need a vehicle for a trip'
   - 'Companies moving guests or staff'
   - 'Wedding and event organisers with guests to transport'
+# Company-owned (user, 2026-11-05). Details and photos from the client's vehicle brochures.
+vehicles:
+  - name: 'Toyota Hycross'
+    edition: 'Premium Executive Edition'
+    passengers: 4
+    bestFor: 'Executives and VIP guests'
+    features:
+      - 'Leather captain seats with powered leg rests'
+      - 'Ventilated, reclining seats with their own armrests'
+      - 'Centre console with seat controls'
+      - 'Ambient lighting and a quiet cabin'
+      - 'Boot space, with rear seats that fold'
+      - 'Chauffeur-driven'
+    photos:
+      - src: '../../assets/photos/fleet/hycross-exterior.jpg'
+        alt: 'The white Toyota Hycross, seen from the side'
+      - src: '../../assets/photos/fleet/hycross-rear-seats.jpg'
+        alt: 'Two cream leather captain seats with armrests between them'
+      - src: '../../assets/photos/fleet/hycross-ambient.jpg'
+        alt: 'Ambient lighting on the door panel beside a captain seat'
+  - name: 'Force Urbania'
+    edition: 'Premium Traveller'
+    passengers: 12
+    bestFor: 'Corporate groups, family trips and VIP guests'
+    features:
+      - 'High-back reclining seats with room for your legs'
+      - 'Armrests with cup holders'
+      - 'Wide centre aisle'
+      - 'Quiet cabin'
+      - 'Chauffeur-driven'
+    photos:
+      - src: '../../assets/photos/fleet/urbania-exterior.jpg'
+        alt: 'The white Force Urbania van, seen from the side'
+      - src: '../../assets/photos/fleet/urbania-cabin.jpg'
+        alt: 'Rows of cream reclining seats either side of a carpeted aisle'
+      - src: '../../assets/photos/fleet/urbania-seats.jpg'
+        alt: 'Cream high-back seats with cushions, looking down the cabin'
 formType: 'transport'
 image:
   src: '../../assets/photos/service-car-coach.jpg'

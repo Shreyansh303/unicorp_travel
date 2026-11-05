@@ -9,6 +9,7 @@ import TickList from '../../components/ui/TickList.astro';
 import HowItWorks from '../../components/ui/HowItWorks.astro';
 import Accordion from '../../components/ui/Accordion.astro';
 import ContactDesks from '../../components/ui/ContactDesks.astro';
+import VehicleCards from '../../components/ui/VehicleCards.astro';
 import EnquirySection from '../../components/forms/EnquirySection.astro';
 import {
   getFaqsForService,
@@ -111,6 +112,18 @@ const otherServices = all.filter((item) => item.id !== service.id);
       </div>
     )}
   </Section>
+
+  {data.vehicles && data.vehicles.length > 0 && (
+    <Section tone="paper" mood="corporate" aria-labelledby="vehicles-title" class="sec-compact">
+      <div data-reveal class="section-head">
+        <h2 id="vehicles-title" class="t-h2">
+          Our premium vehicles
+        </h2>
+        <p>Company-owned and chauffeur-driven, for trips across North India.</p>
+      </div>
+      <VehicleCards vehicles={data.vehicles} />
+    </Section>
+  )}
 
   <Section tone="white" mood="corporate" aria-labelledby="how-title" class="sec-compact">
     <div data-reveal class="section-head">

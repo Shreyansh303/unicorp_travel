@@ -84,7 +84,7 @@ Put every fact below in **one** file (for example `src/config/site.ts`) and read
 | Legal name | Unicorp Holidays & Business Travel Private Limited | Company registry (Zauba Corp, MCA data) | **Confirm** how it should appear. |
 | CIN | U74140DL2014PTC272416 | Company registry | **Confirm** before showing it. |
 | GSTIN | Not available | IndiaMART shows one; not copied | **Client to supply.** |
-| Office (operating) | 16th Floor Office No.7, A Silver Wing, Wave one Noida, Plot No L-2A, Sector 18, Noida, Uttar Pradesh 201301 | Google Maps listing (located in Wave Mall); client confirmed Noida on 2026-10-18 | **Confirm** the exact formatting. |
+| Office (operating) | Office No. 07A Silver, 16th Floor, Wave One, Plot No. 2A, Sector 18, Noida, Uttar Pradesh 201301 (from the client's brochure, user-confirmed 2026-11-05) | Google Maps listing (located in Wave Mall); client confirmed Noida on 2026-10-18 | **Confirm** the exact formatting. |
 | Registered office | Bhikaji Cama Place, New Delhi | Company registry | **Confirm** whether to show it. |
 | Phone (mobile, also WhatsApp) | +91 98916 77321 | Old site and Google listing | Consistent in both sources. |
 | Phone (office landline) | +91 120 5109212 | Client, 2026-10-26 | Verified. |

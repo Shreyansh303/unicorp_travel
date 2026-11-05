@@ -7,6 +7,8 @@
 interface Props {
   as?: 'div' | 'ul' | 'ol';
   class?: string;
+  /** Inline custom properties, e.g. a column count. */
+  style?: string;
 }
 
 const { as: Tag = 'div', class: className, ...rest } = Astro.props;
