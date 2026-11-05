@@ -160,9 +160,16 @@ export const site = {
         countryCode: 'IN',
       },
     } satisfies Fact<PostalAddress>,
+    /** The registered office is the address in the client's brochure (user, 2026-11-05). */
     registered: {
-      status: 'confirm',
-      value: { lines: ['Bhikaji Cama Place, New Delhi'] },
+      status: 'verified',
+      value: {
+        lines: [
+          'Office No. 07A Silver, 16th Floor, Wave One',
+          'Plot No. 2A, Sector 18',
+          'Noida, Uttar Pradesh 201301',
+        ],
+      },
     } satisfies Fact<{ lines: string[] }>,
   },
 
