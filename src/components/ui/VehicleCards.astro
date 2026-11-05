@@ -111,9 +111,10 @@ const cards = await Promise.all(
     list-style: none;
   }
 
+  /* Photos on top, details filling the rest, so the cards in a row match in height. */
   .vehicle {
     display: grid;
-    align-content: start;
+    grid-template-rows: auto 1fr;
     gap: var(--space-5);
     padding: var(--space-4);
     border-radius: var(--radius-lg);
@@ -149,9 +150,9 @@ const cards = await Promise.all(
   }
 
   .vehicle-body {
-    display: grid;
-    align-content: start;
-    justify-items: start;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
     gap: var(--space-3);
     padding-inline: var(--space-1);
   }
@@ -189,8 +190,13 @@ const cards = await Promise.all(
     font-weight: var(--weight-bold);
   }
 
+  /* The button sits at the foot of the card, level with the one beside it. */
   .vehicle-body :global(.vehicle-ask) {
-    margin-top: var(--space-2);
+    margin-top: auto;
+  }
+
+  .vehicle-body :global(.ticks) {
+    margin-bottom: var(--space-2);
   }
 
   @media (max-width: 767.98px) {
