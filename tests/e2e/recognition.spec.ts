@@ -1,12 +1,12 @@
 /**
- * The "Recognised by our partners" timeline on /about: all four certificates with their issuers,
+ * The "Recognised by our partners" timeline on /about: all five recognitions with their issuers,
  * the IATA details and the years, in an ordered list, with nothing overflowing on a phone.
  */
 import { expect, test } from '@playwright/test';
 import { site } from '../../src/config/site';
 
 test.describe('about recognition timeline', () => {
-  test('shows the four certificates, years and the IATA code', async ({ page }) => {
+  test('shows the five recognitions, years and the IATA code', async ({ page }) => {
     await page.goto('/about');
     const section = page.locator('section[aria-labelledby="recognition-title"]');
     await expect(section.getByRole('heading', { level: 2 })).toHaveText(
@@ -14,7 +14,7 @@ test.describe('about recognition timeline', () => {
     );
     const items = section.locator('ol.recs > li');
     await expect(items).toHaveCount(site.recognitions.length);
-    expect(site.recognitions).toHaveLength(4);
+    expect(site.recognitions).toHaveLength(5);
     for (const item of site.recognitions) {
       await expect(section.getByRole('heading', { level: 3, name: item.issuer })).toBeVisible();
       await expect(section.getByText(item.type, { exact: true }).first()).toBeVisible();
@@ -23,6 +23,7 @@ test.describe('about recognition timeline', () => {
     }
     await expect(section).toContainText('14022982');
     await expect(section).toContainText('GoLite');
+    await expect(section).toContainText('Platinum Pillar Award');
   });
 
   test('sits between "How we work" and "Company details"', async ({ page }) => {

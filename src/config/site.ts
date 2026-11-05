@@ -408,6 +408,14 @@ export const site = {
       ],
     },
     {
+      // Trophy photo sent by the user, 2026-11-05.
+      year: '2026',
+      issuer: 'Global Reservations Network (GRN)',
+      type: 'Platinum Pillar Award',
+      text: 'Presented to Unicorp Holidays and Business Travel Pvt Ltd.',
+      details: [],
+    },
+    {
       year: '',
       issuer: 'IndiGo (6E)',
       type: 'Certificate of Recognition · “We are 6E together”',

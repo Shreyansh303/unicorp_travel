@@ -12,7 +12,7 @@ const items = site.recognitions;
 ---
 
 {items.length > 0 && (
-  <Stagger as="ol" class="recs">
+  <Stagger as="ol" class="recs" style={`--rec-count: ${items.length}`}>
     {items.map((item) => (
       <li class="rec">
         <span class="rec-dot" aria-hidden="true" />
@@ -51,7 +51,7 @@ const items = site.recognitions;
     list-style: none;
   }
 
-  /* The line: vertical on the left below 1024px, across the top from 1024px. */
+  /* The line: vertical on the left below 1280px, across the top from 1280px (one column per entry). */
   .recs::before {
     content: '';
     position: absolute;
@@ -137,9 +137,9 @@ const items = site.recognitions;
     color: var(--text);
   }
 
-  @media (min-width: 1024px) {
+  @media (min-width: 1280px) {
     .recs {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(var(--rec-count), minmax(0, 1fr));
       gap: var(--space-8);
       padding-left: 0;
       padding-top: var(--space-10);
