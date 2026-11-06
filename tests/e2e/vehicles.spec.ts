@@ -1,12 +1,12 @@
 /**
  * The company's own vehicles on /services/car-coach (client brochures, 2026-11-05): the Toyota
- * Hycross (5 passengers) and the Force Urbania (12), each with photos, features and a WhatsApp
+ * Hycross (4 passengers) and the Force Urbania (12), each with photos, features and a WhatsApp
  * button that names the vehicle, with nothing overflowing on a phone.
  */
 import { expect, test } from '@playwright/test';
 
 const vehicles = [
-  { name: 'Toyota Hycross', seats: '5 passengers', button: 'Ask about the Hycross' },
+  { name: 'Toyota Hycross', seats: '4 passengers', button: 'Ask about the Hycross' },
   { name: 'Force Urbania', seats: '12 passengers', button: 'Ask about the Urbania' },
 ];
 

@@ -28,7 +28,7 @@ whoItsFor:
 vehicles:
   - name: 'Toyota Hycross'
     edition: 'Premium Executive Edition'
-    passengers: 5
+    passengers: 4
     bestFor: 'Executives and VIP guests'
     features:
       - 'Leather captain seats with powered leg rests'
