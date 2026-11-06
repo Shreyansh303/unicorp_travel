@@ -37,6 +37,7 @@ vehicles:
       - 'Centre console with seat controls'
       - 'Ambient lighting and a quiet cabin'
       - 'Boot space, with rear seats that fold'
+      - 'A snack box on board for every guest'
       - 'Chauffeur-driven'
     photos:
       - src: '../../assets/photos/fleet/hycross-exterior.jpg'
@@ -54,6 +55,7 @@ vehicles:
       - 'Armrests with cup holders'
       - 'Wide centre aisle'
       - 'Quiet cabin'
+      - 'A snack box on board for every guest'
       - 'Chauffeur-driven'
     photos:
       - src: '../../assets/photos/fleet/urbania-exterior.jpg'
