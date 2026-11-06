@@ -124,8 +124,8 @@ export const site = {
     status: 'verified',
     value: 'Unicorp Holidays & Business Travel',
   } satisfies Fact<string>,
-  cin: { status: 'confirm', value: 'U74140DL2014PTC272416' } satisfies Fact<string>,
-  gstin: { status: 'clientToSupply', value: null } satisfies Fact<string>,
+  cin: { status: 'verified', value: 'U74140DL2014PTC272416' } satisfies Fact<string>,
+  gstin: { status: 'verified', value: '09AABCU7517L1ZW' } satisfies Fact<string>,
   /** Do not show until confirmed: registry says incorporated 2014, old site said 2024. */
   foundingYear: { status: 'doNotShow', value: null } satisfies Fact<number>,
   /**
