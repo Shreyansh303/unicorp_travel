@@ -58,8 +58,15 @@ function dropButton(page: Page, group: Group) {
   return page.locator(`[data-drop="${group}"] [data-drop-btn]`);
 }
 
-/** Opens the group's dropdown when it is closed, then toggles the option. */
+/**
+ * Opens the group's dropdown when it is closed (on a phone, the filter sheet first), then toggles
+ * the option.
+ */
 async function toggle(page: Page, group: Group, value: string) {
+  const opener = page.locator('[data-sheet-open]');
+  if ((await opener.isVisible()) && (await opener.getAttribute('aria-expanded')) !== 'true') {
+    await opener.click();
+  }
   const button = dropButton(page, group);
   if ((await button.getAttribute('aria-expanded')) !== 'true') await button.click();
   await chip(page, group, value).click();
@@ -206,7 +213,7 @@ test.describe('holiday filters', () => {
 
   test('the clear filters control resets every group', async ({ page }) => {
     await open(page, '/holidays?type=domestic&theme=family&budget=under-40k');
-    const clear = page.locator('[data-holiday-filters] [data-filters-clear]');
+    const clear = page.locator('[data-holiday-filters] .hf-bar [data-filters-clear]');
     await expect(clear).toBeVisible();
     await clear.click();
     await expect(clear).toBeHidden();
@@ -252,22 +259,62 @@ test.describe('holiday filters', () => {
 test.describe('on a phone', () => {
   test.use({ viewport: { width: 375, height: 812 } });
 
-  test('the dropdowns fit the screen and still filter', async ({ page }) => {
+  test('one Filters button opens a sheet of groups that still filters', async ({ page }) => {
     await open(page);
+    await expect(dropButton(page, 'type')).toBeHidden();
+    const opener = page.locator('[data-sheet-open]');
+    await expect(opener).toBeVisible();
+    await opener.click();
+    const sheet = page.locator('[data-sheet]');
+    await expect(sheet).toHaveAttribute('role', 'dialog');
+    await expect(sheet).toHaveAttribute('aria-modal', 'true');
+    await expect(dropButton(page, 'type')).toBeFocused();
     await toggle(page, 'type', 'domestic');
-    expect(await visibleSlugs(page)).toEqual(expected({ type: ['domestic'] }));
-    await expect(dropButton(page, 'type')).toContainText('(1)');
-    const panel = await page.locator('#hf-drop-type').boundingBox();
-    expect((panel?.x ?? 0) + (panel?.width ?? 0)).toBeLessThanOrEqual(375);
-    const overflow = await page.evaluate(
-      () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    await toggle(page, 'region', 'south-india');
+    const want = expected({ type: ['domestic'], region: ['south-india'] });
+    await expect(page.locator('[data-sheet-go]')).toHaveText(
+      `Show ${want.length} ${want.length === 1 ? 'holiday' : 'holidays'}`,
     );
-    expect(overflow).toBeLessThanOrEqual(0);
+    await expect(page.locator('[data-drop="type"] [data-drop-value]')).toHaveText('Domestic');
+    const box = await sheet.boundingBox();
+    expect((box?.x ?? 1) + (box?.width ?? 0)).toBeLessThanOrEqual(375);
+    await page.locator('[data-sheet-go]').click();
+    await expect(sheet).not.toHaveAttribute('role', 'dialog');
+    await expect(opener).toBeFocused();
+    await expect(opener).toContainText('(2)');
+    expect(await visibleSlugs(page)).toEqual(want);
+  });
+
+  test('Escape, the close button and the backdrop close the sheet', async ({ page }) => {
+    await open(page);
+    const opener = page.locator('[data-sheet-open]');
+    const sheet = page.locator('[data-sheet]');
+    await opener.click();
+    await page.keyboard.press('Escape');
+    await expect(opener).toHaveAttribute('aria-expanded', 'false');
+    await expect(opener).toBeFocused();
+    await opener.click();
+    await page.getByRole('button', { name: 'Close filters' }).click();
+    await expect(sheet).not.toHaveAttribute('role', 'dialog');
+    await opener.click();
+    await page.locator('[data-sheet-backdrop]').click({ position: { x: 20, y: 20 } });
+    await expect(opener).toHaveAttribute('aria-expanded', 'false');
+  });
+
+  test('Tab stays inside the open sheet', async ({ page }) => {
+    await open(page);
+    await page.locator('[data-sheet-open]').click();
+    for (let i = 0; i < 12; i++) {
+      await page.keyboard.press('Tab');
+      const inside = await page.evaluate(() => !!document.activeElement?.closest('[data-sheet]'));
+      expect(inside).toBe(true);
+    }
   });
 
   test('a shared link sets its filters', async ({ page }) => {
     await open(page, '/holidays?theme=family');
     await expect(chip(page, 'theme', 'family')).toHaveAttribute('aria-pressed', 'true');
+    await expect(page.locator('[data-sheet-open]')).toContainText('(1)');
   });
 });
 

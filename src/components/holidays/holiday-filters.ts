@@ -23,7 +23,15 @@ interface Parts {
   drops: HTMLElement[];
   total: number;
   more: HTMLButtonElement | null;
+  /** Phones: the Filters button, the bottom sheet, its backdrop and its "Show N" button. */
+  opener: HTMLButtonElement | null;
+  sheet: HTMLElement | null;
+  backdrop: HTMLElement | null;
+  go: HTMLButtonElement | null;
+  activeCount: HTMLElement | null;
 }
+
+const phone = window.matchMedia('(max-width: 767.98px)');
 
 /** Phones show this many matching holidays first; "Show more" reveals the rest. */
 const firstBatch = 6;
@@ -44,6 +52,11 @@ function find(): Parts | null {
     drops: Array.from(root.querySelectorAll<HTMLElement>('[data-drop]')),
     total: Number(root.dataset['total'] ?? 0),
     more: document.querySelector<HTMLButtonElement>('[data-show-more]'),
+    opener: root.querySelector('[data-sheet-open]'),
+    sheet: root.querySelector('[data-sheet]'),
+    backdrop: root.querySelector('[data-sheet-backdrop]'),
+    go: root.querySelector('[data-sheet-go]'),
+    activeCount: root.querySelector('[data-active-count]'),
   };
 }
 
@@ -123,14 +136,26 @@ function render(parts: Parts, state: State): void {
     if (!button.closest('[data-filter-empty]')) button.hidden = active === 0;
   }
   if (parts.empty) parts.empty.hidden = shown > 0;
-  // Each dropdown button says how many of its options are on.
+  // Each dropdown button says how many of its options are on (desktop) or which (phone rows).
   for (const drop of parts.drops) {
-    const on = state[drop.dataset['drop'] as Group]?.length ?? 0;
+    const group = drop.dataset['drop'] as Group;
+    const picked = chipsOf(parts.root, group).filter((chip) => state[group].includes(chip.value));
     const button = drop.querySelector<HTMLElement>('[data-drop-btn]');
     const count = drop.querySelector<HTMLElement>('[data-drop-count]');
-    button?.classList.toggle('is-active', on > 0);
-    if (count) count.textContent = on > 0 ? `(${on})` : '';
+    const value = drop.querySelector<HTMLElement>('[data-drop-value]');
+    button?.classList.toggle('is-active', picked.length > 0);
+    if (count) count.textContent = picked.length > 0 ? `(${picked.length})` : '';
+    if (value) {
+      value.textContent =
+        picked.length === 0
+          ? 'Any'
+          : picked.length === 1
+            ? (picked[0]?.textContent ?? '').trim()
+            : `${picked.length} picked`;
+    }
   }
+  if (parts.activeCount) parts.activeCount.textContent = active > 0 ? `(${active})` : '';
+  if (parts.go) parts.go.textContent = `Show ${shown} ${shown === 1 ? 'holiday' : 'holidays'}`;
 }
 
 function update(parts: Parts, state: State): void {
@@ -161,6 +186,50 @@ function openOne(parts: Parts): HTMLElement | null {
   );
 }
 
+function sheetOpen(parts: Parts): boolean {
+  return parts.sheet?.classList.contains('is-open') ?? false;
+}
+
+/** Phones: opens or closes the filter sheet, as a modal dialog while it is open. */
+function setSheet(parts: Parts, open: boolean): void {
+  const { sheet, backdrop, opener } = parts;
+  if (!sheet) return;
+  if (sheetOpen(parts) === open) return;
+  sheet.classList.toggle('is-open', open);
+  opener?.setAttribute('aria-expanded', String(open));
+  if (backdrop) backdrop.hidden = !open;
+  if (open) {
+    sheet.setAttribute('role', 'dialog');
+    sheet.setAttribute('aria-modal', 'true');
+    document.documentElement.style.overflow = 'hidden';
+    sheet.querySelector<HTMLElement>('[data-drop-btn]')?.focus();
+  } else {
+    sheet.removeAttribute('role');
+    sheet.removeAttribute('aria-modal');
+    document.documentElement.style.overflow = '';
+    openDrop(parts, null);
+    if (phone.matches) opener?.focus();
+  }
+}
+
+/** Keeps Tab inside the open sheet. */
+function trapFocus(parts: Parts, event: KeyboardEvent): void {
+  if (event.key !== 'Tab' || !parts.sheet || !sheetOpen(parts)) return;
+  const items = Array.from(
+    parts.sheet.querySelectorAll<HTMLElement>('button:not([hidden])'),
+  ).filter((item) => item.getClientRects().length > 0);
+  const first = items[0];
+  const last = items[items.length - 1];
+  if (!first || !last) return;
+  if (event.shiftKey && document.activeElement === first) {
+    event.preventDefault();
+    last.focus();
+  } else if (!event.shiftKey && document.activeElement === last) {
+    event.preventDefault();
+    first.focus();
+  }
+}
+
 function bind(): void {
   const parts = find();
   current = parts;
@@ -177,11 +246,25 @@ function bind(): void {
     });
   }
   parts.root.addEventListener('keydown', (event) => {
+    trapFocus(parts, event);
     if (event.key !== 'Escape') return;
     const open = openOne(parts);
-    if (!open) return;
-    openDrop(parts, null);
-    open.querySelector<HTMLElement>('[data-drop-btn]')?.focus();
+    if (open) {
+      openDrop(parts, null);
+      open.querySelector<HTMLElement>('[data-drop-btn]')?.focus();
+    } else if (sheetOpen(parts)) {
+      setSheet(parts, false);
+    }
+  });
+
+  // Phones: the Filters button opens the sheet; the close button, "Show N" and the backdrop close it.
+  parts.opener?.addEventListener('click', () => setSheet(parts, true));
+  parts.backdrop?.addEventListener('click', () => setSheet(parts, false));
+  for (const button of parts.root.querySelectorAll<HTMLElement>('[data-sheet-close]')) {
+    button.addEventListener('click', () => setSheet(parts, false));
+  }
+  phone.addEventListener('change', () => {
+    if (!phone.matches) setSheet(parts, false);
   });
   document.addEventListener('click', (event) => {
     const open = openOne(parts);
@@ -203,9 +286,15 @@ function bind(): void {
   for (const button of parts.clear) {
     button.addEventListener('click', () => {
       update(parts, emptyState());
-      // The clear button hides itself, so move focus to the first dropdown button.
+      // The clear button hides itself, so move focus to the first dropdown button (or, on a
+      // phone with the sheet closed, the Filters button).
       openDrop(parts, null);
-      parts.root.querySelector<HTMLElement>('[data-drop-btn]')?.focus();
+      const first = parts.root.querySelector<HTMLElement>('[data-drop-btn]');
+      if (first && first.getClientRects().length > 0 && (!phone.matches || sheetOpen(parts))) {
+        first.focus();
+      } else {
+        parts.opener?.focus();
+      }
     });
   }
 }

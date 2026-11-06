@@ -106,16 +106,17 @@ for (const route of ['/holidays', '/services']) {
 test.describe('phone /holidays list', () => {
   test.use({ viewport: { width: 390, height: 844 } });
 
-  test('one dropdown per filter group, and a used group is filled', async ({ page }) => {
+  test('a Filters button opens a sheet with one row per group', async ({ page }) => {
     await page.goto('/holidays');
-    const buttons = page.locator('[data-drop-btn]');
-    await expect(buttons).toHaveCount(5);
-    const first = buttons.first();
-    await first.click();
+    await page.locator('[data-holiday-filters][data-bound]').waitFor({ state: 'attached' });
+    await page.locator('[data-sheet-open]').click();
+    const rows = page.locator('[data-sheet] [data-drop-btn]');
+    await expect(rows).toHaveCount(5);
+    await rows.first().click();
     const chip = page.locator('[data-drop="type"] .chip').first();
     await chip.click();
     await expect(chip).toHaveAttribute('aria-pressed', 'true');
-    await expect(first).toHaveClass(/is-active/);
+    await expect(rows.first()).toHaveClass(/is-active/);
     expect(page.url()).toContain('type=');
   });
 
@@ -133,6 +134,7 @@ test.describe('phone /holidays list', () => {
     await page.goto('/holidays');
     const total = await page.locator('[data-package]').count();
     await page.getByRole('button', { name: 'Show more' }).click();
+    await page.locator('[data-sheet-open]').click();
     const options = page.locator('[data-drop-panel] .chip');
     const count = await options.count();
     for (let i = 0; i < count; i++) {
@@ -151,6 +153,7 @@ test.describe('phone /holidays list', () => {
       else await expect(more).toBeHidden();
       await options.nth(i).click();
     }
+    await page.locator('[data-sheet-go]').click();
     // Clearing the filters brings the first six and the button back.
     await expect(cards(page)).toHaveCount(6);
     await expect(page.getByRole('button', { name: 'Show more' })).toBeVisible();
