@@ -75,7 +75,7 @@ const groups = index.flatMap((kind) => kind.groups);
                     aria-hidden="true"
                     focusable="false"
                   >
-                    <path d="m6 9 6 6 6-6"></path>
+                    <path d="M5 12h14M13 6l6 6-6 6"></path>
                   </svg>
                 </a>
               </li>
@@ -185,8 +185,7 @@ const groups = index.flatMap((kind) => kind.groups);
   @media (min-width: 768px) {
     .topics {
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: var(--space-8);
-      max-width: 60rem;
+      gap: var(--space-8) var(--space-12);
     }
   }
 
