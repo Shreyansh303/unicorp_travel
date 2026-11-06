@@ -428,8 +428,8 @@ export const site = {
       ],
     },
     {
-      // Trophy photo sent by the user, 2026-11-05.
-      year: '2026',
+      // Trophy photo sent by the user, 2026-11-05. No year shown (user, 2026-11-06).
+      year: '',
       issuer: 'Global Reservations Network (GRN)',
       type: 'Platinum Pillar Award',
       text: 'Presented to Unicorp Holidays and Business Travel Pvt Ltd.',
