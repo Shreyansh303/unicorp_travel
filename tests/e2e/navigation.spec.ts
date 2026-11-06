@@ -31,6 +31,7 @@ test('filters and the planner work after client-side navigation', async ({ page 
   // The filters bind, narrow the list and write the query string.
   await page.locator('[data-holiday-filters][data-bound]').waitFor({ state: 'attached' });
   const all = await page.locator('[data-package]:visible').count();
+  await page.locator('[data-drop="region"] [data-drop-btn]').click();
   const chip = page.locator('[data-chips="region"] [data-chip]').first();
   await chip.click();
   await expect(chip).toHaveAttribute('aria-pressed', 'true');

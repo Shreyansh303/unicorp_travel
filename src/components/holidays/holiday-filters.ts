@@ -20,9 +20,7 @@ interface Parts {
   count: HTMLElement | null;
   clear: HTMLButtonElement[];
   empty: HTMLElement | null;
-  toggle: HTMLButtonElement | null;
-  panel: HTMLElement | null;
-  activeCount: HTMLElement | null;
+  drops: HTMLElement[];
   total: number;
   more: HTMLButtonElement | null;
 }
@@ -43,9 +41,7 @@ function find(): Parts | null {
     count: root.querySelector('[data-filter-count]'),
     clear: Array.from(document.querySelectorAll<HTMLButtonElement>('[data-filters-clear]')),
     empty: document.querySelector('[data-filter-empty]'),
-    toggle: root.querySelector('[data-filters-toggle]'),
-    panel: root.querySelector('[data-filters-panel]'),
-    activeCount: root.querySelector('[data-active-count]'),
+    drops: Array.from(root.querySelectorAll<HTMLElement>('[data-drop]')),
     total: Number(root.dataset['total'] ?? 0),
     more: document.querySelector<HTMLButtonElement>('[data-show-more]'),
   };
@@ -127,8 +123,13 @@ function render(parts: Parts, state: State): void {
     if (!button.closest('[data-filter-empty]')) button.hidden = active === 0;
   }
   if (parts.empty) parts.empty.hidden = shown > 0;
-  if (parts.activeCount) {
-    parts.activeCount.textContent = active > 0 ? `(${active} on)` : '';
+  // Each dropdown button says how many of its options are on.
+  for (const drop of parts.drops) {
+    const on = state[drop.dataset['drop'] as Group]?.length ?? 0;
+    const button = drop.querySelector<HTMLElement>('[data-drop-btn]');
+    const count = drop.querySelector<HTMLElement>('[data-drop-count]');
+    button?.classList.toggle('is-active', on > 0);
+    if (count) count.textContent = on > 0 ? `(${on})` : '';
   }
 }
 
@@ -142,9 +143,22 @@ function update(parts: Parts, state: State): void {
   render(parts, state);
 }
 
-function setOpen(parts: Parts, open: boolean): void {
-  parts.toggle?.setAttribute('aria-expanded', String(open));
-  parts.panel?.classList.toggle('is-open', open);
+/** Opens one dropdown (or none, with `null`) and closes the rest. */
+function openDrop(parts: Parts, which: HTMLElement | null): void {
+  for (const drop of parts.drops) {
+    const open = drop === which;
+    drop.querySelector('[data-drop-btn]')?.setAttribute('aria-expanded', String(open));
+    const panel = drop.querySelector<HTMLElement>('[data-drop-panel]');
+    if (panel) panel.hidden = !open;
+  }
+}
+
+function openOne(parts: Parts): HTMLElement | null {
+  return (
+    parts.drops.find(
+      (drop) => drop.querySelector('[data-drop-btn]')?.getAttribute('aria-expanded') === 'true',
+    ) ?? null
+  );
 }
 
 function bind(): void {
@@ -153,13 +167,31 @@ function bind(): void {
   if (!parts || parts.root.dataset['bound']) return;
   parts.root.dataset['bound'] = 'true';
 
-  const initial = fromUrl(parts.root);
-  render(parts, initial);
-  // On phones the panel starts closed, unless a shared link already set filters.
-  setOpen(
-    parts,
-    groups.some((group) => initial[group].length > 0),
-  );
+  render(parts, fromUrl(parts.root));
+
+  // Dropdowns: a button opens its list and closes the others; Escape, a click outside or moving
+  // focus out of the filters closes it. Picking options keeps the list open.
+  for (const drop of parts.drops) {
+    drop.querySelector('[data-drop-btn]')?.addEventListener('click', () => {
+      openDrop(parts, openOne(parts) === drop ? null : drop);
+    });
+  }
+  parts.root.addEventListener('keydown', (event) => {
+    if (event.key !== 'Escape') return;
+    const open = openOne(parts);
+    if (!open) return;
+    openDrop(parts, null);
+    open.querySelector<HTMLElement>('[data-drop-btn]')?.focus();
+  });
+  document.addEventListener('click', (event) => {
+    const open = openOne(parts);
+    if (open && !open.contains(event.target as Node)) openDrop(parts, null);
+  });
+  parts.root.addEventListener('focusout', (event) => {
+    const next = (event as FocusEvent).relatedTarget as Node | null;
+    const open = openOne(parts);
+    if (open && next && !open.contains(next)) openDrop(parts, null);
+  });
 
   parts.more?.addEventListener('click', () => {
     expanded = true;
@@ -168,16 +200,12 @@ function bind(): void {
     firstFolded?.querySelector<HTMLElement>('a')?.focus();
   });
   parts.root.addEventListener('chips:change', () => update(parts, fromChips(parts.root)));
-  parts.toggle?.addEventListener('click', () =>
-    setOpen(parts, parts.toggle?.getAttribute('aria-expanded') !== 'true'),
-  );
   for (const button of parts.clear) {
     button.addEventListener('click', () => {
       update(parts, emptyState());
-      // The clear button hides itself, so move focus to the first filter (or the toggle).
-      const first = chipsOf(parts.root, 'type')[0];
-      if (first && first.getClientRects().length > 0) first.focus();
-      else parts.toggle?.focus();
+      // The clear button hides itself, so move focus to the first dropdown button.
+      openDrop(parts, null);
+      parts.root.querySelector<HTMLElement>('[data-drop-btn]')?.focus();
     });
   }
 }

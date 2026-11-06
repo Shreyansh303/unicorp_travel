@@ -106,19 +106,16 @@ for (const route of ['/holidays', '/services']) {
 test.describe('phone /holidays list', () => {
   test.use({ viewport: { width: 390, height: 844 } });
 
-  test('filter chips are one scrolling row and the active chip is filled', async ({ page }) => {
+  test('one dropdown per filter group, and a used group is filled', async ({ page }) => {
     await page.goto('/holidays');
-    const panel = page.locator('[data-filters-panel]');
-    await expect(panel).toBeVisible();
-    const scrolls = await panel.evaluate((el) => el.scrollWidth > el.clientWidth);
-    expect(scrolls).toBe(true);
-    const tops = await panel
-      .locator('.chip')
-      .evaluateAll((els) => els.map((el) => Math.round(el.getBoundingClientRect().top)));
-    expect(new Set(tops).size).toBe(1);
-    const chip = panel.locator('.chip').first();
+    const buttons = page.locator('[data-drop-btn]');
+    await expect(buttons).toHaveCount(5);
+    const first = buttons.first();
+    await first.click();
+    const chip = page.locator('[data-drop="type"] .chip').first();
     await chip.click();
     await expect(chip).toHaveAttribute('aria-pressed', 'true');
+    await expect(first).toHaveClass(/is-active/);
     expect(page.url()).toContain('type=');
   });
 
@@ -136,9 +133,15 @@ test.describe('phone /holidays list', () => {
     await page.goto('/holidays');
     const total = await page.locator('[data-package]').count();
     await page.getByRole('button', { name: 'Show more' }).click();
-    const options = page.locator('[data-filters-panel] .chip');
+    const options = page.locator('[data-drop-panel] .chip');
     const count = await options.count();
     for (let i = 0; i < count; i++) {
+      // Open the option's dropdown if it is closed.
+      const group = await options
+        .nth(i)
+        .evaluate((el) => el.closest<HTMLElement>('[data-drop]')?.dataset['drop'] ?? '');
+      const button = page.locator(`[data-drop="${group}"] [data-drop-btn]`);
+      if ((await button.getAttribute('aria-expanded')) !== 'true') await button.click();
       await options.nth(i).click();
       const matching = await page.locator('[data-package]:not([hidden])').count();
       await expect(page.getByRole('status')).toContainText(`Showing ${matching} of ${total}`);
@@ -192,6 +195,6 @@ test.describe('1366 listing page is unchanged in shape', () => {
     const total = await page.locator('[data-package]').count();
     await expect(cards(page)).toHaveCount(total);
     await expect(page.locator('[data-show-more]')).toBeHidden();
-    await expect(page.locator('[data-filters-toggle]')).toBeHidden();
+    await expect(page.locator('[data-drop-btn]')).toHaveCount(5);
   });
 });

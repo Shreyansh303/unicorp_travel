@@ -54,6 +54,17 @@ function chip(page: Page, group: Group, value: string) {
   return page.locator(`[data-chips="${group}"] [data-chip][value="${value}"]`);
 }
 
+function dropButton(page: Page, group: Group) {
+  return page.locator(`[data-drop="${group}"] [data-drop-btn]`);
+}
+
+/** Opens the group's dropdown when it is closed, then toggles the option. */
+async function toggle(page: Page, group: Group, value: string) {
+  const button = dropButton(page, group);
+  if ((await button.getAttribute('aria-expanded')) !== 'true') await button.click();
+  await chip(page, group, value).click();
+}
+
 const total = packageFacts.length;
 const count = (page: Page) => page.locator('[data-filter-count]');
 
@@ -79,14 +90,14 @@ test.describe('holiday filters', () => {
         .evaluateAll((chips) => chips.map((item) => (item as HTMLButtonElement).value));
       expect(values.length, group).toBeGreaterThan(0);
       for (const value of values) {
-        await chip(page, group, value).click();
+        await toggle(page, group, value);
         await expect(chip(page, group, value)).toHaveAttribute('aria-pressed', 'true');
         const want = expected({ [group]: [value] });
         expect(want.length, `${group}=${value} has packages`).toBeGreaterThan(0);
         expect(await visibleSlugs(page), `${group}=${value}`).toEqual(want);
         expect(new URL(page.url()).searchParams.getAll(group)).toEqual([value]);
         await expect(count(page)).toHaveText(`Showing ${want.length} of ${total} holidays`);
-        await chip(page, group, value).click();
+        await toggle(page, group, value);
         await expect(count(page)).toHaveText(`Showing ${total} of ${total} holidays`);
       }
     }
@@ -95,9 +106,9 @@ test.describe('holiday filters', () => {
 
   test('choices combine: any within a group, all across groups', async ({ page }) => {
     await open(page);
-    await chip(page, 'type', 'domestic').click();
-    await chip(page, 'theme', 'beach').click();
-    await chip(page, 'theme', 'wildlife').click();
+    await toggle(page, 'type', 'domestic');
+    await toggle(page, 'theme', 'beach');
+    await toggle(page, 'theme', 'wildlife');
     const want = expected({ type: ['domestic'], theme: ['beach', 'wildlife'] });
     expect(await visibleSlugs(page)).toEqual(want);
     const params = new URL(page.url()).searchParams;
@@ -113,7 +124,7 @@ test.describe('holiday filters', () => {
     expect(await visibleSlugs(page)).toEqual(want);
     await expect(chip(page, 'type', 'international')).toHaveAttribute('aria-pressed', 'true');
     await expect(chip(page, 'duration', 'week')).toHaveAttribute('aria-pressed', 'true');
-    await chip(page, 'budget', '40k-75k').click();
+    await toggle(page, 'budget', '40k-75k');
     await page.reload();
     await page.locator('[data-holiday-filters][data-bound]').waitFor({ state: 'attached' });
     expect(await visibleSlugs(page)).toEqual(
@@ -129,8 +140,8 @@ test.describe('holiday filters', () => {
     await page.evaluate(() => {
       (window as unknown as { marker: boolean }).marker = true;
     });
-    await chip(page, 'type', 'domestic').click();
-    await chip(page, 'region', 'himalaya').click();
+    await toggle(page, 'type', 'domestic');
+    await toggle(page, 'region', 'himalaya');
     expect(await visibleSlugs(page)).toEqual(
       expected({ type: ['domestic'], region: ['himalaya'] }),
     );
@@ -159,7 +170,7 @@ test.describe('holiday filters', () => {
     await page.locator('main a[href="/holidays"]').first().click();
     await page.waitForURL('**/holidays');
     await page.locator('[data-holiday-filters][data-bound]').waitFor({ state: 'attached' });
-    await chip(page, 'type', 'domestic').click();
+    await toggle(page, 'type', 'domestic');
     await page.goBack();
     await page.goBack();
     await page.waitForURL((url) => url.pathname === '/');
@@ -171,14 +182,16 @@ test.describe('holiday filters', () => {
   }) => {
     await open(page);
     // An international trip in South India cannot exist.
-    await chip(page, 'type', 'international').click();
-    await chip(page, 'region', 'south-india').click();
+    await toggle(page, 'type', 'international');
+    await toggle(page, 'region', 'south-india');
     expect(expected({ type: ['international'], region: ['south-india'] })).toEqual([]);
     const empty = page.locator('[data-filter-empty]');
     await expect(empty).toBeVisible();
     await expect(count(page)).toHaveText(`Showing 0 of ${total} holidays`);
     expect(await visibleSlugs(page)).toEqual([]);
 
+    // Close the open list first, as a visitor would, so it does not cover the button.
+    await page.keyboard.press('Escape');
     await empty.getByRole('button', { name: 'Clear filters' }).click();
     await expect(empty).toBeHidden();
     await expect(count(page)).toHaveText(`Showing ${total} of ${total} holidays`);
@@ -201,35 +214,58 @@ test.describe('holiday filters', () => {
     await expect(count(page)).toHaveText(`Showing ${total} of ${total} holidays`);
   });
 
-  test('chips work with the keyboard', async ({ page }) => {
+  test('dropdowns work with the keyboard', async ({ page }) => {
     await open(page);
+    const button = dropButton(page, 'type');
+    await button.focus();
+    await page.keyboard.press('Enter');
+    await expect(button).toHaveAttribute('aria-expanded', 'true');
+    await page.keyboard.press('Tab');
     const domestic = chip(page, 'type', 'domestic');
-    await domestic.focus();
+    await expect(domestic).toBeFocused();
     await page.keyboard.press('Space');
     await expect(domestic).toHaveAttribute('aria-pressed', 'true');
     await page.keyboard.press('Tab');
     await expect(chip(page, 'type', 'international')).toBeFocused();
     await page.keyboard.press('Enter');
     expect(await visibleSlugs(page)).toEqual(expected({ type: ['domestic', 'international'] }));
-    await page.keyboard.press('Shift+Tab');
-    await page.keyboard.press('Enter');
-    expect(await visibleSlugs(page)).toEqual(expected({ type: ['international'] }));
+    await expect(button).toContainText('(2)');
+    // Escape closes the list and puts focus back on its button.
+    await page.keyboard.press('Escape');
+    await expect(button).toHaveAttribute('aria-expanded', 'false');
+    await expect(button).toBeFocused();
+    await expect(chip(page, 'type', 'domestic')).toBeHidden();
+  });
+
+  test('one dropdown is open at a time, and a click outside closes it', async ({ page }) => {
+    await open(page);
+    await dropButton(page, 'region').click();
+    await expect(page.locator('#hf-drop-region')).toBeVisible();
+    await dropButton(page, 'theme').click();
+    await expect(page.locator('#hf-drop-region')).toBeHidden();
+    await expect(page.locator('#hf-drop-theme')).toBeVisible();
+    await page.locator('h1').click();
+    await expect(page.locator('#hf-drop-theme')).toBeHidden();
   });
 });
 
 test.describe('on a phone', () => {
   test.use({ viewport: { width: 375, height: 812 } });
 
-  test('the chips are one scrolling row (no toggle) and still filter', async ({ page }) => {
+  test('the dropdowns fit the screen and still filter', async ({ page }) => {
     await open(page);
-    await expect(page.locator('[data-filters-toggle]')).toBeHidden();
-    await expect(chip(page, 'type', 'domestic')).toBeVisible();
-    await chip(page, 'type', 'domestic').click();
+    await toggle(page, 'type', 'domestic');
     expect(await visibleSlugs(page)).toEqual(expected({ type: ['domestic'] }));
-    await expect(page.locator('[data-active-count]')).toContainText('(1 on)');
+    await expect(dropButton(page, 'type')).toContainText('(1)');
+    const panel = await page.locator('#hf-drop-type').boundingBox();
+    expect((panel?.x ?? 0) + (panel?.width ?? 0)).toBeLessThanOrEqual(375);
+    const overflow = await page.evaluate(
+      () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    );
+    expect(overflow).toBeLessThanOrEqual(0);
   });
 
-  test('a shared link opens the panel with its filters', async ({ page }) => {
+  test('a shared link sets its filters', async ({ page }) => {
     await open(page, '/holidays?theme=family');
     await expect(chip(page, 'theme', 'family')).toHaveAttribute('aria-pressed', 'true');
   });
