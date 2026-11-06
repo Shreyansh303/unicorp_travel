@@ -163,17 +163,24 @@ test.describe('phone /about', () => {
 test.describe('phone /faqs', () => {
   test.use({ viewport: phone });
 
-  test('topic chips are one scrolling row that jumps to the group', async ({ page }) => {
+  test('the topic index is three stacked lists that jump to the group', async ({ page }) => {
     await page.goto('/faqs');
-    const row = page.locator('.jump ul');
-    expect(await row.evaluate((el) => el.scrollWidth > el.clientWidth)).toBe(true);
-    const tops = await page
-      .locator('.jump a')
-      .evaluateAll((els) => els.map((el) => Math.round(el.getBoundingClientRect().top)));
-    expect(new Set(tops).size).toBe(1);
-    const chips = page.locator('.jump a');
-    expect(await chips.count()).toBe(12);
-    const last = chips.last();
+    const kinds = page.locator('.topics .topic-kind');
+    await expect(kinds).toHaveCount(3);
+    await expect(page.locator('.topics h2')).toHaveText([
+      'Holidays',
+      'Business travel',
+      'Papers and money',
+    ]);
+    const links = page.locator('.topics a');
+    expect(await links.count()).toBe(12);
+    // No question counts beside the topics.
+    for (const text of await links.allTextContents()) expect(text).not.toMatch(/\d/);
+    const lefts = await kinds.evaluateAll((els) =>
+      els.map((el) => Math.round(el.getBoundingClientRect().left)),
+    );
+    expect(new Set(lefts).size).toBe(1);
+    const last = links.last();
     const target = (await last.getAttribute('href')) ?? '';
     await last.scrollIntoViewIfNeeded();
     await last.click();
@@ -234,11 +241,21 @@ test.describe('phone /faqs', () => {
 test.describe('1366 info pages keep their shape', () => {
   test.use({ viewport: { width: 1366, height: 900 } });
 
-  test('chips wrap and accordions allow several open', async ({ page }) => {
+  test('topics sit in three columns and accordions allow several open', async ({ page }) => {
     await page.goto('/faqs');
     await expect(page.locator('[data-readmore-toggle]').first()).toBeHidden();
-    const flex = await page.locator('.jump ul').evaluate((el) => getComputedStyle(el).flexWrap);
-    expect(flex).toBe('wrap');
+    const tops = await page
+      .locator('.topics .topic-kind')
+      .evaluateAll((els) => els.map((el) => Math.round(el.getBoundingClientRect().top)));
+    expect(new Set(tops).size).toBe(1);
+    // The sections follow the index order.
+    const order = await page
+      .locator('section.faq-group')
+      .evaluateAll((els) => els.map((el) => el.id));
+    const links = await page
+      .locator('.topics a')
+      .evaluateAll((els) => els.map((el) => (el.getAttribute('href') ?? '').slice(1)));
+    expect(order).toEqual(links);
     const buttons = page.locator('[data-accordion-button]');
     await buttons.nth(0).click();
     await buttons.nth(1).click();

@@ -8,7 +8,27 @@ import { getFaqsGroupedByService } from '../lib/content';
 import { greeting } from '../lib/enquiry';
 import { midSentence, routes, serviceHref, serviceLabel } from '../lib/routes';
 
-const groups = await getFaqsGroupedByService();
+const allGroups = await getFaqsGroupedByService();
+
+// The topic index sorts the services into three kinds of help (user-approved mockup B,
+// 2026-11-06). The page's sections follow the same order. A service not listed here goes last.
+const kinds = [
+  { title: 'Holidays', ids: ['leisure', 'cruises', 'rail', 'car-coach'] },
+  { title: 'Business travel', ids: ['corporate', 'mice', 'air-ticketing', 'hotels'] },
+  { title: 'Papers and money', ids: ['visa-passport', 'frro', 'forex', 'insurance'] },
+];
+const listed = kinds.flatMap((kind) => kind.ids);
+const index = kinds
+  .map((kind) => ({
+    title: kind.title,
+    groups: kind.ids
+      .map((id) => allGroups.find((group) => group.service.id === id))
+      .filter((group) => group !== undefined),
+  }))
+  .filter((kind) => kind.groups.length > 0);
+const others = allGroups.filter((group) => !listed.includes(group.service.id));
+if (others.length > 0) index.push({ title: 'Other services', groups: others });
+const groups = index.flatMap((kind) => kind.groups);
 ---
 
 <PageLayout
@@ -27,19 +47,42 @@ const groups = await getFaqsGroupedByService();
   <PageHero
     title="Questions and answers"
     eyebrow="FAQs"
-    lede="Short answers to the questions we hear most often, grouped by service. Each group links to the full service page."
+    lede="Short answers to the questions we hear most often, grouped by service. Pick a topic to jump to its questions."
     crumbs={[{ label: 'Home', href: routes.home }, { label: 'FAQs' }]}
     mood="corporate"
     compact
   >
-    <nav class="jump" aria-label="FAQ topics">
-      <ul>
-        {groups.map((group) => (
-          <li>
-            <a href={`#faq-${group.service.id}`}>{serviceLabel(group.service)}</a>
-          </li>
-        ))}
-      </ul>
+    <nav class="topics" aria-label="FAQ topics">
+      {index.map((kind, i) => (
+        <div class="topic-kind">
+          <h2 class="topic-title" id={`topic-kind-${i}`}>
+            {kind.title}
+          </h2>
+          <ul aria-labelledby={`topic-kind-${i}`}>
+            {kind.groups.map((group) => (
+              <li>
+                <a href={`#faq-${group.service.id}`}>
+                  <span>{serviceLabel(group.service)}</span>
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                    focusable="false"
+                  >
+                    <path d="m6 9 6 6 6-6"></path>
+                  </svg>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
     </nav>
   </PageHero>
 
@@ -78,66 +121,81 @@ const groups = await getFaqsGroupedByService();
 </PageLayout>
 
 <style>
-  .jump ul {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2);
+  /* Topic index: three short lists (one per kind of help), stacked on phones. */
+  .topics {
+    display: grid;
+    gap: var(--space-6);
+    width: 100%;
+    margin-top: var(--space-2);
   }
 
-  .jump a {
-    display: inline-flex;
-    align-items: center;
-    min-height: var(--tap);
-    padding: var(--space-2) var(--space-4);
-    border-radius: var(--radius-pill);
-    color: var(--text);
+  .topic-title {
+    margin-bottom: var(--space-1);
+    font-family: inherit;
     font-size: var(--text-sm);
+    font-weight: var(--weight-black);
+    letter-spacing: 0;
+    color: var(--accent-text);
+  }
+
+  .topics ul {
+    display: grid;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .topics li {
+    border-bottom: 1px solid var(--sand-200);
+  }
+
+  .topics a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    min-height: var(--tap);
+    padding-block: var(--space-2);
+    color: var(--text);
     font-weight: var(--weight-bold);
     text-decoration: none;
-    box-shadow: inset 0 0 0 1.5px var(--text);
   }
 
-  /* Phones: one scrolling row of chips that bleeds to the screen edges. */
+  .topics a svg {
+    flex: none;
+    color: var(--text-muted);
+  }
+
+  .topics a:hover span {
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 4px;
+  }
+
+  .topics a:hover svg {
+    color: var(--accent-text);
+  }
+
+  .topics a:focus-visible {
+    outline: 3px solid var(--focus);
+    outline-offset: 2px;
+  }
+
+  @media (min-width: 768px) {
+    .topics {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--space-8);
+      max-width: 60rem;
+    }
+  }
+
+  /* Phones: the title sits on its own line, then the group link. */
   @media (max-width: 767.98px) {
-    .jump {
-      width: 100vw;
-      max-width: 100vw;
-      margin-inline: calc(-1 * var(--gutter));
-      margin-top: var(--space-3);
-    }
-
-    .jump ul {
-      flex-wrap: nowrap;
-      gap: var(--space-2);
-      padding-inline: var(--gutter);
-      overflow-x: auto;
-      scroll-snap-type: x proximity;
-      scroll-padding-inline: var(--gutter);
-      scrollbar-width: none;
-    }
-
-    .jump ul::-webkit-scrollbar {
-      display: none;
-    }
-
-    .jump li {
-      flex: none;
-      scroll-snap-align: start;
-    }
-
-    .jump a {
-      border: 1.5px solid var(--stone-300);
-      box-shadow: none;
-      font-size: 0.9375rem;
-      font-weight: var(--weight-bold);
-      white-space: nowrap;
-    }
-
     .faq-group .group-grid {
       gap: var(--space-3);
     }
 
-    /* Title on its own line, then the group link. */
     .group-grid .group-head {
       display: flex;
       flex-wrap: wrap;
@@ -152,11 +210,6 @@ const groups = await getFaqsGroupedByService();
     :global(section.faq-group) {
       scroll-margin-top: var(--space-16);
     }
-  }
-
-  .jump a:hover {
-    background: var(--text);
-    color: var(--bg);
   }
 
   .group-grid {
