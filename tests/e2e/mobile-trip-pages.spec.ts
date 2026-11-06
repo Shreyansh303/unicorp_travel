@@ -83,7 +83,8 @@ for (const route of routes) {
       const bar = page.locator('.floating-fixed');
       const enquire = bar.getByRole('button', { name: 'Enquire' });
       await expect(enquire).toBeVisible();
-      await expect(bar.getByRole('link', { name: /Call/ })).toBeVisible();
+      await expect(bar.getByRole('button', { name: 'More contact options' })).toBeVisible();
+      await expect(bar.getByRole('link', { name: /Call/ })).toBeHidden();
       await expect(bar.getByRole('link', { name: /WhatsApp/ })).toBeHidden();
       await enquire.click();
       await expect(page.locator('#enquiry')).toBeVisible();
@@ -126,7 +127,9 @@ for (const route of routes) {
       await expect(page.locator('.pk-phone').first()).toBeHidden();
       await expect(page.locator('.itin')).toBeVisible();
       await expect(page.locator('#enquiry')).toBeVisible();
-      await expect(page.locator('.floating-fixed').getByRole('link', { name: /WhatsApp/ })).toBeVisible();
+      await expect(
+        page.locator('.floating-fixed').getByRole('link', { name: /WhatsApp/ }),
+      ).toBeVisible();
     });
 
     test('has no axe violations with the form closed and open', async ({ page }) => {

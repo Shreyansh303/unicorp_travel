@@ -14,16 +14,16 @@ const scrollToBand = (page: Page) =>
 test.describe('phone bottom bar at 390x844', () => {
   test.use({ viewport: { width: 390, height: 844 } });
 
-  test('is a slim paper bar with 48px pill buttons', async ({ page }) => {
+  test('is a slim paper bar with a primary pill and a round More button', async ({ page }) => {
     await page.goto('/');
     await expect(bar(page)).toBeVisible();
     const look = await page.evaluate(() => {
       const el = document.querySelector('.floating-fixed') as HTMLElement;
-      const wa = el.querySelector('.floating-wa') as HTMLElement;
-      const call = el.querySelector('.floating-call') as HTMLElement;
+      const wa = el.querySelector('.floating-primary') as HTMLElement;
+      const more = el.querySelector('[data-more]') as HTMLElement;
       const bs = getComputedStyle(el);
       const w = wa.getBoundingClientRect();
-      const c = call.getBoundingClientRect();
+      const m = more.getBoundingClientRect();
       return {
         bg: bs.backgroundColor,
         borderTop: `${bs.borderTopWidth} ${bs.borderTopColor}`,
@@ -32,17 +32,15 @@ test.describe('phone bottom bar at 390x844', () => {
         bottom: Math.round(el.getBoundingClientRect().bottom),
         position: bs.position,
         waH: w.height,
-        callH: c.height,
-        gap: Math.round(c.left - w.right),
-        ratio: Math.round((w.width / c.width) * 10) / 10,
+        moreW: m.width,
+        moreH: m.height,
+        gap: Math.round(m.left - w.right),
         waBg: getComputedStyle(wa).backgroundColor,
-        callBg: getComputedStyle(call).backgroundColor,
+        moreBg: getComputedStyle(more).backgroundColor,
+        moreRadius: getComputedStyle(more).borderTopLeftRadius,
         waRadius: getComputedStyle(wa).borderTopLeftRadius,
         font: `${getComputedStyle(wa).fontSize} ${getComputedStyle(wa).fontWeight}`,
-        numberWidth: (call.querySelector('.floating-number') as HTMLElement).getBoundingClientRect()
-          .width,
         waText: (wa.querySelector('.floating-text') as HTMLElement).innerText.trim(),
-        callLabel: call.textContent?.replace(/\s+/g, ' ').trim(),
       };
     });
     expect(look.position).toBe('fixed');
@@ -52,17 +50,15 @@ test.describe('phone bottom bar at 390x844', () => {
     expect(look.height).toBe(69);
     expect(look.bottom).toBe(844);
     expect(look.waH).toBe(48);
-    expect(look.callH).toBe(48);
+    expect(look.moreW).toBe(48);
+    expect(look.moreH).toBe(48);
     expect(look.gap).toBe(10);
-    expect(look.ratio).toBeCloseTo(1.4, 1);
     expect(look.waBg).toBe('rgb(237, 0, 0)');
-    expect(look.callBg).toBe('rgb(20, 17, 16)');
+    expect(look.moreBg).toBe('rgb(20, 17, 16)');
     expect(parseFloat(look.waRadius)).toBeGreaterThanOrEqual(24);
+    expect(parseFloat(look.moreRadius)).toBeGreaterThanOrEqual(24);
     expect(look.font).toBe('16px 700');
     expect(look.waText).toBe('WhatsApp');
-    expect(look.numberWidth).toBeLessThanOrEqual(1);
-    // The number stays in the accessible name.
-    expect(look.callLabel).toMatch(/^Call \+91/);
     await expect(bar(page).locator('a[href^="tel:+91"]')).toHaveCount(1);
     await expect(bar(page).locator('a[href^="https://wa.me/"]')).toHaveCount(1);
   });

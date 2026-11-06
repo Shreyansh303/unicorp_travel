@@ -80,6 +80,7 @@ const officer = id === 'privacy' ? shown(site.grievanceOfficer) : null;
     <div class="legal-grid">
       <article class="prose">
         <Content />
+        <slot />
       </article>
       <aside class="legal-aside" aria-labelledby="legal-company">
         <h2 id="legal-company" class="t-h4">

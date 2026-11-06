@@ -1,6 +1,6 @@
 /**
  * The floating Email button beside WhatsApp and Call (client request, 2026-11-04): a mailto link
- * to site.floatingEmail on phones (a round 48px icon), in the 768 to 1439px bar and as a round
+ * to site.floatingEmail on phones (a labelled pill in the More stack), in the 768 to 1439px bar and as a round
  * corner button from 1440px. The Home corporate band has no Email button.
  */
 import { expect, test } from '@playwright/test';
@@ -14,12 +14,13 @@ for (const width of [375, 1024, 1600]) {
     await page.setViewportSize({ width, height: 800 });
     await page.goto('/services');
     const link = page.locator(mail);
+    // On phones the Email pill is in the More stack.
+    if (width < 768) await page.getByRole('button', { name: 'More contact options' }).click();
     await expect(link).toBeVisible();
     expect(await link.getAttribute('href')).toMatch(new RegExp(`^mailto:${email}[?]subject=`));
     await expect(link).toHaveAccessibleName('Email');
     const box = await link.boundingBox();
     expect(box?.height ?? 0).toBeGreaterThanOrEqual(44);
-    if (width < 768) expect(Math.round(box?.width ?? 0)).toBe(48);
     const overflow = await page.evaluate(
       () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
     );

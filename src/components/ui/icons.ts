@@ -17,7 +17,9 @@ export type IconName =
   | 'alert-circle'
   | 'alert-triangle'
   | 'info'
-  | 'loader';
+  | 'loader'
+  | 'message-square'
+  | 'ellipsis';
 
 /** Inner SVG markup per icon, on a 24px grid with a 2px stroke. */
 export const iconPaths: Record<IconName, string> = {
@@ -45,4 +47,7 @@ export const iconPaths: Record<IconName, string> = {
     '<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/>',
   info: '<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>',
   loader: '<path d="M21 12a9 9 0 1 1-6.22-8.56"/>',
+  'message-square': '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
+  ellipsis:
+    '<circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/>',
 };

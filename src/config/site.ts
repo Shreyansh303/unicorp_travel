@@ -203,6 +203,19 @@ export const site = {
     value: 'vishal@unicorptravel.com',
   } satisfies Fact<string>,
 
+  /**
+   * The website chat assistant: the public page of the Zapier chatbot (see docs/chatbot-setup.md).
+   * The chat buttons are plain links to it. While `url` is null nothing chat-related renders.
+   */
+  chatbot: {
+    provider: 'zapier',
+    // CHATBOT_TEST_URL=none switches the chat off in a throwaway build, to test the empty case.
+    url:
+      typeof process !== 'undefined' && process.env['CHATBOT_TEST_URL'] === 'none'
+        ? null
+        : 'https://unicorp-travel-assistant.zapier.app',
+  } as { provider: 'zapier'; url: string | null },
+
   /** Names and titles only: no phone or email is shown for a director. */
   directors: {
     status: 'verified',

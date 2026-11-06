@@ -1,11 +1,16 @@
 ---
 /**
- * Floating WhatsApp, call and email buttons (F-02; email added by the client, 2026-11-04). Below 1440px they form a bar fixed to the bottom of
- * the screen, and the page reserves the bar's height at its end, so the bar never covers content
- * (at 375px or anywhere else). From 1440px the side margin beside the 75rem content column is at
- * least 120px, so the round buttons in the bottom-right corner keep a clear gap from content.
- * On phones the email button is a round icon, so WhatsApp and Call keep their width.
- * Numbers and links come from site.ts helpers; nothing renders without a number.
+ * Floating WhatsApp, call, email and chat buttons (F-02; email added by the client, 2026-11-04).
+ * Below 768px they form a launcher: one wide primary pill (WhatsApp, or Enquire on trip pages)
+ * and a round "More contact options" button that opens a stack of labelled pills (Chat with us,
+ * Email, Call, and WhatsApp when Enquire is the primary) above a light scrim. Without JavaScript
+ * the more button is hidden and the stack is shown in the bar instead (see BaseLayout), so Call
+ * stays reachable. From 768px the buttons form a centred bar; below 1440px the page reserves the
+ * bar's height at its end, so the bar never covers content. From 1440px the side margin beside
+ * the 75rem content column is at least 120px, so round buttons in the bottom-right corner keep a
+ * clear gap from content. Numbers and links come from site.ts helpers; nothing renders without
+ * a number. The chat button is a plain link to the Zapier chat page and renders only when
+ * site.chatbot.url is set; nothing from Zapier loads on our pages.
  */
 import Icon from './Icon.astro';
 import { mailtoHref, shown, site, telHref, whatsappHref } from '../../config/site';
@@ -15,7 +20,7 @@ interface Props {
   message?: string;
   /** Styleguide only: render in place instead of fixed to the screen. */
   inline?: boolean;
-  /** Phones: the left button reads "Enquire" and opens the page's folded form (trip pages). */
+  /** Phones: the primary button reads "Enquire" and opens the page's folded form (trip pages). */
   enquire?: boolean;
   /** Phones: no bottom bar (the contact page is the contact surface). From 768 px nothing changes. */
   phoneHidden?: boolean;
@@ -29,53 +34,102 @@ const {
 } = Astro.props;
 const mobile = shown(site.phones.mobile);
 const email = shown(site.floatingEmail);
+const chatUrl = site.chatbot.url;
+const menuId = inline ? 'floating-more-menu-inline' : 'floating-more-menu';
+const waHref = whatsappHref(message);
 ---
 
 {mobile && (
-  <div
-    class:list={[
-      'floating',
-      inline ? 'floating-inline' : 'floating-fixed',
-      phoneHidden && 'floating-phone-hidden',
-    ]}
-  >
-    {enquire && (
+  <>
+    <div
+      class:list={[
+        'floating',
+        inline ? 'floating-inline' : 'floating-fixed',
+        phoneHidden && 'floating-phone-hidden',
+      ]}
+    >
+      {enquire ? (
+        <button
+          type="button"
+          class="floating-btn floating-wa floating-enquire floating-primary"
+          aria-controls="enquiry-fold"
+          data-open-enquiry
+          data-needs-js
+        >
+          <span class="floating-text">Enquire</span>
+        </button>
+      ) : (
+        <a
+          class="floating-btn floating-wa floating-wa-link floating-primary"
+          href={waHref}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Icon name="whatsapp" size={22} />
+          <span class="floating-text">WhatsApp</span>
+          <span class="sr-only"> (opens in a new tab)</span>
+        </a>
+      )}
       <button
         type="button"
-        class="floating-btn floating-wa floating-enquire"
-        aria-controls="enquiry-fold"
-        data-open-enquiry
+        class="floating-more"
+        aria-label="More contact options"
+        aria-expanded="false"
+        aria-controls={menuId}
+        data-more
         data-needs-js
       >
-        <span class="floating-text">Enquire</span>
+        <span class="more-dots">
+          <Icon name="ellipsis" size={22} />
+        </span>
+        <span class="more-close">
+          <Icon name="close" size={22} />
+        </span>
       </button>
-    )}
-    <a
-      class:list={['floating-btn', 'floating-wa', 'floating-wa-link']}
-      href={whatsappHref(message)}
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      <Icon name="whatsapp" size={22} />
-      <span class="floating-text">WhatsApp</span>
-      <span class="sr-only"> (opens in a new tab)</span>
-    </a>
-    <a class="floating-btn floating-call" href={telHref(mobile)}>
-      <Icon name="phone" size={22} />
-      <span class="floating-text">
-        Call<span class="floating-number"> {mobile.display}</span>
-      </span>
-    </a>
-    {email && (
-      <a
-        class="floating-btn floating-mail"
-        href={mailtoHref(email, { subject: `Enquiry from the ${site.displayName} website` })}
-      >
-        <Icon name="mail" size={22} />
-        <span class="floating-text">Email</span>
-      </a>
-    )}
-  </div>
+      <div class="floating-menu" id={menuId} data-more-menu>
+        {chatUrl && (
+          <a
+            class="floating-btn floating-chat"
+            href={chatUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Icon name="message-square" size={22} />
+            <span class="floating-text">Chat with us</span>
+            <span class="sr-only"> (opens in a new tab)</span>
+          </a>
+        )}
+        {enquire && (
+          <a
+            class="floating-btn floating-wa floating-wa-link"
+            href={waHref}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Icon name="whatsapp" size={22} />
+            <span class="floating-text">WhatsApp</span>
+            <span class="sr-only"> (opens in a new tab)</span>
+          </a>
+        )}
+        <a class="floating-btn floating-call" href={telHref(mobile)}>
+          <Icon name="phone" size={22} />
+          <span class="floating-text">
+            Call<span class="floating-number"> {mobile.display}</span>
+          </span>
+        </a>
+        {email && (
+          <a
+            class="floating-btn floating-mail"
+            href={mailtoHref(email, { subject: `Enquiry from the ${site.displayName} website` })}
+          >
+            <Icon name="mail" size={22} />
+            <span class="floating-text">Email</span>
+          </a>
+        )}
+      </div>
+    </div>
+    {!inline && !phoneHidden && <div class="floating-scrim" data-more-scrim aria-hidden="true" />}
+  </>
 )}
 
 <style>
@@ -114,6 +168,16 @@ const email = shown(site.floatingEmail);
 
   .floating-inline {
     border-radius: var(--radius-lg);
+  }
+
+  /* From 768px the pills sit in the bar itself; the phone-only parts are off. */
+  .floating-menu {
+    display: contents;
+  }
+
+  .floating-more,
+  .floating-scrim {
+    display: none;
   }
 
   .floating-btn {
@@ -157,17 +221,20 @@ const email = shown(site.floatingEmail);
     background: var(--stone-800);
   }
 
-  .floating-mail {
+  .floating-mail,
+  .floating-chat {
     background: var(--white);
     color: var(--ink);
     box-shadow: inset 0 0 0 1.5px var(--ink);
   }
 
-  .floating-mail:hover {
+  .floating-mail:hover,
+  .floating-chat:hover {
     background: var(--sand-100);
   }
 
-  .floating-btn:focus-visible {
+  .floating-btn:focus-visible,
+  .floating-more:focus-visible {
     outline: 3px solid var(--ink);
     outline-offset: 3px;
     box-shadow: 0 0 0 6px var(--white);
@@ -175,7 +242,7 @@ const email = shown(site.floatingEmail);
 
   /* Inline demo: on the narrowest phones the number is read out but not shown. */
   @media (max-width: 419px) {
-    .floating-number {
+    .floating-inline .floating-number {
       position: absolute;
       width: 1px;
       height: 1px;
@@ -186,9 +253,10 @@ const email = shown(site.floatingEmail);
   }
 
   /*
-   * Phones: a slim paper bar. It steps aside while the contact band is on screen (the script sets
-   * data-away) or the phone Menu is open (html[data-menu-open]); hidden means invisible, not
-   * focusable and not tappable. Only transform and opacity move.
+   * Phones: a slim paper bar holding the primary pill and the round More button. It steps aside
+   * while the contact band is on screen (the script sets data-away) or the phone Menu is open
+   * (html[data-menu-open]); hidden means invisible, not focusable and not tappable. The pill
+   * stack and the scrim fade and slide in; only transform and opacity move.
    */
   @media (max-width: 767.98px) {
     .floating-fixed {
@@ -247,34 +315,12 @@ const email = shown(site.floatingEmail);
       font-weight: var(--weight-bold);
     }
 
-    .floating-fixed .floating-wa {
-      flex: 1.4 1 0;
+    .floating-fixed .floating-primary {
+      flex: 1 1 0;
     }
 
     .floating-fixed .floating-btn.floating-enquire {
       display: inline-flex;
-    }
-
-    .floating-fixed:has(.floating-enquire) .floating-wa-link {
-      display: none;
-    }
-
-    .floating-fixed .floating-call {
-      flex: 1 1 0;
-    }
-
-    /* A round 48px icon button; its name is still read out. */
-    .floating-fixed .floating-mail {
-      flex: 0 0 3rem;
-    }
-
-    .floating-fixed .floating-mail .floating-text {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      overflow: hidden;
-      clip-path: inset(50%);
-      white-space: nowrap;
     }
 
     .floating-fixed .floating-btn :global(.icon) {
@@ -282,33 +328,139 @@ const email = shown(site.floatingEmail);
       height: 20px;
     }
 
-    /* The number is read out but not shown; the button just says "Call". */
-    .floating-fixed .floating-number {
+    /* The round More button: ink, dots, and a close mark while the stack is open. */
+    .floating-fixed .floating-more {
+      display: inline-grid;
+      place-items: center;
+      flex: 0 0 3rem;
+      width: 3rem;
+      height: 3rem;
+      padding: 0;
+      border: 0;
+      border-radius: var(--radius-pill);
+      background: var(--ink);
+      color: var(--white);
+      cursor: pointer;
+    }
+
+    .floating-more span {
+      display: inline-flex;
+    }
+
+    .floating-more .more-close,
+    .floating-more[aria-expanded='true'] .more-dots {
+      display: none;
+    }
+
+    .floating-more[aria-expanded='true'] .more-close {
+      display: inline-flex;
+    }
+
+    /* The stack of labelled pills, right-aligned above the More button. */
+    .floating-fixed .floating-menu {
       position: absolute;
-      width: 1px;
-      height: 1px;
-      overflow: hidden;
-      clip-path: inset(50%);
-      white-space: nowrap;
+      right: 20px;
+      bottom: calc(100% + 10px);
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 10px;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(12px);
+      transition:
+        opacity var(--duration-base) var(--ease-out),
+        transform var(--duration-base) var(--ease-out),
+        visibility 0s linear var(--duration-base);
+    }
+
+    .floating-fixed[data-more-open] .floating-menu {
+      opacity: 1;
+      visibility: visible;
+      transform: none;
+      transition:
+        opacity var(--duration-base) var(--ease-out),
+        transform var(--duration-base) var(--ease-out),
+        visibility 0s linear 0s;
+    }
+
+    .floating-fixed .floating-menu .floating-btn {
+      padding: 0 20px;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .floating-fixed .floating-menu .floating-mail,
+    .floating-fixed .floating-menu .floating-chat {
+      box-shadow:
+        inset 0 0 0 1.5px var(--ink),
+        var(--shadow-lg);
+    }
+
+    .floating-scrim {
+      display: block;
+      position: fixed;
+      inset: 0;
+      z-index: calc(var(--z-floating) - 1);
+      background: rgb(20 17 16 / 0.32);
+      opacity: 0;
+      visibility: hidden;
+      transition:
+        opacity var(--duration-base) var(--ease-out),
+        visibility 0s linear var(--duration-base);
+    }
+
+    .floating-fixed[data-more-open] ~ .floating-scrim {
+      opacity: 1;
+      visibility: visible;
+      transition:
+        opacity var(--duration-base) var(--ease-out),
+        visibility 0s linear 0s;
     }
   }
 
   @media (max-width: 767.98px) and (prefers-reduced-motion: reduce) {
     .floating-fixed,
     .floating-fixed[data-away],
-    :global(html[data-menu-open]) .floating-fixed {
+    :global(html[data-menu-open]) .floating-fixed,
+    .floating-fixed .floating-menu,
+    .floating-fixed[data-more-open] .floating-menu,
+    .floating-scrim,
+    .floating-fixed[data-more-open] ~ .floating-scrim {
       transition: none;
+    }
+
+    .floating-fixed .floating-menu {
+      transform: none;
     }
   }
 
   @media (min-width: 768px) {
     .floating {
-      grid-template-columns: repeat(2, minmax(0, 15rem));
+      grid-auto-flow: column;
+      grid-template-columns: none;
+      grid-auto-columns: minmax(0, 15rem);
       justify-content: center;
     }
 
-    .floating:has(.floating-mail) {
-      grid-template-columns: repeat(3, minmax(0, 13rem));
+    .floating:has(.floating-mail),
+    .floating:has(.floating-chat) {
+      grid-auto-columns: minmax(0, 13rem);
+    }
+
+    .floating .floating-wa-link {
+      order: 1;
+    }
+
+    .floating .floating-call {
+      order: 2;
+    }
+
+    .floating .floating-mail {
+      order: 3;
+    }
+
+    .floating .floating-chat {
+      order: 4;
     }
   }
 
@@ -323,9 +475,11 @@ const email = shown(site.floatingEmail);
     }
 
     .floating-fixed,
-    .floating-fixed:has(.floating-mail) {
+    .floating-fixed:has(.floating-mail),
+    .floating-fixed:has(.floating-chat) {
       inset: auto var(--space-6) var(--space-6) auto;
-      grid-template-columns: auto;
+      grid-auto-flow: row;
+      grid-auto-columns: auto;
       padding: 0;
       background: transparent;
       box-shadow: none;
@@ -341,8 +495,9 @@ const email = shown(site.floatingEmail);
         var(--shadow-lg);
     }
 
-    /* The white email button gets an ink ring inside the white one, so it shows on paper too. */
-    .floating-fixed .floating-mail {
+    /* The white email and chat buttons get an ink ring inside the white one, so they show on paper too. */
+    .floating-fixed .floating-mail,
+    .floating-fixed .floating-chat {
       box-shadow:
         inset 0 0 0 1.5px var(--ink),
         0 0 0 2px var(--white),
@@ -456,4 +611,84 @@ const email = shown(site.floatingEmail);
   }
 
   document.addEventListener('astro:page-load', watchContactBand);
+</script>
+
+<script>
+  /*
+   * Phones: the More button opens a stack of contact pills. Escape, a tap on the scrim, or
+   * choosing an option closes it; focus moves into the stack on open and back to the button on
+   * close. The stack also closes when focus leaves the bar, when the bar steps aside, when the
+   * phone Menu opens and when the window grows to 768px.
+   */
+  const phones = window.matchMedia('(max-width: 767.98px)');
+  let watcher: MutationObserver | undefined;
+
+  const bar = () => document.querySelector<HTMLElement>('.floating-fixed');
+  const moreButton = () => bar()?.querySelector<HTMLButtonElement>('[data-more]') ?? null;
+  const isOpen = () => bar()?.hasAttribute('data-more-open') ?? false;
+
+  function setOpen(open: boolean, restoreFocus = false): void {
+    const el = bar();
+    const button = moreButton();
+    if (!el || !button) return;
+    el.toggleAttribute('data-more-open', open);
+    button.setAttribute('aria-expanded', String(open));
+    if (open) {
+      el.querySelector<HTMLElement>('[data-more-menu] a, [data-more-menu] button')?.focus();
+    } else if (restoreFocus) {
+      button.focus();
+    }
+  }
+
+  document.addEventListener('click', (event) => {
+    const target = event.target as Element | null;
+    if (!target) return;
+    if (target.closest('[data-more]')) {
+      setOpen(!isOpen());
+      return;
+    }
+    if (!isOpen()) return;
+    if (target.closest('[data-more-scrim]')) {
+      setOpen(false, true);
+      return;
+    }
+    if (target.closest('[data-more-menu] a, [data-more-menu] button')) setOpen(false, true);
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && isOpen()) {
+      event.preventDefault();
+      setOpen(false, true);
+    }
+  });
+
+  document.addEventListener('focusin', (event) => {
+    const el = bar();
+    if (isOpen() && el && !el.contains(event.target as Node | null)) setOpen(false);
+  });
+
+  phones.addEventListener('change', () => {
+    if (isOpen()) setOpen(false);
+  });
+
+  function watchBar() {
+    watcher?.disconnect();
+    const el = bar();
+    if (!el) return;
+    watcher = new MutationObserver(() => {
+      if (
+        isOpen() &&
+        (el.hasAttribute('data-away') || document.documentElement.hasAttribute('data-menu-open'))
+      ) {
+        setOpen(false);
+      }
+    });
+    watcher.observe(el, { attributes: true, attributeFilter: ['data-away'] });
+    watcher.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-menu-open'],
+    });
+  }
+
+  document.addEventListener('astro:page-load', watchBar);
 </script>

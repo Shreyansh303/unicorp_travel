@@ -1,5 +1,21 @@
 ---
 import LegalLayout from '../layouts/LegalLayout.astro';
+import { site } from '../config/site';
+
+const chatOn = site.chatbot.url !== null;
 ---
 
-<LegalLayout id="privacy" />
+<LegalLayout id="privacy">
+  {chatOn && (
+    <>
+      <h3 id="chat">Chat on this website</h3>
+      <p>
+        The chat with us link opens a separate page run by Zapier, in a new tab. The messages you
+        type there are processed by Zapier and the AI service providers it works with, to answer
+        your question, under their own privacy terms. The chat does not pass your details to us.
+        Please do not share personal or payment details in the chat; to make an enquiry, use
+        WhatsApp, call us or use the enquiry form. Nothing from the chat loads on this website.
+      </p>
+    </>
+  )}
+</LegalLayout>
