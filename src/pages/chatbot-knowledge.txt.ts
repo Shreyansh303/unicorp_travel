@@ -101,6 +101,19 @@ if (services.length > 0) {
     add(`- ${service.data.title}: ${service.data.summary} ${link(serviceHref(service))}`);
   }
 }
+
+// --- Company vehicles (car and coach rentals) ---------------------------------------------------
+const withVehicles = services.filter((service) => (service.data.vehicles ?? []).length > 0);
+if (withVehicles.length > 0) {
+  label('Company-owned vehicles, chauffeur-driven');
+  for (const service of withVehicles) {
+    for (const vehicle of service.data.vehicles ?? []) {
+      add(
+        `- ${vehicle.name} (${vehicle.edition}): ${vehicle.passengers} passengers. Best for: ${vehicle.bestFor}. ${vehicle.features.join('; ')}. ${link(serviceHref(service))}`,
+      );
+    }
+  }
+}
 label('Other pages');
 add(`- Holiday packages: ${link(routes.holidays)}`);
 add(`- All services: ${link(routes.services)}`);

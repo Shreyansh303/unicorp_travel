@@ -239,7 +239,7 @@ const services = defineCollection({
             edition: z.string().min(3).max(60),
             passengers: z.number().int().positive(),
             bestFor: z.string().min(10).max(80),
-            features: z.array(z.string().min(5).max(80)).min(3).max(6),
+            features: z.array(z.string().min(5).max(80)).min(3).max(7),
             photos: z
               .array(z.object({ src: image(), alt: z.string().min(10) }))
               .min(1)
