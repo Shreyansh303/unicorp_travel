@@ -1,15 +1,14 @@
 ---
 /**
- * Page for a legal draft from the `legal` collection (F-14). The text is sample content pending
- * legal review, so the page says so. The company it
- * speaks for is named from site.ts, never in the Markdown.
+ * Page for a legal text from the `legal` collection (F-14). Drafts pending legal review are
+ * marked `demo: true`, which blocks a production build, and are not labelled on the page
+ * (user decision, 2026-11-06). The company it speaks for is named from site.ts, never in the Markdown.
  */
 import { render } from 'astro:content';
 import PageLayout from './PageLayout.astro';
 import PageHero from '../components/ui/PageHero.astro';
 import Section from '../components/ui/Section.astro';
 import FactsBlock from '../components/ui/FactsBlock.astro';
-import Icon from '../components/ui/Icon.astro';
 import { mailtoHref, shown, site, telHref } from '../config/site';
 import { getLegal } from '../lib/content';
 import { formatDate, isoDate } from '../lib/format';
@@ -48,14 +47,6 @@ const officer = id === 'privacy' ? shown(site.grievanceOfficer) : null;
     mood="corporate"
     compact
   >
-    <div class="legal-status">
-      {entry.data.demo && (
-        <p class="legal-draft">
-          <Icon name="alert-triangle" size={18} />
-          <span>Draft, pending legal review</span>
-        </p>
-      )}
-    </div>
     <p class="legal-updated">
       Last updated{' '}
       <time datetime={isoDate(entry.data.updated)}>{formatDate(entry.data.updated)}</time>
@@ -116,25 +107,6 @@ const officer = id === 'privacy' ? shown(site.grievanceOfficer) : null;
   /* The opening above is white too and already ends with its own padding. */
   :global(.section.section-default.legal-body) {
     padding-top: 0;
-  }
-
-  .legal-status {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--space-3);
-  }
-
-  .legal-draft {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2);
-    padding: var(--space-1) var(--space-3);
-    border-radius: var(--radius-sm);
-    background: var(--warning-50);
-    color: var(--warning-700);
-    font-size: var(--text-sm);
-    font-weight: var(--weight-bold);
   }
 
   .legal-officer {

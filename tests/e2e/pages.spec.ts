@@ -1,10 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { listedPhones, shown, site } from '../../src/config/site';
-import {
-  allRoutes,
-  demoLegalRoutes,
-  packageRoutes,
-} from '../routes';
+import { allRoutes, demoLegalRoutes, packageRoutes } from '../routes';
 
 // astro.config.mjs reads SITE_URL; without it pages must not invent canonical or OG URLs.
 const siteUrl = process.env['SITE_URL']?.trim() || null;
@@ -93,7 +89,8 @@ test.describe('every page', () => {
       await expect(page.locator('body')).not.toContainText('Sample content');
 
       if (demoLegalRoutes.includes(path)) {
-        await expect(page.locator('main')).toContainText('Draft, pending legal review');
+        // Legal drafts are not labelled either (user decision, 2026-11-06).
+        await expect(page.locator('main')).not.toContainText('Draft, pending legal review');
       }
     });
   }
